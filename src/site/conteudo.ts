@@ -23,16 +23,15 @@ export interface Secao {
  * seções seguintes explicam o percurso que levou até ele.
  */
 export const SECOES: Secao[] = [
-  { id: 'introducao', numero: '01', titulo: 'Introdução', curto: 'Introdução' },
-  { id: 'overview', numero: '02', titulo: 'Overview do projeto', curto: 'Overview' },
-  { id: 'prototipo', numero: '03', titulo: 'Protótipo interativo', curto: 'Protótipo' },
-  { id: 'processo', numero: '04', titulo: 'Etapas do processo', curto: 'Processo' },
-  { id: 'fluxogramas', numero: '05', titulo: 'Fluxogramas originais, comentados', curto: 'Fluxogramas' },
-  { id: 'prints', numero: '06', titulo: 'Prints das telas atuais, anotados', curto: 'Prints' },
-  { id: 'fluxo-v1', numero: '07', titulo: 'Fluxo de estados (V1)', curto: 'Fluxo V1' },
-  { id: 'fluxo-enriquecido', numero: '08', titulo: 'Fluxo enriquecido, atores e notificações', curto: 'Atores' },
-  { id: 'priorizacao', numero: '09', titulo: 'MVP, V.1, V.2 e V.3', curto: 'Priorização' },
-  { id: 'encerramento', numero: '10', titulo: 'Encerramento', curto: 'Encerramento' },
+  { id: 'overview', numero: '01', titulo: 'Overview do projeto', curto: 'Overview' },
+  { id: 'prototipo', numero: '02', titulo: 'Protótipo interativo', curto: 'Protótipo' },
+  { id: 'processo', numero: '03', titulo: 'Etapas do processo', curto: 'Processo' },
+  { id: 'fluxogramas', numero: '04', titulo: 'Fluxogramas originais, comentados', curto: 'Fluxogramas' },
+  { id: 'fluxo-v1', numero: '05', titulo: 'Fluxo de estados (V1)', curto: 'Fluxo V1' },
+  { id: 'fluxo-enriquecido', numero: '06', titulo: 'Fluxo enriquecido, atores e notificações', curto: 'Atores' },
+  { id: 'fluxo-telas', numero: '07', titulo: 'Fluxo de telas do protótipo', curto: 'Telas' },
+  { id: 'priorizacao', numero: '08', titulo: 'MVP, V.1, V.2 e V.3', curto: 'Priorização' },
+  { id: 'encerramento', numero: '09', titulo: 'Encerramento', curto: 'Encerramento' },
 ];
 
 /* ---------------- 03 · Etapas do processo ------------------- */
@@ -77,7 +76,7 @@ export const FLUXOGRAMAS = [
   {
     fluxo: 'Fluxo de Aprovação',
     tom: 'discordancia' as const,
-    texto: 'O rascunho duplica toda a árvore de decisão duas vezes — uma para quando o parâmetro de aprovador está ligado, outra idêntica para quando está desligado. Isso é redundante e propenso a divergir com o tempo. Simplifiquei para que o parâmetro apenas decida se o estado "Aguardando aprovação" existe no fluxo ou é pulado, sem duplicar a lógica inteira.',
+    texto: 'O original duplica toda a árvore de decisão para o parâmetro ON e OFF — e, mesmo no ramo OFF, continua oferecendo Aprovar e Reprovar. Questionei tanto a repetição quanto essa inconsistência. No meu fluxo, baseado no protótipo atual, a aprovação é obrigatória e aparece uma única vez: a transferência já nasce reservada na fila do Aprovador, que decide entre aprovar e reprovar.',
   },
   {
     fluxo: 'Fluxo de Recebimento — a contradição real',
@@ -206,13 +205,16 @@ export const PRINTS: PrintAnotado[] = [
 export type Ator = 'origem' | 'destino' | 'sistema' | 'nenhum';
 
 export const ATORES: { estado: string; ator: Ator; atorNota?: string; acao: string }[] = [
-  { estado: 'Reservado', ator: 'origem', acao: 'Pode cancelar a transferência' },
-  { estado: 'Aguardando aprovação', ator: 'destino', atorNota: 'papel definido pelo cliente', acao: 'Aprova ou reprova a transferência' },
+  { estado: 'Reservado · aprovação pendente', ator: 'destino', atorNota: 'Aprovador da obra que recebe', acao: 'Aprova ou reprova; a origem ainda pode cancelar' },
+  { estado: 'Aprovado · envio pendente', ator: 'origem', acao: 'Registra o despacho ou cancela antes da saída' },
   { estado: 'Reprovado', ator: 'sistema', acao: 'Devolve a quantidade ao disponível da origem' },
-  { estado: 'Em trânsito', ator: 'nenhum', acao: 'Nenhuma ação disponível, aguarda chegada' },
-  { estado: 'Avaliação de entrega (FVM)', ator: 'destino', atorNota: 'papel definido pelo cliente', acao: 'Confirma recebimento ou registra divergência' },
-  { estado: 'Recebido com divergência', ator: 'origem', acao: 'Reenvia corrigido ou mantém o registro' },
-  { estado: 'Cancelado', ator: 'origem', acao: 'Devolve ao disponível, antes do despacho' },
+  { estado: 'Em trânsito', ator: 'destino', acao: 'Alega a chegada do material à obra' },
+  { estado: 'FVM pendente', ator: 'destino', atorNota: 'papel definido pelo cliente', acao: 'Confere enviado × recebido e registra divergências' },
+  { estado: 'Aguardando NF', ator: 'destino', acao: 'Confirma o número e anexa a nota fiscal' },
+  { estado: 'Divergência pendente', ator: 'origem', acao: 'Envia o saldo faltante ou encerra assumindo a falta' },
+  { estado: 'Recebido ok', ator: 'nenhum', acao: 'Transferência encerrada sem pendências' },
+  { estado: 'Finalizada com divergência', ator: 'nenhum', acao: 'Registro encerrado e mantido para auditoria' },
+  { estado: 'Cancelado', ator: 'sistema', acao: 'Devolve ao disponível da origem' },
 ];
 
 export const ATOR_LEGENDA: Record<Ator, string> = {
@@ -232,9 +234,9 @@ export const NOTIFICACOES: {
   tripla?: boolean;
 }[] = [
   {
-    transicao: 'Entra em aguardando aprovação',
+    transicao: 'Criação · reserva e aprovação pendente',
     origem: false, aprovador: true, destino: false,
-    nota: 'Aprovador precisa agir; destino ainda não tem nada visível.',
+    nota: 'O Aprovador precisa agir; o saldo já está travado na origem.',
   },
   {
     transicao: 'Aprovado',
@@ -254,7 +256,12 @@ export const NOTIFICACOES: {
   {
     transicao: 'Confirmação de recebimento (ok ou divergente)',
     origem: true, aprovador: true, destino: true, tripla: true,
-    nota: 'As três partes são avisadas — confirmado explicitamente no vídeo da Suplos. Único evento com notificação tripla no fluxo inteiro.',
+    nota: 'A FVM avisa as três partes; com divergência, o aviso para a origem ganha tratamento crítico.',
+  },
+  {
+    transicao: 'NF confirmada',
+    origem: true, aprovador: false, destino: true,
+    nota: 'Sem divergência, encerra. Com divergência, apenas resolve a pendência da nota.',
   },
   {
     transicao: 'Recebido com divergência → precisa reenviar',
@@ -262,14 +269,19 @@ export const NOTIFICACOES: {
     nota: 'Só a origem precisa agir; ao reenviar, o ciclo de notificação recomeça do início.',
   },
   {
-    transicao: 'Cancelado',
+    transicao: 'Divergência encerrada pela origem',
+    origem: true, aprovador: true, destino: true, tripla: true,
+    nota: 'As três partes recebem o fechamento; a falta continua auditável.',
+  },
+  {
+    transicao: 'Cancelado antes do despacho',
     origem: true, aprovador: false, destino: false,
-    nota: 'Ação e ciência ficam só com quem criou.',
+    nota: 'Ação e ciência ficam com quem criou; o saldo volta ao disponível.',
   },
 ];
 
 export const FONTE_NOTIFICACOES =
-  'Base: transcrição do vídeo de apresentação da Suplos (min 3:13–3:30) — "tanto a obra que enviou… recebe essa confirmação, mas também o gestor… mas também essa obra aparecer que esse material foi recebido."';
+  'Base: transcrição do vídeo de apresentação da Suplos (min 3:13–3:30) para a notificação tripla do recebimento. No protótipo, o encerramento da divergência repete os três destinatários para fechar o ciclo com todas as partes cientes.';
 
 /* ---------------- 08 · Priorização -------------------------- */
 export interface Versao {
@@ -286,56 +298,60 @@ export const VERSOES: Versao[] = [
   {
     chave: 'mvp',
     rotulo: 'MVP',
-    chamada: 'Resolve o problema central do case — sem isso, o risco real continua.',
+    chamada: 'O fluxo completo que já está implementado e demonstrável no protótipo.',
     destaque: true,
     inclui: [
-      { titulo: 'Reservado', detalhe: 'quantidade travada' },
-      { titulo: 'Aguardando aprovação / Aprovado / Reprovado' },
-      { titulo: 'Em trânsito' },
-      { titulo: 'Avaliação de entrega', detalhe: 'confere quantidade e registra divergência' },
-      { titulo: 'Aguardando NF', detalhe: 'confirmação da nota com anexo' },
-      { titulo: 'Cancelado' },
-      { titulo: 'Painel de visibilidade por obra', detalhe: '"A Enviar" / "A Receber"' },
+      { titulo: 'Separação por obra e direção', detalhe: 'painéis “Saindo” na origem e “Chegando” no destino' },
+      { titulo: 'Reserva real de estoque', detalhe: 'quantidade travada sem sair do saldo antes do despacho' },
+      { titulo: 'Aprovação explícita', detalhe: 'aprovar ou reprovar, com simulação da outra empresa' },
+      { titulo: 'Despacho e trânsito rastreáveis', detalhe: 'data efetiva de saída e previsão de chegada' },
+      { titulo: 'Chegada separada da conferência', detalhe: 'alegar recebimento não dá entrada; a FVM confere enviado × recebido' },
+      { titulo: 'Divergência com resolução', detalhe: 'a origem reenvia o saldo ou encerra assumindo a falta; o reenvio volta à aprovação' },
+      { titulo: 'NF como pendência própria', detalhe: 'a nota pode ser confirmada sem esconder uma divergência aberta' },
+      { titulo: 'Cancelamento antes do despacho', detalhe: 'devolve a quantidade reservada ao saldo disponível' },
+      { titulo: 'Auditoria web e mobile', detalhe: 'timeline, notificações, atrasos, saldos e histórico compartilhados' },
     ],
-    notaTitulo: 'Fica de fora, de propósito',
-    nota: 'Correção automática da divergência — ela é registrada, mas resolvida manualmente por enquanto.',
+    notaTitulo: 'Entrega demonstrável',
+    nota: 'O ciclo pode ser percorrido de ponta a ponta: criar, aprovar, despachar, receber, conferir, anexar a NF e resolver uma divergência.',
   },
   {
     chave: 'v1',
     rotulo: 'V.1',
-    chamada: 'Resolve a conveniência de corrigir uma divergência sem sair do sistema.',
+    chamada: 'Transforma o histórico concluído em um documento que pode ser compartilhado.',
     inclui: [
       {
-        titulo: 'Loop "Vai reenviar?"',
-        detalhe: 'Remetente corrige e reenvia; a transferência volta ao estado Reservado — não direto para Em trânsito.',
+        titulo: 'Exportar relatório da transferência finalizada',
+        detalhe: 'Depois da conclusão, um botão permite exportar o relatório daquele pedido específico, com dados, etapas e resultado do recebimento.',
       },
     ],
-    notaTitulo: 'Trade-off assumido',
-    nota: 'O reenvio passa pela aprovação de novo, do zero. É mais fricção para quem já errou uma vez — decisão deliberada, para não reabrir a mesma brecha que o case pede para fechar: saída sem validação.',
+    notaTitulo: 'Recorte da primeira evolução',
+    nota: 'A exportação só aparece depois que o fluxo termina, garantindo que o relatório represente o histórico completo e imutável daquele pedido.',
   },
   {
     chave: 'v2',
     rotulo: 'V.2',
-    chamada: 'Proposta própria — não vem de nenhum pedido do CS.',
+    chamada: 'Ajuda a direcionar a sobra para uma obra que realmente precisa do material.',
     inclui: [
       {
         titulo: 'Sugestão automática de destino',
-        detalhe: 'Ao reservar, cruza o item com obras marcadas com "Estoque Baixo" daquele mesmo material (recurso que já existe no produto) e sugere. A pessoa confirma — não decide sozinho pelo sistema.',
+        detalhe: 'Cruza o item com obras marcadas com “Estoque Baixo” e sugere um destino; a pessoa continua responsável pela decisão.',
       },
     ],
-    notaTitulo: 'Por que é iniciativa, não pedido',
-    nota: 'Deixo isso explícito para o time: é design proativo, não resposta a uma dor relatada.',
+    notaTitulo: 'Evolução proposta',
+    nota: 'A sugestão reaproveita um sinal que já existe no produto; ela orienta a operação, mas não decide nem aprova automaticamente.',
   },
   {
     chave: 'v3',
     rotulo: 'V.3',
-    chamada: 'O case pede melhoria além do fluxo atual, não só fechar lacunas.',
+    chamada: 'Adiciona inteligência operacional e robustez para o uso em campo.',
     inclui: [
-      { titulo: 'Transportador confirma carregamento', detalhe: 'segundo ponto de conferência, na saída' },
+      { titulo: 'Transportador confirma carregamento', detalhe: 'cria um segundo ponto de conferência antes do material entrar em trânsito' },
       { titulo: 'SLA de trânsito com alerta de atraso', detalhe: 'reaproveita o padrão já existente na tela de Entregas' },
-      { titulo: 'Indicador de confiabilidade por obra/rota' },
-      { titulo: 'Modo offline no mobile', detalhe: 'quem confirma está no canteiro, no sol, de luva, com conexão ruim' },
+      { titulo: 'Indicador de confiabilidade por obra/rota', detalhe: 'usa o histórico para revelar recorrência de atrasos e divergências' },
+      { titulo: 'Modo offline no mobile', detalhe: 'permite confirmar no canteiro e sincronizar quando a conexão voltar' },
     ],
+    notaTitulo: 'Por que vem depois',
+    nota: 'Depende de histórico, métricas e sincronização confiável; entrega mais valor quando o fluxo-base já estiver rodando em produção.',
   },
 ];
 

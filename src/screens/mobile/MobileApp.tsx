@@ -80,7 +80,7 @@ export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {})
           />
         );
       case 'estoque':
-        return <TelaEstoque />;
+        return <TelaEstoque onSaida={() => empilhar({ t: 'nova' })} />;
       case 'movimentacoes':
         return <TelaMovimentacoes onAbrir={(id) => empilhar({ t: 'detalhe', id })} />;
       case 'notificacoes':

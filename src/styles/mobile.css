@@ -394,6 +394,10 @@
 }
 
 /* --- Estoque ----------------------------------------------- */
+.mob-estoque__acoes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+}
+.mob-estoque__acoes .mob-btn { min-width: 0; }
 .mob-busca { position: relative; margin-bottom: 12px; }
 .mob-busca svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-faint); }
 .mob-busca input {

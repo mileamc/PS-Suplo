@@ -36,7 +36,7 @@ export default function App() {
             rota={destino.rota} id={destino.id}
             somenteLeitura={destino.somenteLeitura} navegar={navegar}
           />}
-      <Toasts />
+      {destino.tela === 'prototipo' && destino.rota !== 'mobile' && <Toasts />}
     </StoreProvider>
   );
 }

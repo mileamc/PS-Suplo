@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import {
-  ArrowRight, ArrowUpRight, Mail, Monitor, Smartphone, Info, CornerDownRight,
+  ArrowRight, ArrowUpRight, Mail, Monitor, Smartphone, Info,
   MoveHorizontal, ArrowUp,
 } from 'lucide-react';
 import {
-  AUTOR, SECOES, ETAPAS, FLUXOGRAMAS, PRINTS, ATORES, ATOR_LEGENDA,
+  AUTOR, SECOES, ETAPAS, FLUXOGRAMAS, ATORES, ATOR_LEGENDA,
   NOTIFICACOES, FONTE_NOTIFICACOES, VERSOES, FORA_DE_ESCOPO,
 } from './conteudo';
 import { ROTAS } from '../state/rotas';
@@ -14,21 +14,20 @@ import { ROTAS } from '../state/rotas';
    Sistema visual "warm paper notebook": canvas #f6f5f4, cards
    brancos com fio de 1px, azul único para a ação primária e um
    elenco de acentos que pinta os blocos de destaque.
-   O protótipo (seção 09) entra por iframe, sem alteração.
+   O protótipo entra por iframe e mantém a identidade da Suplos.
    ============================================================ */
 export function CaseSite() {
   return (
     <div className="site">
       <NavSite />
       <Hero />
-      <Introducao />
       <Overview />
       <Prototipo />
       <Processo />
       <Fluxogramas />
-      <Prints />
       <FluxoV1 />
       <FluxoEnriquecido />
+      <FluxoTelas />
       <Priorizacao />
       <Encerramento />
       <Rodape />
@@ -162,11 +161,11 @@ function Hero() {
           </div>
           <div>
             <span className="hero__meta-rot">Recorte</span>
-            <span className="hero__meta-val">MVP + protótipo web e mobile</span>
+            <span className="hero__meta-val">Fluxo completo + protótipo web e mobile</span>
           </div>
           <div>
             <span className="hero__meta-rot">Seções</span>
-            <span className="hero__meta-val">10 · protótipo logo no começo</span>
+            <span className="hero__meta-val">9 · protótipo logo no começo</span>
           </div>
         </div>
       </div>
@@ -174,41 +173,7 @@ function Hero() {
   );
 }
 
-/* ---------------- 01 · Introdução --------------------------- */
-function Introducao() {
-  return (
-    <section className="secao" id="introducao">
-      <div className="site__larg">
-        <Cabecalho id="introducao" />
-        <div className="secao__corpo">
-          <div className="card-acento" style={{ ['--bg-acento' as string]: 'var(--marigold)', padding: 40 }}>
-            <div style={{ display: 'grid', gap: 20, maxWidth: '62ch', fontFamily: 'var(--serif)', fontSize: 18, lineHeight: 1.56 }}>
-              <p>
-                Oi! Antes de qualquer coisa, obrigada pela oportunidade de chegar até essa etapa — sei
-                que o volume de candidaturas foi grande, e fico feliz de estar aqui.
-              </p>
-              <p>
-                Esse case foi desenhado com lacunas de propósito, e decidi tratar isso como parte do
-                desafio, não como um obstáculo. Em vez de desenhar telas direto, segui um processo:
-                primeiro entendi a marca e o produto, depois analisei as telas que já existem,
-                destrinchei as dores e os objetivos por trás do pedido, mapeei os pontos de fricção do
-                fluxo atual, modelei os estados que resolvem esses pontos, e só então parti para a
-                produção das telas.
-              </p>
-              <p>
-                Esse site apresenta esse processo do início ao fim, na ordem em que ele aconteceu —
-                incluindo os pontos em que discordei do material que vocês me deram, e por quê.
-              </p>
-            </div>
-          </div>
-          <p className="nota-rodape">Material bônus, complementar à apresentação ao vivo.</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- 02 · Overview ----------------------------- */
+/* ---------------- 01 · Overview ----------------------------- */
 function Overview() {
   return (
     <section className="secao" id="overview">
@@ -240,7 +205,7 @@ function Overview() {
   );
 }
 
-/* ---------------- 04 · Processo ----------------------------- */
+/* ---------------- 03 · Processo ----------------------------- */
 const CORES_ETAPA = [
   ['var(--sky-tint)', 'var(--notion-blue)'],
   ['#ffeccc', '#8a5a00'],
@@ -279,7 +244,7 @@ function Processo() {
   );
 }
 
-/* ---------------- 05 · Fluxogramas -------------------------- */
+/* ---------------- 04 · Fluxogramas -------------------------- */
 function Fluxogramas() {
   return (
     <section className="secao" id="fluxogramas">
@@ -307,15 +272,25 @@ function Fluxogramas() {
             ))}
           </div>
 
-          <div style={{ marginTop: 32 }}>
+          <div className="fluxos-digitalizados">
             <div className="legenda-cores">
               <span><i style={{ background: '#0b3a6f' }} /> no diagrama: discordância / proposta</span>
               <span><i style={{ background: '#5b9fe0' }} /> pergunta / premissa confirmada</span>
             </div>
             <Diagrama
-              arquivo="fluxogramas_originais_comentados.svg"
-              legenda="Os três fluxogramas originais com os comentários e as propostas sobrepostos."
-              minLargura={860}
+              arquivo="fluxo_original_1_criacao.svg"
+              legenda="Fluxo 1 — Criação. Redesenhado digitalmente sem mudar caixas, caminhos ou conteúdo; as perguntas ficam fora do fluxo."
+              minLargura={1300}
+            />
+            <Diagrama
+              arquivo="fluxo_original_2_aprovacao.svg"
+              legenda="Fluxo 2 — Aprovação. As árvores ON e OFF foram preservadas exatamente como no original, inclusive a repetição questionada."
+              minLargura={1900}
+            />
+            <Diagrama
+              arquivo="fluxo_original_3_recebimento.svg"
+              legenda="Fluxo 3 — Recebimento. Os dois pontos de entrada e a FVM opcional permanecem como enviados; a anotação registra o que foi revisto no meu fluxo."
+              minLargura={1600}
             />
           </div>
         </div>
@@ -324,86 +299,24 @@ function Fluxogramas() {
   );
 }
 
-/* ---------------- 06 · Prints ------------------------------- */
-function Prints() {
-  return (
-    <section className="secao" id="prints">
-      <div className="site__larg">
-        <Cabecalho id="prints">
-          <p>
-            Antes de desenhar qualquer coisa nova, fiz um diagnóstico visual em cima do produto como
-            ele existe hoje. Cada marcação abaixo liga um ponto específico da interface a uma dor
-            real (dos prints e do vídeo de apresentação) e, quando aplicável, ao estado do fluxo novo
-            que resolve aquilo.
-          </p>
-          <p>
-            O achado que mais gostei: o modal de "Detalhes do Pedido" (para pedidos de compra) já
-            tem, hoje, uma comparação lado a lado entre quantidade pedida e quantidade recebida. Isso
-            não é um recurso que estou inventando — é um padrão que a Suplos já usa em outro lugar do
-            produto. Meu trabalho foi reconhecer esse padrão e propor que ele seja reaproveitado para
-            transferências entre obras, em vez de criar algo do zero.
-          </p>
-        </Cabecalho>
-
-        <div className="secao__corpo">
-          <div className="prints">
-            {PRINTS.map((p, i) => (
-              <article className="print" key={p.arquivo}>
-                <div className="print__cabecalho">
-                  <h3 className="print__titulo">Print {i + 1} — {p.titulo}</h3>
-                  {p.legenda && <span className="print__legenda">{p.legenda}</span>}
-                </div>
-                <div className="print__janela">
-                  <img
-                    src={`/case/${p.arquivo}`} alt={`Print anotado: ${p.titulo}`}
-                    style={{ minWidth: 780, width: '100%' }}
-                  />
-                </div>
-                <div className="print__achados">
-                  {p.achados.map((a) => (
-                    <div className="achado" key={a.n}>
-                      <span className="achado__n">{a.n}</span>
-                      <div>
-                        <h4 className="achado__titulo">{a.titulo}</h4>
-                        {a.texto && <p className="achado__texto">{a.texto}</p>}
-                        {a.resolucao && (
-                          <div className="achado__resolucao">
-                            <CornerDownRight size={15} />
-                            <span>{a.resolucao}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- 07 · Fluxo V1 ----------------------------- */
+/* ---------------- 05 · Fluxo V1 ----------------------------- */
 function FluxoV1() {
   return (
     <section className="secao" id="fluxo-v1">
       <div className="site__larg">
         <Cabecalho id="fluxo-v1">
           <p>
-            Esse é o resultado da etapa de modelagem: a transferência deixa de ser uma ação única e
-            passa a ter um ciclo de vida — reservada, aguardando aprovação, em trânsito, avaliada na
-            entrega, aguardando a nota fiscal e, só então, recebida (com ou sem divergência), com os
-            devidos caminhos de reprovação e cancelamento.
+            Esse fluxo foi revisado olhando somente para o que o protótipo faz hoje. Ao salvar, a
+            transferência já nasce como <strong>Reservado · aprovação pendente</strong>; depois passa
+            por decisão do aprovador, despacho, trânsito, chegada, FVM e confirmação da nota fiscal.
+            Não há atalhos ou parâmetros que não possam ser demonstrados na interface.
           </p>
           <p>
-            Duas decisões que a versão anterior deste fluxo não tinha. A transferência{' '}
-            <strong>nasce já reservada</strong>: não existe um segundo clique para "enviar para
-            aprovação" — assim que a saída é salva, a quantidade trava e a obra de destino já é
-            avisada. E a conferência não encerra nada sozinha: o material entra no estoque, mas a
-            transferência fica em <strong>Aguardando NF</strong> até alguém confirmar o número da
-            nota e anexá-la. É o mesmo estado que a tela de Entregas já usa para pedidos de compra.
+            A chegada e a entrada no estoque continuam separadas: alegar recebimento tira o material
+            da estrada, mas só a FVM confere enviado × recebido e dá entrada no destino. Com
+            divergência, NF e decisão da origem viram pendências paralelas; confirmar a NF não fecha
+            o caso. A origem encerra assumindo a falta ou reserva apenas o saldo faltante e reinicia a
+            aprovação.
           </p>
         </Cabecalho>
 
@@ -411,7 +324,7 @@ function FluxoV1() {
           <Diagrama
             arquivo="fluxo_transferencia_v1_linha_unica.svg"
             legenda="Fluxo de transferência V1 — o ciclo de vida completo, só de estados."
-            minLargura={1400}
+            minLargura={2000}
           />
 
           <div className="card-acento" style={{ ['--bg-acento' as string]: 'var(--coral)', color: '#fff', marginTop: 16 }}>
@@ -430,7 +343,7 @@ function FluxoV1() {
   );
 }
 
-/* ---------------- 08 · Fluxo enriquecido -------------------- */
+/* ---------------- 06 · Fluxo enriquecido -------------------- */
 function FluxoEnriquecido() {
   return (
     <section className="secao" id="fluxo-enriquecido">
@@ -439,22 +352,24 @@ function FluxoEnriquecido() {
           <p>
             Aqui eu pego o mesmo fluxo de estados e acrescento a camada que estava faltando: em qual
             modal, mensagem ou aba cada transição aparece — no mesmo nível de detalhe que os
-            fluxogramas originais de vocês tinham. São seis modais no total: registrar saída,
-            despacho, aprovação, confirmar entrega, confirmar NF e cancelamento.
+            fluxogramas originais de vocês tinham. O diagrama agora acompanha o protótipo: inclui o
+            drawer de detalhe, a seção de aprovação, os modais de despacho, chegada, FVM, NF,
+            cancelamento e a decisão da origem diante da divergência.
           </p>
           <p>
             Ao lado, a tabela de atores responde a uma exigência específica do material (<em>"cada
             estado permite ações diferentes para pessoas diferentes"</em>): quem decide o quê, em cada
             estado. Simplifiquei para dois papéis — Origem e Destino — porque, como o próprio
-            glossário de vocês confirma, o papel de aprovador é configurável por cliente; não faz
-            sentido eu fixar um cargo específico.
+            glossário de vocês confirma, o papel de aprovador é configurável por cliente; no
+            protótipo, a própria empresa aprova o que chega e a outra ponta é simulada apenas quando
+            precisa aprovar o que sai.
           </p>
           <p>
             Um detalhe que só descobri ouvindo o vídeo de apresentação com atenção (não estava em
-            nenhum slide): a confirmação de recebimento é o único evento do fluxo inteiro que notifica
-            as três partes ao mesmo tempo — origem, aprovador e destino. Isso está registrado na
-            tabela de notificações, separada da tabela de decisão, porque nem sempre quem decide é
-            quem precisa saber.
+            nenhum slide): a confirmação de recebimento precisa notificar as três partes ao mesmo
+            tempo — origem, aprovador e destino. No protótipo, esse mesmo alcance é repetido quando a
+            divergência é encerrada, para fechar o ciclo com todos cientes. A tabela de notificações
+            fica separada da tabela de decisão porque nem sempre quem decide é quem precisa saber.
           </p>
         </Cabecalho>
 
@@ -462,7 +377,7 @@ function FluxoEnriquecido() {
           <Diagrama
             arquivo="fluxo_v1_enriquecido.svg"
             legenda="O mesmo fluxo, agora com os touchpoints de UI — modal, mensagem e aba — em cada transição."
-            minLargura={1400}
+            minLargura={2000}
           />
           <div style={{ marginTop: 16 }}><TabelaAtores /></div>
           <div style={{ marginTop: 16 }}><TabelaNotificacoes /></div>
@@ -555,12 +470,51 @@ function TabelaNotificacoes() {
   );
 }
 
-/* ---------------- 09 · Priorização -------------------------- */
-const ESTILO_VERSAO: Record<string, React.CSSProperties> = {
-  mvp: { ['--bg-v' as string]: 'var(--marigold)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
-  v1: { ['--bg-v' as string]: 'var(--sky-wash)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
+/* ---------------- 07 · Fluxo de telas ----------------------- */
+function FluxoTelas() {
+  return (
+    <section className="secao" id="fluxo-telas">
+      <div className="site__larg">
+        <Cabecalho id="fluxo-telas">
+          <p>
+            O modelo de estados explica o que acontece com a transferência; este mapa mostra onde
+            cada ação acontece. Ele conecta rotas, abas, drawer, modais e bottom sheets das versões
+            web e mobile, deixando explícito que as duas experiências escrevem na mesma entidade e
+            compartilham saldos, histórico, notificações e regras de permissão.
+          </p>
+        </Cabecalho>
+
+        <div className="secao__corpo">
+          <Diagrama
+            arquivo="fluxo_telas_prototipo.svg"
+            legenda="Mapa completo das telas e sobreposições do protótipo, com as conexões entre web, mobile e a máquina de estados compartilhada."
+            minLargura={2000}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- 08 · Priorização -------------------------- */
+const ESTILO_VERSAO: Record<string, CSSProperties> = {
+  mvp: {
+    ['--bg-v' as string]: 'var(--marigold)',
+    ['--bd-v' as string]: 'transparent',
+    ['--bd-nota' as string]: 'rgba(0,0,0,.16)',
+  },
+  v1: {
+    ['--bg-v' as string]: 'var(--sky-wash)',
+    ['--bd-v' as string]: 'transparent',
+    ['--bd-nota' as string]: 'rgba(0,0,0,.16)',
+  },
   v2: { ['--bg-v' as string]: 'var(--white)' },
-  v3: { ['--bg-v' as string]: 'var(--midnight)', ['--fg-v' as string]: 'var(--white)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(255,255,255,.2)' },
+  v3: {
+    ['--bg-v' as string]: 'var(--midnight)',
+    ['--fg-v' as string]: 'var(--white)',
+    ['--bd-v' as string]: 'transparent',
+    ['--bd-nota' as string]: 'rgba(255,255,255,.2)',
+  },
 };
 
 function Priorizacao() {
@@ -604,50 +558,61 @@ function Priorizacao() {
           </div>
 
           <p className="fora-escopo">{FORA_DE_ESCOPO}</p>
-
-          <div style={{ marginTop: 16 }}>
-            <Diagrama
-              arquivo="mvp_v1_v2_v3.svg"
-              legenda="A priorização completa, com o raciocínio de cada versão."
-              minLargura={1000}
-            />
-          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------------- 03 · Protótipo ---------------------------- */
+/* ---------------- 02 · Protótipo ---------------------------- */
 function Prototipo() {
   const base = window.location.origin.replace(/^https?:\/\//, '');
   return (
     <section id="prototipo" style={{ paddingTop: 8, paddingBottom: 8 }}>
       <div className="proto">
         <div className="proto__interno">
-          <Cabecalho id="prototipo">
-            <p>
-              Este é o resultado, antes do percurso: um protótipo funcional, navegável tanto na
-              versão web (criação e aprovação, para quem trabalha no escritório) quanto na versão
-              mobile (recebimento, para quem está no canteiro). Ele reaproveita a identidade visual
-              da Suplos e os padrões que já existem no produto — como a comparação "pedido x
-              recebido" — em vez de propor um visual do zero.
-            </p>
-            <p>
-              Ele cobre o recorte do MVP, incluindo o recebimento com divergência: o caminho
-              "não-feliz" que o case pede no recorte de alta-fidelidade. As seções seguintes
-              mostram como se chegou até aqui — as telas atuais, os fluxogramas originais e o que
-              foi questionado neles, o modelo de estados e o corte entre MVP e versões seguintes.
-            </p>
-          </Cabecalho>
+          <div className="proto__topo">
+            <div className="proto__apresentacao">
+              <Cabecalho id="prototipo">
+                <p>
+                  Este é o resultado, antes do percurso: um protótipo funcional, navegável tanto na
+                  versão web quanto na mobile. Ele reaproveita a identidade visual da Suplos e padrões
+                  que já existem no produto — como a comparação "pedido × recebido" — em vez de propor
+                  um visual desconectado do produto atual.
+                </p>
+                <p>
+                  O fluxo completo pode ser percorrido: criar, aprovar, despachar, alegar chegada,
+                  conferir, anexar a NF e resolver uma divergência. As seções seguintes mostram os
+                  três originais digitalizados, o que foi questionado e como cada decisão aparece no
+                  modelo de estados e nas telas.
+                </p>
+              </Cabecalho>
 
-          <div className="proto__aviso">
-            <Info size={17} />
-            <span>
-              O protótipo abaixo é uma peça funcional à parte, com a identidade visual da Suplos — por
-              isso ele não segue a paleta deste site. Ele é interativo de verdade: pode clicar, criar
-              uma transferência, aprovar, despachar e registrar divergência.
-            </span>
+              <div className="proto__aviso">
+                <Info size={17} />
+                <span>
+                  O protótipo abaixo é uma peça funcional à parte, com a identidade visual da Suplos — por
+                  isso ele não segue a paleta deste site. Ele é interativo de verdade: pode clicar, criar
+                  uma transferência, aprovar, despachar e registrar divergência.
+                </span>
+              </div>
+            </div>
+
+            {/* TODO(case): revisar esta lista sempre que uma ação ou estado novo entrar no protótipo. */}
+            <aside className="proto__resumo" aria-label="O que o protótipo acrescenta ao fluxo original">
+              <span className="proto__resumo-rot">Em relação ao fluxo original</span>
+              <h3>O que foi acrescentado ao protótipo</h3>
+              <ul>
+                <li><strong>Separação por obra e direção:</strong> o mesmo registro aparece como “Saindo” na origem e “Chegando” no destino.</li>
+                <li><strong>Reserva real:</strong> o saldo fica travado, mas não sai do estoque antes do despacho.</li>
+                <li><strong>Aprovação explícita:</strong> a obra que recebe aprova ou reprova; a outra empresa pode ser simulada.</li>
+                <li><strong>Despacho rastreável:</strong> data efetiva de saída e previsão de chegada ficam no histórico.</li>
+                <li><strong>Chegada separada da conferência:</strong> alegar recebimento não dá entrada no estoque; a FVM faz isso.</li>
+                <li><strong>Divergência acionável:</strong> a origem recebe aviso crítico e decide entre reenviar o saldo ou assumir a falta.</li>
+                <li><strong>NF como pendência própria:</strong> confirmar a nota não apaga uma divergência ainda aberta.</li>
+                <li><strong>Auditoria e visibilidade:</strong> status, timeline, notificações, atrasos e saldos são compartilhados por web e mobile.</li>
+              </ul>
+            </aside>
           </div>
 
           <div className="proto__web">
@@ -703,18 +668,17 @@ function Prototipo() {
 
           <div className="proto__dicas">
             <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--marigold)', ['--fg-d' as string]: 'var(--ink)' }}>
-              <strong>Troque de papel</strong>
+              <strong>Crie uma transferência</strong>
               <span>
-                Alterna entre Origem, Aprovador e Destino — e as ações disponíveis mudam junto,
-                seguindo a tabela de atores da seção 07. No web fica na barra do topo; no mobile, no
-                ícone de controles.
+                Ao salvar, a quantidade já fica reservada e a transferência entra na aprovação — sem
+                um segundo clique e sem movimentar o estoque antes do despacho.
               </span>
             </div>
             <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--sky-wash)', ['--fg-d' as string]: 'var(--ink)' }}>
-              <strong>Desligue a aprovação</strong>
+              <strong>Simule a outra empresa</strong>
               <span>
-                O parâmetro por cliente da seção 04 é um interruptor real: desligado, o estado
-                "Aguardando aprovação" some do fluxo, sem duplicar nenhuma lógica.
+                Depois de criar, o botão do aprovador externo acende. A seção adicional permite
+                aprovar ou reprovar o que saiu desta obra e então voltar ao painel da própria empresa.
               </span>
             </div>
             <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--coral)', ['--fg-d' as string]: 'var(--white)' }}>
@@ -731,7 +695,7 @@ function Prototipo() {
   );
 }
 
-/* ---------------- 10 · Encerramento ------------------------- */
+/* ---------------- 09 · Encerramento ------------------------- */
 function Encerramento() {
   return (
     <section className="secao fim" id="encerramento">

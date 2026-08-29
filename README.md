@@ -29,7 +29,7 @@ Este protótipo modela esse intervalo e essa divergência.
 
 | Caminho | Tela |
 |---|---|
-| `/` | Site de apresentação do case — 10 seções, do diagnóstico ao protótipo |
+| `/` | Site de apresentação do case — 9 seções, do diagnóstico ao mapa de telas |
 | `/embed/mobile` | Protótipo mobile sem moldura, para o frame de celular do site |
 | `/stocks` | Estoque de Materiais (cards + abas Estoque / Movimentações) |
 | `/stocks/transfers` | Painel de visibilidade por obra — **A Enviar** e **A Receber** |
@@ -74,7 +74,7 @@ simulação não teria o que resolver.
 |---|---|
 | Entrada **Requisição de material** (pedido interno da obra) | Campo "Origem da transferência" → *Requisição de material*, com seletor que puxa insumos e quantidades da requisição |
 | Entrada **Estoque (saída direta)** | Campo "Origem da transferência" → *Saída direta* |
-| **Reservado** — quantidade travada · *Modal: Registrar Saída de Estoque* | A transferência nasce já reservada: com o parâmetro ligado entra direto em "Reservado · aprovação pendente"; desligado, em "Reservado · envio pendente" |
+| **Reservado** — quantidade travada · *Modal: Registrar Saída de Estoque* | A transferência nasce já reservada e entra direto em "Reservado · aprovação pendente", porque a aprovação está obrigatória no protótipo atual |
 | **Aprovado?** | Estados `aguardando_aprovacao` → `aprovado`/`reprovado`, condicionados ao parâmetro |
 | **Reprovado** — volta ao estoque · *mensagem de recusa + observação* | Modal de reprovação com motivo obrigatório; devolve ao disponível e notifica a origem |
 | **Cancelado** — volta ao estoque · *mensagem de cancelamento* | Ação de cancelar, disponível em toda a fase pré-despacho |
@@ -177,10 +177,11 @@ sobrasse tempo. Está marcado como `(V1)` no botão.
 
 ## Site de apresentação do case
 
-Em `/`, um site único em ordem cronológica com o processo inteiro: introdução, overview,
-etapas, fluxogramas originais comentados, prints anotados, fluxo de estados, fluxo enriquecido
-com tabelas de atores e notificações, priorização MVP/V.1/V.2/V.3, o protótipo interativo e o
-encerramento.
+Em `/`, um site único em ordem cronológica com o processo inteiro: overview,
+protótipo interativo, etapas, os três fluxogramas originais digitalizados e comentados, fluxo de
+estados, fluxo enriquecido com tabelas de atores e notificações, mapa completo de telas e
+priorização MVP/V.1/V.2/V.3, além do encerramento. Os blocos de introdução e prints anotados foram
+removidos.
 
 **Sistema visual.** O site segue o design system "warm paper notebook": canvas quente `#f6f5f4`,
 cards brancos com fio de 1px e nenhuma sombra, um único azul (`#0075de`) reservado para a ação
@@ -188,13 +189,13 @@ primária, e um elenco de acentos (marigold, coral, sky-wash, midnight) que pint
 destaque como post-its. Tipografia Inter para tudo, com um serif usado só nos momentos editoriais
 — subtítulo do hero, intros de seção e o texto de encerramento.
 
-**Diagramas.** Os SVGs originais vieram multicoloridos e foram recoloridos por um mapeamento de
-matiz que preserva a distinção semântica: o que era vermelho (discordância) virou azul escuro e
-saturado; o que era verde ou azul (premissa confirmada) virou azul claro. Os arquivos recoloridos
-estão em `public/case/`.
+**Diagramas.** Os três fluxos originais foram redesenhados digitalmente sem alterar caixas,
+caminhos, rótulos ou a duplicação ON/OFF recebida. As perguntas ficam em uma faixa externa ao
+desenho, sem contaminar o original. Os diagramas derivados seguem a paleta do site e são gerados
+em `public/case/`.
 
 **Separação visual.** O protótipo mantém a identidade da Suplos, sem recolorir nada. Ele entra
-na seção 09 dentro de iframes — um frame de navegador para a versão web e um frame de celular
+na seção 02 dentro de iframes — um frame de navegador para a versão web e um frame de celular
 para a mobile — sobre um fundo escuro que o isola do resto do site. O iframe também garante que
 o CSS do site não vaze para dentro do protótipo.
 
@@ -225,6 +226,7 @@ conferência e divergência — com a navegação refeita para o polegar. Dimens
   escolher insumo e os controles do protótipo.
 
 **Adaptações de conteúdo**
+- A tela de Estoque mantém as ações **Entrada** e **Saída**; Saída abre o passo a passo real da transferência.
 - O modal de duas colunas do "Registrar Saída de Estoque" virou um passo a passo de três etapas:
   origem e destino, insumos, observação e assinatura — com barra de progresso.
 - As tabelas do web viraram cards: o saldo tripartido do estoque virou chips, o histórico virou
@@ -275,8 +277,8 @@ estado. Criar transferência continua disponível ali, porque não é uma ação
 existente.
 
 **A criação não espera um segundo clique.** Ao salvar, a quantidade trava e a transferência já
-entra em aprovação pendente (ou em envio pendente, se o parâmetro de aprovação estiver desligado).
-O passo "Enviar para aprovação" deixou de existir.
+entra em aprovação pendente. O passo "Enviar para aprovação" deixou de existir; no protótipo
+atual, a aprovação está sempre ligada.
 
 **Despacho pede as duas datas.** Data efetiva de saída e previsão de chegada, no mesmo modal, com
 validação de que a previsão não é anterior à saída.
@@ -301,12 +303,12 @@ uma coluna nova, Situação da transferência, acrescenta reservado, em trânsit
 
 ## Diagramas do fluxo
 
-`src/site/` consome dois SVGs em `public/case/` que descrevem a máquina de estados:
-`fluxo_transferencia_v1_linha_unica.svg` (só estados) e `fluxo_v1_enriquecido.svg` (com os
-touchpoints de UI). Os dois são gerados por `scripts/gerar-diagramas-fluxo.py`, que desenha a
-partir da mesma paleta do site — rode o script depois de qualquer mudança no fluxo, para os
-diagramas não descolarem do protótipo:
+`src/site/` consome seis SVGs gerados em `public/case/`: os três originais digitalizados,
+`fluxo_transferencia_v1_linha_unica.svg` (estados demonstrados), `fluxo_v1_enriquecido.svg`
+(touchpoints de UI) e `fluxo_telas_prototipo.svg` (rotas e interações web/mobile). Todos saem de
+`scripts/gerar-diagramas-fluxo.py` — rode o script depois de qualquer mudança no fluxo ou na
+navegação para os diagramas não descolarem do protótipo:
 
 ```bash
-python3 scripts/gerar-diagramas-fluxo.py
+python scripts/gerar-diagramas-fluxo.py
 ```

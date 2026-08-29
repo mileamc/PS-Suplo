@@ -133,7 +133,11 @@ export function TelaTransferencias({
         )}
 
         <div className="mob-chips">
-          {filtros.filter((f) => f.grupo === 'total' || conta(f.grupo) > 0).map((f) => (
+          {/* Mantém inclusive os grupos zerados: a página mobile precisa
+              espelhar exatamente os cards disponíveis na versão web. */}
+          {/* TODO(mobile): ao criar um grupo em domain/grupos.ts, validar a
+              rolagem horizontal e a paridade web/mobile neste ponto. */}
+          {filtros.map((f) => (
             <button
               key={f.grupo} className="mob-chip"
               aria-pressed={filtro === f.grupo}

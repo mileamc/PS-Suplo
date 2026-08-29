@@ -16,10 +16,10 @@ rastreado direito no produto.
 
 A entrega tem duas partes, e **as duas vivem no mesmo app React**:
 
-1. **O site do case** (rota `/`) — a apresentação: introdução, overview,
-   protótipo, etapas do processo, os fluxogramas originais comentados, prints
-   das telas atuais anotados, o modelo de estados proposto, a priorização
-   MVP/V1/V2/V3 e o encerramento. É o que a banca lê.
+1. **O site do case** (rota `/`) — a apresentação: overview,
+   protótipo, etapas do processo, os três fluxogramas originais digitalizados e
+   comentados, o modelo de estados, o fluxo enriquecido, um mapa de telas,
+   priorização em MVP/V.1/V.2/V.3 e encerramento. É o que a banca lê.
 2. **O protótipo funcional** (rotas `/stocks*`) — telas navegáveis de verdade,
    web e mobile, com a identidade visual da Suplos. É embutido dentro do site,
    num frame de navegador e num frame de celular.
@@ -187,6 +187,22 @@ obra no que chega, a empresa simulada no que sai.
 | `afda279` | Painel de uma empresa só + modo de simulação da outra ponta; barra do topo reduzida |
 | `7f23c00` | Fila de aprovação começa vazia; a tela do modo aprovador vira painel completo com seção a mais |
 
+### Atualização de 29/08/2026 — alterações atuais do working tree
+
+- Os três screenshots em `origem/fluxos/` foram redesenhados como SVGs separados,
+  preservando caixas, rótulos, cores e caminhos; perguntas ficam fora do fluxo.
+- Os diagramas próprios foram refeitos somente com estados, decisões e touchpoints
+  demonstráveis no protótipo atual.
+- Foi criado `fluxo_telas_prototipo.svg`, com as rotas, abas, drawer, modais e
+  sheets das versões web e mobile.
+- Os blocos “Introdução” e “Prints das telas atuais, anotados” saíram do site; a
+  priorização foi organizada em quatro cards (MVP, V.1, V.2 e V.3) após o mapa de telas.
+- O loop de reenvio já demonstrável no protótipo passou para o card de MVP; as
+  melhorias futuras foram redistribuídas entre V.1, V.2 e V.3, e o SVG redundante saiu da página.
+- O protótipo ganhou um resumo do que acrescenta ao original, e o estoque mobile
+  voltou a mostrar Entrada e Saída; Saída abre a criação real.
+- O toast global deixou de ser renderizado nas rotas mobile, eliminando a duplicação.
+
 Bugs encontrados e corrigidos no caminho, para você não reintroduzi-los:
 
 - O token `--st-nf` **nunca existiu** — a tag "Aguardando NF" saía sem cor.
@@ -213,13 +229,9 @@ Nada disso está quebrado — são escolhas que a Milena pode querer revisitar.
    barra do topo e o campo ficou fixo em `true` no `store`, porque é ele que cria
    a única pendência da outra empresa. O código que lê o parâmetro continua todo
    lá (`store.tsx`, `machine.ts:trilha()`), então religar é trivial. **Atenção:**
-   o site ainda argumenta sobre esse parâmetro ser configurável por cliente
-   (`src/site/conteudo.ts`, item sobre duplicação da árvore de decisão) — o texto
-   segue correto como proposta de produto, mas não há mais como demonstrá-lo na
-   tela. Se alguém reclamar da incoerência, é aqui.
-3. **Toasts duplicados no `/embed/mobile`.** O `<Toasts />` global do App e o
-   `<MobToasts />` do mobile aparecem os dois. É pré-existente, não foi tocado.
-4. **Assinatura mockada** e anexos são strings de nome de arquivo — não há upload
+   o site agora descreve a aprovação como obrigatória no protótipo e registra que
+   o original duplicava de forma inconsistente as árvores ON/OFF.
+3. **Assinatura mockada** e anexos são strings de nome de arquivo — não há upload
    real. É protótipo.
 
 ---

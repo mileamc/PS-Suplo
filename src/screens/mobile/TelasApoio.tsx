@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   Search, Bell, Check, ArrowRight, Archive, TrendingDown, Layers, AlertTriangle,
+  Download, Upload,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { INSUMOS } from '../../data/insumos';
@@ -16,8 +17,8 @@ import { MobTop, MobVazio, MobCarregando, brl, num } from './comuns';
    cards de resumo e saldo separado em disponível / reservado /
    em trânsito / a receber.
    ============================================================ */
-export function TelaEstoque() {
-  const { state, aEnviar, saldo } = useStore();
+export function TelaEstoque({ onSaida }: { onSaida: () => void }) {
+  const { state, dispatch, aEnviar, saldo } = useStore();
   const [busca, setBusca] = useState('');
 
   const reservasTransferencia = useMemo(
@@ -35,6 +36,25 @@ export function TelaEstoque() {
       <MobTop eyebrow={nomeObra(OBRA_ATUAL)} titulo="Estoque de Materiais" />
       <div className="mob-corpo">
         <div className="mob-pad">
+          <div className="mob-estoque__acoes" aria-label="Movimentar estoque">
+            <button
+              className="mob-btn mob-btn--primario"
+              onClick={() => dispatch({
+                type: 'toast',
+                toast: {
+                  tom: 'info',
+                  titulo: 'Entrada de estoque preservada',
+                  descricao: 'A opção continua disponível; este case detalha a saída por transferência entre obras.',
+                },
+              })}
+            >
+              <Download size={18} /> Entrada
+            </button>
+            <button className="mob-btn mob-btn--perigo" onClick={onSaida}>
+              <Upload size={18} /> Saída
+            </button>
+          </div>
+
           <div className="mob-cartao" style={{ marginBottom: 12, borderLeft: '4px solid var(--purple)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 650 }}>
