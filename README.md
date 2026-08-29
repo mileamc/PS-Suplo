@@ -128,8 +128,7 @@ com a previsão de chegada preenchida dentro do próprio modal de aprovação.
    enviado × recebido e histórico de quem fez o quê e quando.
 3. **Modal de Avaliação de entrega (FVM)** — comparação enviado × recebido com diferença em
    quantidade e em valor, motivo obrigatório por item divergente.
-4. **Mobile de confirmação de recebimento** — para o almoxarife no canteiro: alvos de 54 px,
-   "Chegou tudo certo" resolve o caso comum em um toque, divergência é o caminho alternativo.
+4. **App mobile completo** — cobre o mesmo fluxo da versão web, com navegação de aplicativo.
 
 ---
 
@@ -170,10 +169,16 @@ etapas, fluxogramas originais comentados, prints anotados, fluxo de estados, flu
 com tabelas de atores e notificações, priorização MVP/V.1/V.2/V.3, o protótipo interativo e o
 encerramento.
 
-**Paleta.** O site usa apenas azuis e neutros. Os SVGs originais vieram multicoloridos e foram
-recoloridos por um mapeamento de matiz que preserva a distinção semântica: o que era vermelho
-(discordância) virou azul escuro e saturado; o que era verde ou azul (premissa confirmada) virou
-azul claro. Os arquivos recoloridos estão em `public/case/`.
+**Sistema visual.** O site segue o design system "warm paper notebook": canvas quente `#f6f5f4`,
+cards brancos com fio de 1px e nenhuma sombra, um único azul (`#0075de`) reservado para a ação
+primária, e um elenco de acentos (marigold, coral, sky-wash, midnight) que pinta os blocos de
+destaque como post-its. Tipografia Inter para tudo, com um serif usado só nos momentos editoriais
+— subtítulo do hero, intros de seção e o texto de encerramento.
+
+**Diagramas.** Os SVGs originais vieram multicoloridos e foram recoloridos por um mapeamento de
+matiz que preserva a distinção semântica: o que era vermelho (discordância) virou azul escuro e
+saturado; o que era verde ou azul (premissa confirmada) virou azul claro. Os arquivos recoloridos
+estão em `public/case/`.
 
 **Separação visual.** O protótipo mantém a identidade da Suplos, sem recolorir nada. Ele entra
 na seção 09 dentro de iframes — um frame de navegador para a versão web e um frame de celular
@@ -188,3 +193,28 @@ nos fallbacks (Georgia para o display, system sans para o corpo).
 
 **Publicação.** As rotas do protótipo são caminhos reais, então o host precisa de fallback de
 SPA (servir `index.html` para qualquer rota). `npm run preview` já faz isso.
+
+
+---
+
+## Protótipo mobile
+
+Não é um recorte da versão web: é o mesmo fluxo inteiro — reserva, aprovação, despacho,
+conferência e divergência — com a navegação refeita para o polegar. Dimensões de iPhone 17
+(402 × 874 pt).
+
+**Navegação**
+- Quatro abas na base: Transferências, Estoque, Movimentações e Alertas — as mesmas áreas da
+  versão web.
+- Pilha para os fluxos longos (detalhe, criação, conferência): ocupam a tela inteira e escondem
+  as abas, para não competir com a tarefa.
+- Bottom sheets para as decisões curtas: despachar, reprovar, cancelar, registrar chegada,
+  escolher insumo e os controles do protótipo.
+
+**Adaptações de conteúdo**
+- O modal de duas colunas do "Registrar Saída de Estoque" virou um passo a passo de três etapas:
+  origem e destino, insumos, observação e assinatura — com barra de progresso.
+- As tabelas do web viraram cards: o saldo tripartido do estoque virou chips, o histórico virou
+  timeline, e o enviado × recebido virou um par de blocos lado a lado.
+- A conferência usa contadores de 56 px em vez de campo numérico, e "Chegou tudo certo" fecha o
+  caso comum em um toque. A divergência só aparece quando alguma quantidade muda.

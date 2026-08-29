@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
-  ArrowRight, ArrowDown, ArrowUpRight, Mail, Monitor, Smartphone,
-  Info, CornerDownRight, MoveHorizontal,
+  ArrowRight, ArrowUpRight, Mail, Monitor, Smartphone, Info, CornerDownRight,
+  MoveHorizontal, ArrowUp,
 } from 'lucide-react';
 import {
   AUTOR, SECOES, ETAPAS, FLUXOGRAMAS, PRINTS, ATORES, ATOR_LEGENDA,
@@ -10,9 +10,11 @@ import {
 import { ROTAS } from '../state/rotas';
 
 /* ============================================================
-   Site de apresentação do case — paleta azul e neutros.
-   O protótipo (seção 09) entra por iframe, sem alteração
-   nenhuma de design.
+   Site de apresentação do case.
+   Sistema visual "warm paper notebook": canvas #f6f5f4, cards
+   brancos com fio de 1px, azul único para a ação primária e um
+   elenco de acentos que pinta os blocos de destaque.
+   O protótipo (seção 09) entra por iframe, sem alteração.
    ============================================================ */
 export function CaseSite() {
   return (
@@ -34,6 +36,8 @@ export function CaseSite() {
   );
 }
 
+const irPara = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
 /* ---------------- Navegação --------------------------------- */
 function NavSite() {
   const [ativa, setAtiva] = useState(SECOES[0].id);
@@ -48,10 +52,8 @@ function NavSite() {
       let atual = SECOES[0].id;
       for (const s of SECOES) {
         const el = document.getElementById(s.id);
-        if (el && el.getBoundingClientRect().top <= 120) atual = s.id;
+        if (el && el.getBoundingClientRect().top <= 140) atual = s.id;
       }
-      // No fim da página as últimas seções nunca chegam a passar do topo,
-      // então a última fica ativa quando não há mais o que rolar.
       if (total > 0 && doc.scrollTop >= total - 2) atual = SECOES[SECOES.length - 1].id;
       setAtiva(atual);
     };
@@ -63,17 +65,14 @@ function NavSite() {
   return (
     <nav className="site-nav">
       <div className="site-nav__barra">
-        <div className="site-nav__marca">
-          {AUTOR.nome} <span>· Case Suplos</span>
-        </div>
+        <div className="site-nav__marca">{AUTOR.nome} <span>· Case Suplos</span></div>
         <div className="site-nav__links">
           {SECOES.map((s) => (
             <button
               key={s.id} className="site-nav__link"
-              aria-current={ativa === s.id}
-              onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
+              aria-current={ativa === s.id} onClick={() => irPara(s.id)}
             >
-              {s.numero} {s.curto}
+              {s.curto}
             </button>
           ))}
         </div>
@@ -85,19 +84,19 @@ function NavSite() {
 
 /* ---------------- Cabeçalho de seção ------------------------ */
 function Cabecalho({
-  id, children,
-}: { id: string; children?: React.ReactNode }) {
+  id, centro, children,
+}: { id: string; centro?: boolean; children?: React.ReactNode }) {
   const s = SECOES.find((x) => x.id === id)!;
   return (
-    <div className="secao__cabecalho">
-      <span className="secao__numero">{s.numero}</span>
+    <div className={`secao__cabecalho ${centro ? 'secao__cabecalho--centro' : ''}`}>
+      <span className="secao__numero">{s.numero} — {s.curto}</span>
       <h2 className="secao__titulo">{s.titulo}</h2>
       {children && <div className="secao__intro">{children}</div>}
     </div>
   );
 }
 
-/* ---------------- Diagrama SVG ------------------------------ */
+/* ---------------- Diagrama ---------------------------------- */
 function Diagrama({
   arquivo, legenda, minLargura = 900,
 }: { arquivo: string; legenda: string; minLargura?: number }) {
@@ -108,36 +107,64 @@ function Diagrama({
       </div>
       <figcaption className="diagrama__legenda">
         <span>{legenda}</span>
-        <span className="diagrama__dica"><MoveHorizontal size={13} style={{ verticalAlign: -2 }} /> arraste para ver</span>
+        <span className="diagrama__dica">
+          <MoveHorizontal size={13} style={{ verticalAlign: -2 }} /> arraste para ver
+        </span>
       </figcaption>
     </figure>
   );
 }
 
-/* ---------------- 01 · Hero + introdução -------------------- */
+/* ---------------- Hero -------------------------------------- */
+const MARCAS = [
+  { emoji: '📦', cor: 'var(--signal-blue)' },
+  { emoji: '🏗️', cor: 'var(--coral)' },
+  { emoji: '🚚', cor: 'var(--marigold)' },
+  { emoji: '📋', cor: 'var(--sky-wash)' },
+  { emoji: '✅', cor: 'var(--signal-blue)' },
+  { emoji: '⚠️', cor: 'var(--coral)' },
+  { emoji: '🧱', cor: 'var(--marigold)' },
+];
+
 function Hero() {
   return (
     <header className="hero">
       <div className="site__larg">
-        <span className="hero__eyebrow">Case · {AUTOR.papel}</span>
+        <div className="hero__marcas" aria-hidden="true">
+          {MARCAS.map((m, i) => (
+            <span className="marca-avatar" key={i} style={{ ['--c' as string]: m.cor }}>{m.emoji}</span>
+          ))}
+        </div>
+
         <h1 className="hero__titulo">
-          Transferência de material <em>entre obras</em>
+          Transferência de material <span className="pill-destaque">entre obras</span>
         </h1>
+
         <p className="hero__sub">
           Do diagnóstico do problema até um protótipo funcional. Este site apresenta o processo
           inteiro na ordem em que ele aconteceu — incluindo os pontos em que discordei do material
           recebido, e por quê.
         </p>
+
+        <div className="hero__ctas">
+          <button className="btn-primario" onClick={() => irPara('prototipo')}>
+            Ver o protótipo <ArrowRight size={16} />
+          </button>
+          <button className="btn-fantasma" onClick={() => irPara('overview')}>
+            Começar pelo processo
+          </button>
+        </div>
+
         <div className="hero__meta">
-          <div className="hero__meta-item">
+          <div>
             <span className="hero__meta-rot">Produto</span>
             <span className="hero__meta-val">Suplos · gestão de suprimentos</span>
           </div>
-          <div className="hero__meta-item">
+          <div>
             <span className="hero__meta-rot">Recorte</span>
             <span className="hero__meta-val">MVP + protótipo web e mobile</span>
           </div>
-          <div className="hero__meta-item">
+          <div>
             <span className="hero__meta-rot">Seções</span>
             <span className="hero__meta-val">10 · em ordem cronológica</span>
           </div>
@@ -147,33 +174,34 @@ function Hero() {
   );
 }
 
+/* ---------------- 01 · Introdução --------------------------- */
 function Introducao() {
   return (
     <section className="secao" id="introducao">
       <div className="site__larg">
         <Cabecalho id="introducao" />
         <div className="secao__corpo">
-          <blockquote className="citacao">
-            <p>
-              Oi! Antes de qualquer coisa, obrigada pela oportunidade de chegar até essa etapa — sei
-              que o volume de candidaturas foi grande, e fico feliz de estar aqui.
-            </p>
-            <p>
-              Esse case foi desenhado com lacunas de propósito, e decidi tratar isso como parte do
-              desafio, não como um obstáculo. Em vez de desenhar telas direto, segui um processo:
-              primeiro entendi a marca e o produto, depois analisei as telas que já existem,
-              destrinchei as dores e os objetivos por trás do pedido, mapeei os pontos de fricção do
-              fluxo atual, modelei os estados que resolvem esses pontos, e só então parti para a
-              produção das telas.
-            </p>
-            <p>
-              Esse site apresenta esse processo do início ao fim, na ordem em que ele aconteceu —
-              incluindo os pontos em que discordei do material que vocês me deram, e por quê.
-            </p>
-          </blockquote>
-          <p className="nota-rodape">
-            Material bônus, complementar à apresentação ao vivo.
-          </p>
+          <div className="card-acento" style={{ ['--bg-acento' as string]: 'var(--marigold)', padding: 40 }}>
+            <div style={{ display: 'grid', gap: 20, maxWidth: '62ch', fontFamily: 'var(--serif)', fontSize: 18, lineHeight: 1.56 }}>
+              <p>
+                Oi! Antes de qualquer coisa, obrigada pela oportunidade de chegar até essa etapa — sei
+                que o volume de candidaturas foi grande, e fico feliz de estar aqui.
+              </p>
+              <p>
+                Esse case foi desenhado com lacunas de propósito, e decidi tratar isso como parte do
+                desafio, não como um obstáculo. Em vez de desenhar telas direto, segui um processo:
+                primeiro entendi a marca e o produto, depois analisei as telas que já existem,
+                destrinchei as dores e os objetivos por trás do pedido, mapeei os pontos de fricção do
+                fluxo atual, modelei os estados que resolvem esses pontos, e só então parti para a
+                produção das telas.
+              </p>
+              <p>
+                Esse site apresenta esse processo do início ao fim, na ordem em que ele aconteceu —
+                incluindo os pontos em que discordei do material que vocês me deram, e por quê.
+              </p>
+            </div>
+          </div>
+          <p className="nota-rodape">Material bônus, complementar à apresentação ao vivo.</p>
         </div>
       </div>
     </section>
@@ -183,27 +211,29 @@ function Introducao() {
 /* ---------------- 02 · Overview ----------------------------- */
 function Overview() {
   return (
-    <section className="secao secao--alt" id="overview">
+    <section className="secao" id="overview">
       <div className="site__larg">
         <Cabecalho id="overview" />
-        <div className="secao__corpo">
-          <div className="citacao citacao--corpo">
-            <p>
-              <strong>O problema, resumido:</strong> hoje, transferir material entre obras é uma ação
-              instantânea — o saldo sai da origem e entra no destino no mesmo clique, sem aprovação,
-              sem reserva, sem confirmação de que o material chegou. Na prática, o caminhão leva de 3
-              a 7 dias, e a quantidade que sai pode não ser igual à que chega. O sistema atual não
-              modela esse intervalo nem essa divergência.
+        <div className="secao__corpo" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+          <article className="card">
+            <h3 className="card__titulo">O problema, resumido</h3>
+            <p className="card__corpo">
+              Hoje, transferir material entre obras é uma ação instantânea — o saldo sai da origem e
+              entra no destino no mesmo clique, sem aprovação, sem reserva, sem confirmação de que o
+              material chegou. Na prática, o caminhão leva de 3 a 7 dias, e a quantidade que sai pode
+              não ser igual à que chega. O sistema atual não modela esse intervalo nem essa divergência.
             </p>
-            <p>
-              <strong>Minha abordagem:</strong> em vez de ir direto para o desenho de telas, tratei
-              isso primeiro como um problema de <strong>modelagem de estados</strong> — o que a
-              transferência "é" em cada momento do tempo — e só depois decidi como isso aparece na
-              interface. Acredito que essa ordem produz uma solução mais sólida, porque separa "o que
-              o sistema faz" de "como isso é mostrado", e evita que decisões de UI escondam buracos
-              de lógica.
+          </article>
+          <article className="card-acento" style={{ ['--bg-acento' as string]: 'var(--sky-tint)' }}>
+            <h3 className="card__titulo">Minha abordagem</h3>
+            <p className="card__corpo" style={{ color: 'var(--graphite)' }}>
+              Em vez de ir direto para o desenho de telas, tratei isso primeiro como um problema de{' '}
+              <strong>modelagem de estados</strong> — o que a transferência "é" em cada momento do
+              tempo — e só depois decidi como isso aparece na interface. Acredito que essa ordem
+              produz uma solução mais sólida, porque separa "o que o sistema faz" de "como isso é
+              mostrado", e evita que decisões de UI escondam buracos de lógica.
             </p>
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -211,6 +241,16 @@ function Overview() {
 }
 
 /* ---------------- 03 · Processo ----------------------------- */
+const CORES_ETAPA = [
+  ['var(--sky-tint)', 'var(--notion-blue)'],
+  ['#ffeccc', '#8a5a00'],
+  ['#fde3df', '#b3230f'],
+  ['var(--sky-tint)', 'var(--notion-blue)'],
+  ['#ffeccc', '#8a5a00'],
+  ['#fde3df', '#b3230f'],
+  ['var(--sky-tint)', 'var(--notion-blue)'],
+];
+
 function Processo() {
   return (
     <section className="secao" id="processo">
@@ -219,8 +259,13 @@ function Processo() {
         <div className="secao__corpo">
           <ol className="etapas">
             {ETAPAS.map((e, i) => (
-              <li className="etapa" key={e.titulo}>
-                <span className="etapa__num">{String(i + 1).padStart(2, '0')}</span>
+              <li className="card etapa" key={e.titulo}>
+                <span
+                  className="etapa__num"
+                  style={{ ['--bg-n' as string]: CORES_ETAPA[i][0], ['--fg-n' as string]: CORES_ETAPA[i][1] }}
+                >
+                  {i + 1}
+                </span>
                 <div>
                   <h3 className="etapa__titulo">{e.titulo}</h3>
                   <p className="etapa__texto">{e.texto}</p>
@@ -234,10 +279,10 @@ function Processo() {
   );
 }
 
-/* ---------------- 04 · Fluxogramas comentados --------------- */
+/* ---------------- 04 · Fluxogramas -------------------------- */
 function Fluxogramas() {
   return (
-    <section className="secao secao--alt" id="fluxogramas">
+    <section className="secao" id="fluxogramas">
       <div className="site__larg">
         <Cabecalho id="fluxogramas">
           <p>
@@ -248,11 +293,6 @@ function Fluxogramas() {
         </Cabecalho>
 
         <div className="secao__corpo">
-          <div className="legenda-cores">
-            <span><i style={{ background: 'var(--azul-800)' }} /> discordância / proposta</span>
-            <span><i style={{ background: 'var(--azul-400)' }} /> pergunta / premissa confirmada</span>
-          </div>
-
           <div className="discordancias">
             {FLUXOGRAMAS.map((f) => (
               <article className={`disc disc--${f.tom}`} key={f.fluxo}>
@@ -267,7 +307,11 @@ function Fluxogramas() {
             ))}
           </div>
 
-          <div style={{ marginTop: 28 }}>
+          <div style={{ marginTop: 32 }}>
+            <div className="legenda-cores">
+              <span><i style={{ background: '#0b3a6f' }} /> no diagrama: discordância / proposta</span>
+              <span><i style={{ background: '#5b9fe0' }} /> pergunta / premissa confirmada</span>
+            </div>
             <Diagrama
               arquivo="fluxogramas_originais_comentados.svg"
               legenda="Os três fluxogramas originais com os comentários e as propostas sobrepostos."
@@ -280,7 +324,7 @@ function Fluxogramas() {
   );
 }
 
-/* ---------------- 05 · Prints anotados ---------------------- */
+/* ---------------- 05 · Prints ------------------------------- */
 function Prints() {
   return (
     <section className="secao" id="prints">
@@ -311,8 +355,7 @@ function Prints() {
                 </div>
                 <div className="print__janela">
                   <img
-                    src={`/case/${p.arquivo}`}
-                    alt={`Print anotado: ${p.titulo}`}
+                    src={`/case/${p.arquivo}`} alt={`Print anotado: ${p.titulo}`}
                     style={{ minWidth: 780, width: '100%' }}
                   />
                 </div>
@@ -325,7 +368,7 @@ function Prints() {
                         {a.texto && <p className="achado__texto">{a.texto}</p>}
                         {a.resolucao && (
                           <div className="achado__resolucao">
-                            <CornerDownRight size={14} />
+                            <CornerDownRight size={15} />
                             <span>{a.resolucao}</span>
                           </div>
                         )}
@@ -345,7 +388,7 @@ function Prints() {
 /* ---------------- 06 · Fluxo V1 ----------------------------- */
 function FluxoV1() {
   return (
-    <section className="secao secao--alt" id="fluxo-v1">
+    <section className="secao" id="fluxo-v1">
       <div className="site__larg">
         <Cabecalho id="fluxo-v1">
           <p>
@@ -354,27 +397,32 @@ function FluxoV1() {
             entrega, e recebida (com ou sem divergência), com os devidos caminhos de reprovação e
             cancelamento.
           </p>
-          <p>
-            Uma decisão que assumo e defendo: quando há divergência e o remetente decide reenviar o
-            material faltante, o fluxo volta para o estado <strong>Reservado</strong>, não direto
-            para "Em trânsito" — e passa pela aprovação de novo, do zero. Isso custa mais fricção
-            para quem já errou uma vez, mas evita reabrir exatamente a brecha que esse case pede para
-            fechar: material saindo do estoque sem nenhuma validação.
-          </p>
         </Cabecalho>
+
         <div className="secao__corpo">
           <Diagrama
             arquivo="fluxo_transferencia_v1_linha_unica.svg"
             legenda="Fluxo de transferência V1 — o ciclo de vida completo, só de estados."
             minLargura={1100}
           />
+
+          <div className="card-acento" style={{ ['--bg-acento' as string]: 'var(--coral)', color: '#fff', marginTop: 16 }}>
+            <h3 className="card__titulo" style={{ color: '#fff' }}>Uma decisão que assumo e defendo</h3>
+            <p className="card__corpo" style={{ color: 'rgba(255,255,255,.92)' }}>
+              Quando há divergência e o remetente decide reenviar o material faltante, o fluxo volta
+              para o estado <strong>Reservado</strong>, não direto para "Em trânsito" — e passa pela
+              aprovação de novo, do zero. Isso custa mais fricção para quem já errou uma vez, mas
+              evita reabrir exatamente a brecha que esse case pede para fechar: material saindo do
+              estoque sem nenhuma validação.
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------------- 07 · Fluxo enriquecido + tabelas ---------- */
+/* ---------------- 07 · Fluxo enriquecido -------------------- */
 function FluxoEnriquecido() {
   return (
     <section className="secao" id="fluxo-enriquecido">
@@ -407,13 +455,8 @@ function FluxoEnriquecido() {
             legenda="O mesmo fluxo, agora com os touchpoints de UI — modal, mensagem e aba — em cada transição."
             minLargura={1200}
           />
-
-          <div style={{ marginTop: 34 }}>
-            <TabelaAtores />
-          </div>
-          <div style={{ marginTop: 24 }}>
-            <TabelaNotificacoes />
-          </div>
+          <div style={{ marginTop: 16 }}><TabelaAtores /></div>
+          <div style={{ marginTop: 16 }}><TabelaNotificacoes /></div>
         </div>
       </div>
     </section>
@@ -424,7 +467,7 @@ function TabelaAtores() {
   return (
     <div className="tabela-bloco">
       <div className="tabela-bloco__cabecalho">
-        <h3 className="tabela-bloco__titulo">Quem age em cada estado da transferência</h3>
+        <h3 className="tabela-bloco__titulo">Quem age em cada estado</h3>
         <p className="tabela-bloco__sub">
           Dois papéis: origem (obra que envia) e destino (obra que recebe — quem exatamente, o
           cliente configura).
@@ -472,7 +515,7 @@ function TabelaNotificacoes() {
         <table className="tabela-site">
           <thead>
             <tr>
-              <th style={{ width: '32%' }}>Transição / evento</th>
+              <th style={{ width: '30%' }}>Transição / evento</th>
               <th className="cel-centro">Origem</th>
               <th className="cel-centro">Aprovador</th>
               <th className="cel-centro">Destino</th>
@@ -488,8 +531,7 @@ function TabelaNotificacoes() {
                 </td>
                 {[n.origem, n.aprovador, n.destino].map((v, i) => (
                   <td className="cel-centro" key={i}>
-                    {v
-                      ? <span className="ponto" title="notificado" />
+                    {v ? <span className="ponto" title="notificado" />
                       : <span className="ponto ponto--vazio" title="não é notificado" />}
                   </td>
                 ))}
@@ -499,15 +541,22 @@ function TabelaNotificacoes() {
           </tbody>
         </table>
       </div>
-      <p className="nota-rodape" style={{ margin: '0 22px 20px' }}>{FONTE_NOTIFICACOES}</p>
+      <p className="nota-rodape" style={{ margin: '0 24px 24px' }}>{FONTE_NOTIFICACOES}</p>
     </div>
   );
 }
 
 /* ---------------- 08 · Priorização -------------------------- */
+const ESTILO_VERSAO: Record<string, React.CSSProperties> = {
+  mvp: { ['--bg-v' as string]: 'var(--marigold)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
+  v1: { ['--bg-v' as string]: 'var(--sky-wash)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
+  v2: { ['--bg-v' as string]: 'var(--white)' },
+  v3: { ['--bg-v' as string]: 'var(--midnight)', ['--fg-v' as string]: 'var(--white)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(255,255,255,.2)' },
+};
+
 function Priorizacao() {
   return (
-    <section className="secao secao--alt" id="priorizacao">
+    <section className="secao" id="priorizacao">
       <div className="site__larg">
         <Cabecalho id="priorizacao">
           <p>
@@ -521,7 +570,7 @@ function Priorizacao() {
         <div className="secao__corpo">
           <div className="versoes">
             {VERSOES.map((v) => (
-              <article className={`versao ${v.destaque ? 'versao--destaque' : ''}`} key={v.chave}>
+              <article className="versao" key={v.chave} style={ESTILO_VERSAO[v.chave]}>
                 <div className="versao__rotulo">{v.rotulo}</div>
                 <p className="versao__chamada">{v.chamada}</p>
                 <div className="versao__rot">Inclui</div>
@@ -547,7 +596,7 @@ function Priorizacao() {
 
           <p className="fora-escopo">{FORA_DE_ESCOPO}</p>
 
-          <div style={{ marginTop: 28 }}>
+          <div style={{ marginTop: 16 }}>
             <Diagrama
               arquivo="mvp_v1_v2_v3.svg"
               legenda="A priorização completa, com o raciocínio de cada versão."
@@ -562,102 +611,109 @@ function Priorizacao() {
 
 /* ---------------- 09 · Protótipo ---------------------------- */
 function Prototipo() {
-  const base = window.location.origin;
+  const base = window.location.origin.replace(/^https?:\/\//, '');
   return (
-    <section className="secao proto" id="prototipo">
-      <div className="site__larg">
-        <Cabecalho id="prototipo">
-          <p>
-            Depois de validar o modelo de estados, o próximo passo foi trazer isso para telas de
-            verdade — reaproveitando a identidade visual da Suplos e os padrões que já existem no
-            produto (como a comparação "pedido x recebido"), em vez de propor um visual do zero.
-          </p>
-          <p>
-            Abaixo está o protótipo funcional, navegável tanto na versão web (fluxo de criação e
-            aprovação, pensado para quem trabalha no escritório) quanto na versão mobile (fluxo de
-            recebimento, pensado para quem está no canteiro). Ele cobre o recorte do MVP descrito
-            acima, incluindo o estado de recebimento com divergência — o caminho "não-feliz" que o
-            case pede que apareça no recorte de alta-fidelidade.
-          </p>
-        </Cabecalho>
+    <section id="prototipo" style={{ paddingTop: 8, paddingBottom: 8 }}>
+      <div className="proto">
+        <div className="proto__interno">
+          <Cabecalho id="prototipo">
+            <p>
+              Depois de validar o modelo de estados, o próximo passo foi trazer isso para telas de
+              verdade — reaproveitando a identidade visual da Suplos e os padrões que já existem no
+              produto (como a comparação "pedido x recebido"), em vez de propor um visual do zero.
+            </p>
+            <p>
+              Abaixo está o protótipo funcional, navegável tanto na versão web (fluxo de criação e
+              aprovação, pensado para quem trabalha no escritório) quanto na versão mobile (fluxo de
+              recebimento, pensado para quem está no canteiro). Ele cobre o recorte do MVP descrito
+              acima, incluindo o estado de recebimento com divergência — o caminho "não-feliz" que o
+              case pede que apareça no recorte de alta-fidelidade.
+            </p>
+          </Cabecalho>
 
-        <div className="proto__aviso">
-          <Info size={16} />
-          <span>
-            O protótipo abaixo é uma peça funcional à parte, com a identidade visual da Suplos — por
-            isso ele não segue a paleta azul do resto deste site. Ele é interativo de verdade: pode
-            clicar, criar uma transferência, aprovar, despachar e registrar divergência.
-          </span>
-        </div>
-
-        <div className="proto__web">
-          <div className="proto__rot"><Monitor size={14} /> Versão web · criação e aprovação</div>
-          <div className="frame-nav">
-            <div className="frame-nav__barra">
-              <div className="frame-nav__bolas"><i /><i /><i /></div>
-              <div className="frame-nav__url">{base.replace(/^https?:\/\//, '')}{ROTAS.transferencias}</div>
-            </div>
-            <div className="frame-nav__viewport">
-              <iframe src={ROTAS.transferencias} title="Protótipo — versão web" />
-            </div>
+          <div className="proto__aviso">
+            <Info size={17} />
+            <span>
+              O protótipo abaixo é uma peça funcional à parte, com a identidade visual da Suplos — por
+              isso ele não segue a paleta deste site. Ele é interativo de verdade: pode clicar, criar
+              uma transferência, aprovar, despachar e registrar divergência.
+            </span>
           </div>
-          <div className="proto__acoes">
-            <a className="btn-proto btn-proto--primario" href={ROTAS.transferencias} target="_blank" rel="noreferrer">
-              Abrir em tela cheia <ArrowUpRight size={15} />
-            </a>
-            <a className="btn-proto" href={ROTAS.estoque} target="_blank" rel="noreferrer">
-              Ver a tela de Estoque <ArrowRight size={15} />
-            </a>
-          </div>
-        </div>
 
-        <div className="proto__mobile">
-          <div>
-            <div className="proto__rot"><Smartphone size={14} /> Versão mobile · recebimento no canteiro</div>
-            <div className="frame-cel">
-              <div className="frame-cel__tela">
-                <span className="frame-cel__entalhe" />
-                <iframe src="/embed/mobile" title="Protótipo — versão mobile" />
+          <div className="proto__web">
+            <div className="proto__rot"><Monitor size={14} /> Versão web · criação e aprovação</div>
+            <div className="frame-nav">
+              <div className="frame-nav__barra">
+                <div className="frame-nav__bolas"><i /><i /><i /></div>
+                <div className="frame-nav__url">{base}{ROTAS.transferencias}</div>
+              </div>
+              <div className="frame-nav__viewport">
+                <iframe src={ROTAS.transferencias} title="Protótipo — versão web" />
               </div>
             </div>
-            <div className="proto__acoes" style={{ justifyContent: 'center' }}>
-              <a className="btn-proto" href={ROTAS.mobile} target="_blank" rel="noreferrer">
+            <div className="proto__acoes">
+              <a className="btn-proto btn-proto--primario" href={ROTAS.transferencias} target="_blank" rel="noreferrer">
                 Abrir em tela cheia <ArrowUpRight size={15} />
+              </a>
+              <a className="btn-proto" href={ROTAS.estoque} target="_blank" rel="noreferrer">
+                Ver a tela de Estoque <ArrowRight size={15} />
               </a>
             </div>
           </div>
 
-          <div className="proto__mobile-texto">
-            <p>
-              A versão mobile atende quem confirma o recebimento no canteiro — no sol, de luva, com
-              conexão ruim. Por isso os alvos têm 54&nbsp;px, não existe tabela, e o caso comum
-              ("chegou tudo certo") se resolve em um toque só. A divergência é o caminho alternativo:
-              ela só aparece quando o almoxarife mexe em alguma quantidade.
-            </p>
-          </div>
-        </div>
+          <div className="proto__mobile">
+            <div>
+              <div className="proto__rot"><Smartphone size={14} /> Versão mobile · o mesmo fluxo no canteiro</div>
+              <div className="frame-cel">
+                <div className="frame-cel__tela">
+                  <iframe src="/embed/mobile" title="Protótipo — versão mobile" />
+                </div>
+              </div>
+              <div className="proto__acoes" style={{ justifyContent: 'center' }}>
+                <a className="btn-proto" href={ROTAS.mobile} target="_blank" rel="noreferrer">
+                  Abrir em tela cheia <ArrowUpRight size={15} />
+                </a>
+              </div>
+            </div>
 
-        <div className="proto__dicas">
-          <div className="proto__dica">
-            <strong>Troque de papel</strong>
-            <span>
-              A barra escura no topo do protótipo alterna entre Origem, Aprovador e Destino — e as
-              ações disponíveis mudam junto, seguindo a tabela de atores da seção 07.
-            </span>
+            <div className="proto__mobile-texto">
+              <p style={{ marginBottom: 16 }}>
+                A versão mobile cobre o mesmo fluxo da web — reserva, aprovação, despacho, conferência
+                e divergência — com a navegação reorganizada para uma mão só: quatro abas na base,
+                pilha para os fluxos longos, e bottom sheets para as decisões curtas.
+              </p>
+              <p>
+                O modal de duas colunas do web virou um passo a passo de três etapas. Os alvos têm
+                54&nbsp;px e não existe tabela em lugar nenhum, porque quem confirma o recebimento
+                está no canteiro, no sol, de luva, com conexão ruim. "Chegou tudo certo" resolve o
+                caso comum em um toque; a divergência só aparece quando alguma quantidade muda.
+              </p>
+            </div>
           </div>
-          <div className="proto__dica">
-            <strong>Desligue a aprovação</strong>
-            <span>
-              O parâmetro por cliente da seção 04 é um interruptor real: desligado, o estado
-              "Aguardando aprovação" some do fluxo, sem duplicar nenhuma lógica.
-            </span>
-          </div>
-          <div className="proto__dica">
-            <strong>Veja a divergência</strong>
-            <span>
-              A transferência TR-000136 já está no estado "Recebido com divergência" — saíram 120,
-              chegaram 92, com o motivo registrado para auditoria.
-            </span>
+
+          <div className="proto__dicas">
+            <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--marigold)', ['--fg-d' as string]: 'var(--ink)' }}>
+              <strong>Troque de papel</strong>
+              <span>
+                Alterna entre Origem, Aprovador e Destino — e as ações disponíveis mudam junto,
+                seguindo a tabela de atores da seção 07. No web fica na barra do topo; no mobile, no
+                ícone de controles.
+              </span>
+            </div>
+            <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--sky-wash)', ['--fg-d' as string]: 'var(--ink)' }}>
+              <strong>Desligue a aprovação</strong>
+              <span>
+                O parâmetro por cliente da seção 04 é um interruptor real: desligado, o estado
+                "Aguardando aprovação" some do fluxo, sem duplicar nenhuma lógica.
+              </span>
+            </div>
+            <div className="proto__dica" style={{ ['--bg-d' as string]: 'var(--coral)', ['--fg-d' as string]: 'var(--white)' }}>
+              <strong>Veja a divergência</strong>
+              <span>
+                A transferência TR-000136 já está no estado "Recebido com divergência" — saíram 120,
+                chegaram 92, com o motivo registrado para auditoria.
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -679,15 +735,11 @@ function Encerramento() {
             disposição para detalhar qualquer ponto na apresentação.
           </p>
           <div className="fim__contato">
-            <a className="fim__botao" href={`mailto:${AUTOR.email}`}>
-              <Mail size={17} /> {AUTOR.email}
+            <a className="btn-primario" href={`mailto:${AUTOR.email}`}>
+              <Mail size={16} /> {AUTOR.email}
             </a>
-            <button
-              className="btn-proto"
-              style={{ color: 'var(--azul-800)', borderColor: 'var(--n-300)', background: 'var(--branco)' }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              Voltar ao início <ArrowDown size={15} style={{ transform: 'rotate(180deg)' }} />
+            <button className="btn-texto" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              Voltar ao início <ArrowUp size={15} />
             </button>
           </div>
         </div>
@@ -701,9 +753,7 @@ function Rodape() {
     <footer className="rodape">
       <div className="site__larg">
         <div className="rodape__linha">
-          <span>
-            <span className="rodape__nome">{AUTOR.nome}</span> · {AUTOR.papel}
-          </span>
+          <span><span className="rodape__nome">{AUTOR.nome}</span> · {AUTOR.papel}</span>
           <span>Case Suplos · transferência de material entre obras</span>
         </div>
       </div>
