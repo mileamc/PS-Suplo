@@ -1,106 +1,87 @@
-<svg viewBox="0 0 1920 700" xmlns="http://www.w3.org/2000/svg">
-<rect x="0" y="0" width="1920" height="700" fill="#ffffff"/>
-<defs>
-<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-<path d="M2 1L8 5L2 9" fill="none" stroke="#575c62" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</marker>
-</defs>
-
-<!-- main line arrows -->
-<line x1="160" y1="350" x2="216" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="400" y1="350" x2="426" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="610" y1="350" x2="666" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="850" y1="350" x2="906" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="1090" y1="350" x2="1116" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="1300" y1="350" x2="1356" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<line x1="1580" y1="350" x2="1636" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-<!-- branch: reprovado -->
-<line x1="520" y1="420" x2="520" y2="476" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-<path d="M520 540 L520 600 L100 600 L100 391" fill="none" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-<!-- branch: cancelado -->
-<line x1="310" y1="385" x2="310" y2="476" stroke="#575c62" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
-<path d="M310 540 L310 600" fill="none" stroke="#575c62" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
-
-<!-- branch: recebido ok -->
-<line x1="1210" y1="280" x2="1210" y2="234" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-<!-- branch: divergencia final -->
-<line x1="1740" y1="420" x2="1740" y2="476" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-<!-- loop: reenviar -> em transito -->
-<path d="M1740 280 L1740 140 L760 140 L760 311" fill="none" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-<!-- labels -->
-<text x="520" y="450" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
-<text x="300" y="588" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">reprovado volta ao estoque</text>
-<text x="1235" y="255" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
-<text x="1740" y="450" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
-<text x="1650" y="260" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">sim</text>
-<text x="1150" y="130" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">reenvia corrigido</text>
-<text x="330" y="430" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="start">cancelado pelo criador</text>
-
-<!-- Estoque -->
-<rect x="40" y="325" width="120" height="50" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
-<text x="100" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Estoque</text>
-
-<!-- Reservado -->
-<rect x="220" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
-<text x="310" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Reservado</text>
-<text x="310" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Quantidade travada</text>
-
-<!-- Cancelado -->
-<rect x="230" y="480" width="160" height="60" rx="8" fill="#ecf0f5" stroke="#092549" stroke-width="1" stroke-dasharray="5 4"/>
-<text x="310" y="505" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Cancelado</text>
-<text x="310" y="526" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Volta ao estoque</text>
-
-<!-- Diamond 1 -->
-<polygon points="520,280 610,350 520,420 430,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
-<text x="520" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Aprovado?</text>
-
-<!-- Reprovado -->
-<rect x="440" y="480" width="160" height="60" rx="8" fill="#ecf0f5" stroke="#092549" stroke-width="1"/>
-<text x="520" y="505" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Reprovado</text>
-<text x="520" y="526" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Volta ao estoque</text>
-
-<!-- Em transito -->
-<rect x="670" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
-<text x="760" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Em trânsito</text>
-<text x="760" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Material despachado</text>
-
-<!-- Avaliacao -->
-<rect x="910" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
-<text x="1000" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Avaliação de entrega</text>
-<text x="1000" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Confere qtd. recebida</text>
-
-<!-- Diamond 2 -->
-<polygon points="1210,280 1300,350 1210,420 1120,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
-<text x="1210" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Divergência?</text>
-
-<!-- Recebido ok -->
-<rect x="1120" y="164" width="180" height="70" rx="8" fill="#f0f6f9" stroke="#2d668e" stroke-width="1"/>
-<text x="1210" y="194" font-family="sans-serif" font-size="15" font-weight="600" fill="#1d435d" text-anchor="middle">Recebido ok</text>
-<text x="1210" y="217" font-family="sans-serif" font-size="13" fill="#2d668e" text-anchor="middle">Sem divergência</text>
-
-<!-- Recebido divergente -->
-<rect x="1360" y="315" width="220" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
-<text x="1470" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Recebido com divergência</text>
-<text x="1470" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Notifica remetente</text>
-
-<!-- Diamond 3 -->
-<polygon points="1740,280 1840,350 1740,420 1640,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
-<text x="1740" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Vai reenviar?</text>
-
-<!-- Divergencia final -->
-<rect x="1630" y="480" width="220" height="70" rx="8" fill="#e3e9f1" stroke="#071e3b" stroke-width="1"/>
-<text x="1740" y="510" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Divergência final</text>
-<text x="1740" y="533" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Registrada para auditoria</text>
-
-<!-- legend -->
-<circle cx="60" cy="650" r="7" fill="#f2f5f7" stroke="#575c62"/><text x="76" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">processo</text>
-<circle cx="190" cy="650" r="7" fill="#e6f0fb" stroke="#185ea5"/><text x="206" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">decisão</text>
-<circle cx="310" cy="650" r="7" fill="#ecf0f5" stroke="#092549"/><text x="326" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">reprovado / cancelado</text>
-<circle cx="500" cy="650" r="7" fill="#f0f6f9" stroke="#2d668e"/><text x="516" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">fim ok</text>
-<circle cx="600" cy="650" r="7" fill="#e3e9f1" stroke="#071e3b"/><text x="616" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">fim com divergência</text>
+<svg viewBox="0 0 2520 820" xmlns="http://www.w3.org/2000/svg" role="img">
+<defs><marker id="pta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#9a9793"/></marker></defs>
+<rect width="2520" height="820" fill="#ffffff"/>
+<text x="40" y="56" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#111111" text-anchor="start">Fluxo de transferência V1</text>
+<text x="40" y="82" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="400" fill="#615d59" text-anchor="start">O ciclo de vida completo, só de estados.</text>
+<rect x="40" y="170" width="190" height="74" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="135.0" y="203.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Requisição de material</text>
+<text x="135.0" y="223.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Pedido interno da obra</text>
+<rect x="40" y="396" width="190" height="74" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="135.0" y="429.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Estoque</text>
+<text x="135.0" y="449.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Saída direta</text>
+<path d="M 230 207 L 268 207 L 268 326.0 L 300 326.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 230 433 L 268 433 L 268 378.0 L 300 378.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="302" y="300" width="240" height="104" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="422.0" y="348.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Reservado</text>
+<text x="422.0" y="368.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Qtd. travada · aprovação pendente</text>
+<path d="M 542 352.0 L 580 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<polygon points="660,294.0 740.0,352.0 660,410.0 580.0,352.0" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5"/>
+<text x="660" y="357.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#0a4f97" text-anchor="middle">Aprovado?</text>
+<path d="M 740 352.0 L 776 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="758" y="340.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">sim</text>
+<rect x="778" y="300" width="214" height="104" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="885.0" y="348.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Aprovado</text>
+<text x="885.0" y="368.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Envio pendente</text>
+<path d="M 992 352.0 L 1042 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="1044" y="300" width="224" height="104" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="1156.0" y="348.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Em trânsito</text>
+<text x="1156.0" y="368.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Data de saída + previsão</text>
+<path d="M 1268 352.0 L 1318 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="1320" y="300" width="236" height="104" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="1438.0" y="348.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Avaliação de entrega</text>
+<text x="1438.0" y="368.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Quantidade + critérios</text>
+<path d="M 1556 352.0 L 1606 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="1608" y="300" width="214" height="104" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5"/>
+<text x="1715.0" y="348.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Aguardando NF</text>
+<text x="1715.0" y="368.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#111111" text-anchor="middle" opacity="0.78">Material já no estoque</text>
+<path d="M 1822 352.0 L 1872 352.0" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<polygon points="1952,294.0 2032.0,352.0 1952,410.0 1872.0,352.0" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5"/>
+<text x="1952" y="357.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#0a4f97" text-anchor="middle">Divergência?</text>
+<rect x="2064" y="150" width="214" height="92" rx="12" fill="#62aef0" stroke="#62aef0" stroke-width="1.5"/>
+<text x="2171.0" y="192.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#06243f" text-anchor="middle">Recebido ok</text>
+<text x="2171.0" y="212.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#06243f" text-anchor="middle" opacity="0.78">Completo</text>
+<path d="M 1952 294.0 L 1952 196 L 2062 196" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="1975" y="250" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">não</text>
+<rect x="2064" y="452" width="236" height="92" rx="12" fill="#f64932" stroke="#f64932" stroke-width="1.5"/>
+<text x="2182.0" y="494.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#ffffff" text-anchor="middle">Recebido com divergência</text>
+<text x="2182.0" y="514.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#ffffff" text-anchor="middle" opacity="0.78">Registrada para auditoria</text>
+<path d="M 1952 410.0 L 1952 498 L 2062 498" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="1975" y="420" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">sim</text>
+<polygon points="2400,444.0 2475.0,498 2400,552.0 2325.0,498" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5"/>
+<text x="2400" y="503" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#0a4f97" text-anchor="middle">Vai reenviar?</text>
+<path d="M 2300 498 L 2325 498" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="2260" y="652" width="236" height="96" rx="12" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="2378.0" y="696.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Divergência final</text>
+<text x="2378.0" y="716.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Encerrada e auditável</text>
+<path d="M 2400 552 L 2400 650" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="2424" y="606" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">não</text>
+<path d="M 2400 444 L 2400 118 L 409 118 L 409 298" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="1180" y="108" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">sim — reenvia corrigido e passa pela aprovação de novo</text>
+<rect x="560" y="620" width="200" height="84" rx="12" fill="#f6f5f4" stroke="#f64932" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="660.0" y="658.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Reprovado</text>
+<text x="660.0" y="678.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Volta ao estoque</text>
+<path d="M 660 410.0 L 660 618" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="684" y="590" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">não</text>
+<rect x="302" y="620" width="200" height="84" rx="12" fill="#f6f5f4" stroke="#f64932" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="402.0" y="658.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#111111" text-anchor="middle">Cancelado</text>
+<text x="402.0" y="678.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="middle" opacity="0.78">Antes do despacho</text>
+<path d="M 380 404 L 380 618" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<text x="330" y="560" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">pelo criador</text>
+<path d="M 660 704 L 660 764 L 402 764" fill="none" stroke="#9a9793" stroke-width="1.6"/>
+<path d="M 402 704 L 402 764 L 135 764 L 135 472" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="250" y="782" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">volta ao estoque</text>
+<path d="M 460 298 L 460 232 L 1156 232 L 1156 298" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<text x="808" y="222" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">parâmetro de aprovação desligado: nasce em envio pendente e vai direto ao despacho</text>
+<rect x="40" y="795" width="16" height="16" rx="4" fill="#f6f5f4" stroke="#dcdbd9" stroke-width="1.5"/>
+<text x="64" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">processo</text>
+<rect x="136.8" y="795" width="16" height="16" rx="4" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5"/>
+<text x="160.8" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">decisão</text>
+<rect x="226.5" y="795" width="16" height="16" rx="4" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5"/>
+<text x="250.5" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">aguardando NF</text>
+<rect x="358.8" y="795" width="16" height="16" rx="4" fill="#62aef0" stroke="#62aef0" stroke-width="1.5"/>
+<text x="382.8" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">fim completo</text>
+<rect x="484.0" y="795" width="16" height="16" rx="4" fill="#f64932" stroke="#f64932" stroke-width="1.5"/>
+<text x="508.0" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">fim com divergência</text>
+<rect x="658.9" y="795" width="16" height="16" rx="4" fill="#ffffff" stroke="#f64932" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="682.9" y="808" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">reprovado / cancelado</text>
 </svg>

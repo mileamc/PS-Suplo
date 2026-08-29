@@ -256,3 +256,16 @@ As linhas em `src/data/orcamento.ts` são placeholders no formato de EAP.
 **Estoque manteve todas as colunas originais.** ID, Nome, Categoria, Tipo, Quantidade, Estoque mín
 e Último movimento seguem iguais; Quantidade mostra o saldo do item com o disponível logo abaixo, e
 uma coluna nova, Situação da transferência, acrescenta reservado, em trânsito e a receber.
+
+
+## Diagramas do fluxo
+
+`src/site/` consome dois SVGs em `public/case/` que descrevem a máquina de estados:
+`fluxo_transferencia_v1_linha_unica.svg` (só estados) e `fluxo_v1_enriquecido.svg` (com os
+touchpoints de UI). Os dois são gerados por `scripts/gerar-diagramas-fluxo.py`, que desenha a
+partir da mesma paleta do site — rode o script depois de qualquer mudança no fluxo, para os
+diagramas não descolarem do protótipo:
+
+```bash
+python3 scripts/gerar-diagramas-fluxo.py
+```

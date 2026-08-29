@@ -235,7 +235,7 @@
   font-size: 14px; color: var(--slate);
 }
 .diagrama__dica { font-size: 12px; color: rgba(0, 0, 0, .4); white-space: nowrap; }
-@media (min-width: 900px) { .diagrama__dica { display: none; } }
+/* O diagrama é mais largo que a coluna: a dica vale em qualquer tela. */
 
 /* ============================================================
    04 · Discordâncias

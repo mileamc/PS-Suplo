@@ -394,8 +394,16 @@ function FluxoV1() {
           <p>
             Esse é o resultado da etapa de modelagem: a transferência deixa de ser uma ação única e
             passa a ter um ciclo de vida — reservada, aguardando aprovação, em trânsito, avaliada na
-            entrega, e recebida (com ou sem divergência), com os devidos caminhos de reprovação e
-            cancelamento.
+            entrega, aguardando a nota fiscal e, só então, recebida (com ou sem divergência), com os
+            devidos caminhos de reprovação e cancelamento.
+          </p>
+          <p>
+            Duas decisões que a versão anterior deste fluxo não tinha. A transferência{' '}
+            <strong>nasce já reservada</strong>: não existe um segundo clique para "enviar para
+            aprovação" — assim que a saída é salva, a quantidade trava e a obra de destino já é
+            avisada. E a conferência não encerra nada sozinha: o material entra no estoque, mas a
+            transferência fica em <strong>Aguardando NF</strong> até alguém confirmar o número da
+            nota e anexá-la. É o mesmo estado que a tela de Entregas já usa para pedidos de compra.
           </p>
         </Cabecalho>
 
@@ -403,7 +411,7 @@ function FluxoV1() {
           <Diagrama
             arquivo="fluxo_transferencia_v1_linha_unica.svg"
             legenda="Fluxo de transferência V1 — o ciclo de vida completo, só de estados."
-            minLargura={1100}
+            minLargura={1400}
           />
 
           <div className="card-acento" style={{ ['--bg-acento' as string]: 'var(--coral)', color: '#fff', marginTop: 16 }}>
@@ -431,7 +439,8 @@ function FluxoEnriquecido() {
           <p>
             Aqui eu pego o mesmo fluxo de estados e acrescento a camada que estava faltando: em qual
             modal, mensagem ou aba cada transição aparece — no mesmo nível de detalhe que os
-            fluxogramas originais de vocês tinham.
+            fluxogramas originais de vocês tinham. São seis modais no total: registrar saída,
+            despacho, aprovação, confirmar entrega, confirmar NF e cancelamento.
           </p>
           <p>
             Ao lado, a tabela de atores responde a uma exigência específica do material (<em>"cada
@@ -453,7 +462,7 @@ function FluxoEnriquecido() {
           <Diagrama
             arquivo="fluxo_v1_enriquecido.svg"
             legenda="O mesmo fluxo, agora com os touchpoints de UI — modal, mensagem e aba — em cada transição."
-            minLargura={1200}
+            minLargura={1400}
           />
           <div style={{ marginTop: 16 }}><TabelaAtores /></div>
           <div style={{ marginTop: 16 }}><TabelaNotificacoes /></div>
