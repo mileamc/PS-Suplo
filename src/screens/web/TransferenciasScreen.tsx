@@ -1,16 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Search, ChevronLeft, ChevronRight,
   AlertCircle, CalendarClock, Plus, Package, Calendar as CalIcon, List,
   Archive, Truck, CheckCircle2, AlertTriangle, FileText, XCircle, Eye,
+  Stamp, ClipboardCheck,
 } from 'lucide-react';
 import { TelaHeader } from '../../components/Shell';
 import { BadgeStatus, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus } from '../../components/ui';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
+import { STATUS_META, STATUS_EM_ROTA } from '../../domain/status';
 import {
-  STATUS_META, STATUS_TRANSITO, STATUS_RESERVA, STATUS_CANCELADOS, STATUS_ATIVOS,
-} from '../../domain/status';
+  HOJE, atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Grupo,
+} from '../../domain/grupos';
 import { fmtData } from '../../domain/notificacoes';
 import type { Transferencia } from '../../domain/types';
 import { RegistrarSaidaModal } from './RegistrarSaidaModal';
@@ -19,32 +21,31 @@ type Direcao = 'enviar' | 'receber';
 type Visao = 'lista' | 'calendario';
 
 /* ------------------------------------------------------------
-   Os cards seguem o vocabulário que a tela de Entregas já usa
-   (Total, Pendentes, Atrasados, Aguardando NF, Completos,
-   Cancelados), e cada um agrupa os estados do fluxo.
+   Os cards seguem o vocabulário que a tela de Entregas já usa,
+   e cada um agrupa os estados do fluxo. A definição da lista
+   mora em domain/grupos.ts, compartilhada com o mobile.
+
+   O ícone e a cor de cada card vêm da mesma família do estado
+   que a tag usa — o card nunca inventa cor própria.
    ------------------------------------------------------------ */
-type Grupo =
-  | 'total' | 'pendentes' | 'transito' | 'atrasados'
-  | 'nf' | 'divergencia' | 'completos' | 'cancelados';
+const ICONE_GRUPO: Record<Grupo, React.ReactNode> = {
+  total: <Package size={15} />,
+  reservados: <Archive size={15} />,
+  aprovacoes: <Stamp size={15} />,
+  transito: <Truck size={15} />,
+  atrasados: <AlertCircle size={15} />,
+  fvm: <ClipboardCheck size={15} />,
+  nf: <FileText size={15} />,
+  divergencia: <AlertTriangle size={15} />,
+  completos: <CheckCircle2 size={15} />,
+  cancelados: <XCircle size={15} />,
+};
 
-const HOJE_G = new Date('2026-08-29T12:00:00');
-
-function noGrupo(t: Transferencia, g: Grupo): boolean {
-  switch (g) {
-    case 'total': return STATUS_ATIVOS.includes(t.status);
-    case 'pendentes': return STATUS_RESERVA.includes(t.status);
-    case 'transito': return STATUS_TRANSITO.includes(t.status);
-    case 'atrasados':
-      return STATUS_TRANSITO.includes(t.status)
-        && Boolean(t.previsaoChegada) && new Date(t.previsaoChegada!) < HOJE_G;
-    case 'nf': return t.status === 'aguardando_nf';
-    case 'divergencia': return t.status === 'recebido_divergencia';
-    case 'completos': return t.status === 'recebido_ok';
-    case 'cancelados': return STATUS_CANCELADOS.includes(t.status);
-  }
-}
-
-const HOJE = new Date('2026-08-29T12:00:00');
+/** Cards sem família própria usam um neutro (Total) ou o vermelho de alerta. */
+const COR_SEM_FAMILIA: Partial<Record<Grupo, string>> = {
+  total: 'var(--text-muted)',
+  atrasados: 'var(--red)',
+};
 
 export function TransferenciasScreen({
   onAbrir,
@@ -68,21 +69,17 @@ export function TransferenciasScreen({
 
   const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g)).length;
 
-  const cards: { grupo: Grupo; rotulo: string; icone: React.ReactNode; cor: string }[] = [
-    { grupo: 'total', rotulo: 'Total', icone: <Package size={15} />, cor: 'var(--text-muted)' },
-    { grupo: 'pendentes', rotulo: 'Pendentes', icone: <Archive size={15} />, cor: corDoStatus('aguardando_aprovacao') },
-    { grupo: 'transito', rotulo: 'Em trânsito', icone: <Truck size={15} />, cor: corDoStatus('em_transito') },
-    { grupo: 'atrasados', rotulo: 'Atrasados', icone: <AlertCircle size={15} />, cor: 'var(--red)' },
-    { grupo: 'nf', rotulo: 'Aguardando NF', icone: <FileText size={15} />, cor: corDoStatus('aguardando_nf') },
-    { grupo: 'divergencia', rotulo: 'Com divergência', icone: <AlertTriangle size={15} />, cor: corDoStatus('recebido_divergencia') },
-    { grupo: 'completos', rotulo: 'Completos', icone: <CheckCircle2 size={15} />, cor: corDoStatus('recebido_ok') },
-    { grupo: 'cancelados', rotulo: 'Cancelados', icone: <XCircle size={15} />, cor: corDoStatus('cancelado') },
-  ];
+  // "Aprovações pendentes" é card só para quem aprova. Se o papel muda com
+  // o filtro aberto, o card some — a lista volta para a visão geral em vez
+  // de ficar filtrando por um card que não está mais na tela.
+  const cards = gruposDoPapel(state.papel);
+  useEffect(() => {
+    if (!cards.some((c) => c.grupo === grupo)) setGrupo('total');
+  }, [cards, grupo]);
 
-  const atrasadas = base.filter((t) =>
-    STATUS_TRANSITO.includes(t.status) && t.previsaoChegada && new Date(t.previsaoChegada) < HOJE);
+  const atrasadas = base.filter((t) => atrasada(t));
   const proximas = base.filter((t) => {
-    if (!t.previsaoChegada || !STATUS_TRANSITO.includes(t.status)) return false;
+    if (!t.previsaoChegada || !STATUS_EM_ROTA.includes(t.status)) return false;
     const d = new Date(t.previsaoChegada);
     const lim = new Date(HOJE); lim.setDate(lim.getDate() + 7);
     return d >= HOJE && d <= lim;
@@ -101,10 +98,10 @@ export function TransferenciasScreen({
           <button
             key={c.grupo}
             className={`card-status ${grupo === c.grupo ? 'card-status--ativo' : ''}`}
-            style={{ ['--c' as string]: c.cor }}
+            style={{ ['--c' as string]: c.familia ? `var(--st-${c.familia})` : COR_SEM_FAMILIA[c.grupo] }}
             onClick={() => setGrupo(c.grupo)}
           >
-            <div className="card-status__topo">{c.icone}</div>
+            <div className="card-status__topo">{ICONE_GRUPO[c.grupo]}</div>
             <div className="card-status__valor">{conta(c.grupo)}</div>
             <div className="card-status__rotulo">{c.rotulo}</div>
           </button>
@@ -149,7 +146,7 @@ export function TransferenciasScreen({
         <EstadoVazio
           titulo={grupo === 'total'
             ? (direcao === 'enviar' ? 'Nenhuma transferência ativa para enviar' : 'Nenhuma transferência ativa a receber')
-            : `Nada em ${cards.find((c) => c.grupo === grupo)?.rotulo.toLowerCase()}`}
+            : `Nada no filtro "${rotuloGrupo(grupo)}"`}
           texto={direcao === 'enviar'
             ? 'Quando esta obra tiver sobra de material, registre uma Saída de Estoque do tipo Transferência para reservar a quantidade e mandar para outra obra.'
             : 'Assim que outra obra despachar material para cá, ele aparece aqui com a previsão de chegada.'}
@@ -198,8 +195,6 @@ function ItemLista({
   t, direcao, onAbrir, somenteLeitura,
 }: { t: Transferencia; direcao: Direcao; onAbrir: (id: string) => void; somenteLeitura?: boolean }) {
   const total = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
-  const atrasada = STATUS_TRANSITO.includes(t.status)
-    && t.previsaoChegada && new Date(t.previsaoChegada) < HOJE;
 
   return (
     <button
@@ -210,7 +205,7 @@ function ItemLista({
         <div className="item-transf__topo">
           <span className="item-transf__codigo">{t.codigo}</span>
           <BadgeStatus status={t.status} compacto />
-          {atrasada && <span className="badge badge--vermelho"><AlertCircle size={11} /> atrasada</span>}
+          {atrasada(t) && <span className="badge badge--vermelho"><AlertCircle size={11} /> atrasada</span>}
           {t.ciclo > 0 && <span className="badge badge--roxo">{t.ciclo}º reenvio</span>}
         </div>
         <div className="rota mt-8">

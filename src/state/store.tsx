@@ -232,7 +232,11 @@ function reducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         transferencias: mapear(state, action.id, () => t1),
-        toasts: [...state.toasts, { id: nid('tst'), tom: 'info', titulo: `${t0.codigo} chegou`, descricao: 'Faça a Avaliação de entrega (FVM) para fechar a movimentação.' }],
+        toasts: [...state.toasts, {
+          id: nid('tst'), tom: 'info', titulo: `${t0.codigo} chegou`,
+          // Sai do trânsito, mas não entra no estoque: quem faz isso é a FVM.
+          descricao: 'Saiu do trânsito e está em FVM pendente. O material só entra no estoque depois da Avaliação de entrega.',
+        }],
       };
     }
 

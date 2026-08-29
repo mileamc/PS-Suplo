@@ -224,9 +224,22 @@ conferência e divergência — com a navegação refeita para o polegar. Dimens
 
 ## Ajustes da última rodada
 
-**Cards de status seguem o vocabulário de Entregas.** Total, Pendentes, Em trânsito, Atrasados,
-Aguardando NF, Com divergência, Completos e Cancelados — cada card agrupa os estados do fluxo em
-vez de expor um estado por card.
+**Cards de status seguem o vocabulário de Entregas.** Total, Reservados, Em trânsito, Atrasados,
+FVM pendente, Aguardando NF, Com divergência, Completos e Cancelados — cada card agrupa os estados
+do fluxo em vez de expor um estado por card. Quem é Aprovador ganha mais um, **Aprovações
+pendentes**, ao lado de Reservados: é a fila de trabalho dele. Para os outros papéis esse card não
+existe — a pendência aparece só como tag na linha da transferência.
+
+**A cor da tag vem do estado, nunca do card.** Dois estados que dizem a mesma coisa na lista —
+"Reservado · envio pendente" e "Aprovado · envio pendente" — compartilham a mesma família visual e
+saem sempre na mesma cor, em qualquer tela. O card reusa a cor da família que agrupa; nunca o
+contrário. `STATUS_META[...].token` é a única fonte dessa cor.
+
+**Alegar o recebimento não fecha a entrega.** Tirar a carga do trânsito e fazer o material entrar
+no estoque são dois atos distintos: quem faz o segundo é a FVM. Ao alegar o recebimento, a
+conferência abre na hora — o material está no pátio. Quem não puder conferir agora escolhe "faço a
+FVM depois", e a transferência cai no card **FVM pendente** até alguém fechá-la, em vez de sumir
+dentro de "Em trânsito".
 
 **Total é só visualização.** Mostra o que está entrando e saindo e em que estado está. Os atalhos
 de ação somem dos cards e o detalhe abre em modo leitura; para agir, a pessoa escolhe o card do

@@ -51,11 +51,13 @@ const A = {
     papel: 'aprovador', destino: 'reprovado', tom: 'perigo',
   },
   registrar_chegada: {
-    id: 'registrar_chegada', label: 'Material chegou',
+    // Alegar o recebimento não fecha nada: só tira do trânsito e joga a
+    // transferência na fila da FVM.
+    id: 'registrar_chegada', label: 'Alegar recebimento',
     papel: 'destino', destino: 'avaliacao_entrega', tom: 'primario',
   },
   avaliar_entrega: {
-    id: 'avaliar_entrega', label: 'Avaliar entrega (FVM)',
+    id: 'avaliar_entrega', label: 'Fazer a FVM',
     papel: 'destino', destino: null, tom: 'primario',
   },
   confirmar_nf: {

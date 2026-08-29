@@ -233,9 +233,9 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 .badge-status__ponto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .85; }
 .badge-status--reservado { background: var(--st-reservado-bg); color: var(--st-reservado-fg); }
 .badge-status--aprovacao { background: var(--st-aprovacao-bg); color: var(--st-aprovacao-fg); }
-.badge-status--aprovado  { background: var(--st-aprovado-bg);  color: var(--st-aprovado-fg); }
 .badge-status--transito  { background: var(--st-transito-bg);  color: var(--st-transito-fg); }
 .badge-status--fvm       { background: var(--st-fvm-bg);       color: var(--st-fvm-fg); }
+.badge-status--nf        { background: var(--st-nf-bg);        color: var(--st-nf-fg); }
 .badge-status--ok        { background: var(--st-ok-bg);        color: var(--st-ok-fg); }
 .badge-status--diverg    { background: var(--st-diverg-bg);    color: var(--st-diverg-fg); }
 .badge-status--reprovado { background: var(--st-reprovado-bg); color: var(--st-reprovado-fg); }
@@ -244,17 +244,25 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 /* ============================================================
    Cards de status (padrão "Entregas")
    ============================================================ */
-.cards-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(126px, 1fr)); gap: 12px; margin-top: 14px; }
+/* A faixa mínima cabe os 10 cards do Aprovador numa linha só; abaixo
+   disso o grid quebra sozinho. */
+.cards-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 12px; margin-top: 14px; }
 .card-status {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
   padding: 12px 13px; text-align: left; box-shadow: var(--sh-1);
   transition: border-color .15s, box-shadow .15s, transform .12s;
+  /* Rótulo de duas linhas ("Aprovações pendentes") não pode desalinhar a
+     fileira: todos os cards reservam a altura das duas linhas. */
+  display: flex; flex-direction: column;
 }
 .card-status:hover { border-color: var(--border-strong); box-shadow: var(--sh-2); }
 .card-status--ativo { border-color: var(--brand-600); box-shadow: 0 0 0 3px rgba(15,164,95,.12); }
 .card-status__topo { display: flex; align-items: center; justify-content: space-between; color: var(--c, var(--text-muted)); }
 .card-status__valor { font-size: var(--fs-24); font-weight: 700; color: var(--text); margin-top: 8px; line-height: 1.1; }
-.card-status__rotulo { font-size: var(--fs-12); color: var(--text-muted); margin-top: 2px; }
+.card-status__rotulo {
+  font-size: var(--fs-12); color: var(--text-muted); margin-top: 2px;
+  min-height: calc(var(--fs-12) * 2 * 1.35); line-height: 1.35;
+}
 
 /* ============================================================
    Modal

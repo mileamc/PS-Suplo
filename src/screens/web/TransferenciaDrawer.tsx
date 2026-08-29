@@ -277,7 +277,15 @@ export function TransferenciaDrawer({
       {modal === 'cancelar' && <CancelarModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'fvm' && <FvmModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'nf' && <NfModal t={t} onFechar={() => setModal(null)} />}
-      {modal === 'chegada' && <ChegadaModal t={t} onFechar={() => setModal(null)} />}
+      {modal === 'chegada' && (
+        <ChegadaModal
+          t={t} onFechar={() => setModal(null)}
+          // Alegar o recebimento emenda direto na conferência: o material
+          // está no pátio agora. Quem não fizer aqui reencontra a
+          // transferência no card "FVM pendente".
+          onSeguirParaFvm={() => setModal('fvm')}
+        />
+      )}
     </>
   );
 }
@@ -322,7 +330,7 @@ function Stepper({ t }: { t: Transferencia }) {
               {erro ? '!' : feita ? <Check size={12} /> : i + 1}
             </span>
             <span className={`stepper__rotulo ${eAtual ? 'stepper__rotulo--atual' : ''}`}>
-              {erro ? 'Com divergência' : STATUS_META[p].curto}
+              {erro ? 'Com divergência' : STATUS_META[p].passo ?? STATUS_META[p].curto}
             </span>
           </div>
         );

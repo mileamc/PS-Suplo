@@ -1,55 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Plus, AlertCircle,
   ClipboardCheck, Truck, PackageCheck, SlidersHorizontal, Send, FileText, Eye,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
-import {
-  STATUS_META, STATUS_TRANSITO, STATUS_RESERVA, STATUS_CANCELADOS, STATUS_ATIVOS,
-} from '../../domain/status';
+import { STATUS_META } from '../../domain/status';
+// Os grupos são os mesmos da versão web — a definição vive em domain/grupos.ts
+// para as duas telas não saírem do lugar uma da outra.
+import { atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Grupo } from '../../domain/grupos';
 import { acoesDoPapel } from '../../domain/machine';
 import { fmtData } from '../../domain/notificacoes';
 import { BadgeStatus, corDoStatus } from '../../components/ui';
 import type { Transferencia } from '../../domain/types';
 import { MobTop, MobVazio, MobCarregando, brl } from './comuns';
-
-const HOJE = new Date('2026-08-29T12:00:00');
-
-export function atrasada(t: Transferencia): boolean {
-  return STATUS_TRANSITO.includes(t.status)
-    && Boolean(t.previsaoChegada)
-    && new Date(t.previsaoChegada!) < HOJE;
-}
-
-/* Mesmos grupos da versão web — vocabulário da tela de Entregas. */
-export type Grupo =
-  | 'total' | 'pendentes' | 'transito' | 'atrasados'
-  | 'nf' | 'divergencia' | 'completos' | 'cancelados';
-
-export function noGrupo(t: Transferencia, g: Grupo): boolean {
-  switch (g) {
-    case 'total': return STATUS_ATIVOS.includes(t.status);
-    case 'pendentes': return STATUS_RESERVA.includes(t.status);
-    case 'transito': return STATUS_TRANSITO.includes(t.status);
-    case 'atrasados': return atrasada(t);
-    case 'nf': return t.status === 'aguardando_nf';
-    case 'divergencia': return t.status === 'recebido_divergencia';
-    case 'completos': return t.status === 'recebido_ok';
-    case 'cancelados': return STATUS_CANCELADOS.includes(t.status);
-  }
-}
-
-const FILTROS: { valor: Grupo; rotulo: string }[] = [
-  { valor: 'total', rotulo: 'Total' },
-  { valor: 'pendentes', rotulo: 'Pendentes' },
-  { valor: 'transito', rotulo: 'Em trânsito' },
-  { valor: 'atrasados', rotulo: 'Atrasados' },
-  { valor: 'nf', rotulo: 'Aguardando NF' },
-  { valor: 'divergencia', rotulo: 'Com divergência' },
-  { valor: 'completos', rotulo: 'Completos' },
-  { valor: 'cancelados', rotulo: 'Cancelados' },
-];
 
 export function TelaTransferencias({
   onAbrir, onNova, onConfig,
@@ -66,6 +30,13 @@ export function TelaTransferencias({
   );
   const abertas = (l: Transferencia[]) => l.filter((t) => !STATUS_META[t.status].terminal).length;
   const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g)).length;
+
+  // "Aprovações pendentes" é chip só de quem aprova; para os outros papéis
+  // a pendência aparece apenas como tag no card da transferência.
+  const filtros = gruposDoPapel(state.papel);
+  useEffect(() => {
+    if (!filtros.some((f) => f.grupo === filtro)) setFiltro('total');
+  }, [filtros, filtro]);
 
   return (
     <>
@@ -94,13 +65,13 @@ export function TelaTransferencias({
         </div>
 
         <div className="mob-chips">
-          {FILTROS.filter((f) => f.valor === 'total' || conta(f.valor) > 0).map((f) => (
+          {filtros.filter((f) => f.grupo === 'total' || conta(f.grupo) > 0).map((f) => (
             <button
-              key={f.valor} className="mob-chip"
-              aria-pressed={filtro === f.valor}
-              onClick={() => setFiltro(f.valor)}
+              key={f.grupo} className="mob-chip"
+              aria-pressed={filtro === f.grupo}
+              onClick={() => setFiltro(f.grupo)}
             >
-              {f.rotulo} <span className="mob-chip__n">{conta(f.valor)}</span>
+              {f.rotulo} <span className="mob-chip__n">{conta(f.grupo)}</span>
             </button>
           ))}
         </div>
@@ -111,7 +82,7 @@ export function TelaTransferencias({
           <MobVazio
             titulo={filtro === 'total'
               ? (direcao === 'enviar' ? 'Nada para enviar' : 'Nada a receber')
-              : `Nada em ${FILTROS.find((f) => f.valor === filtro)?.rotulo.toLowerCase()}`}
+              : `Nada no filtro "${rotuloGrupo(filtro)}"`}
             texto={direcao === 'enviar'
               ? 'Quando esta obra tiver sobra de material, crie uma transferência para reservar a quantidade.'
               : 'Assim que outra obra despachar material para cá, ele aparece aqui com a previsão de chegada.'}

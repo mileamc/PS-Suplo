@@ -179,17 +179,32 @@ export function CancelarModal({ t, onFechar }: { t: Transferencia; onFechar: () 
 
 /* ============================================================
    Confirmação simples de chegada
+
+   Alegar o recebimento tira a transferência do trânsito e emenda
+   direto na FVM — é o caminho esperado, com o material ainda no
+   pátio. Se a conferência não for feita agora, a transferência
+   não some: fica no card "FVM pendente" até alguém fechá-la.
    ============================================================ */
-export function ChegadaModal({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
+export function ChegadaModal({
+  t, onFechar, onSeguirParaFvm,
+}: { t: Transferencia; onFechar: () => void; onSeguirParaFvm: () => void }) {
   const { dispatch } = useStore();
+
+  function alegarRecebimento(seguir: boolean) {
+    dispatch({ type: 'registrar_chegada', id: t.id });
+    if (seguir) onSeguirParaFvm(); else onFechar();
+  }
+
   return (
     <Modal
-      titulo={`Registrar chegada — ${t.codigo}`} largura="estreito" onFechar={onFechar}
+      titulo={`Alegar recebimento — ${t.codigo}`} largura="estreito" onFechar={onFechar}
       rodape={
         <>
-          <button className="btn" onClick={onFechar}>Voltar</button>
-          <button className="btn btn--primario" onClick={() => { dispatch({ type: 'registrar_chegada', id: t.id }); onFechar(); }}>
-            <Package size={15} /> Material chegou
+          <button className="btn" onClick={() => alegarRecebimento(false)}>
+            Chegou, faço a FVM depois
+          </button>
+          <button className="btn btn--primario" onClick={() => alegarRecebimento(true)}>
+            <Package size={15} /> Chegou — conferir agora
           </button>
         </>
       }
@@ -200,9 +215,15 @@ export function ChegadaModal({ t, onFechar }: { t: Transferencia; onFechar: () =
           Previsão: {t.previsaoChegada ? fmtData(t.previsaoChegada) : '—'}
         </span>
       </div>
-      <Aviso tom="info">
-        Registrar a chegada abre a <strong>Avaliação de entrega (FVM)</strong>. A conferência de
-        quantidade é obrigatória — é ela que captura o "saíram 10, chegaram 8".
+      <Aviso tom="info" titulo="O material ainda não entra no estoque aqui">
+        Alegar o recebimento só tira a carga do trânsito. Quem faz o material entrar no estoque de{' '}
+        <strong>{nomeObra(t.obraDestinoId)}</strong> é a <strong>Avaliação de entrega (FVM)</strong> —
+        a conferência de quantidade que captura o "saíram 10, chegaram 8". Ela é obrigatória e não
+        tem caminho que a pule.
+      </Aviso>
+      <Aviso tom="atencao">
+        Se a conferência não for feita agora, a transferência fica no card{' '}
+        <strong>FVM pendente</strong>, esperando alguém fechá-la.
       </Aviso>
       <div style={{ height: 4 }} />
     </Modal>

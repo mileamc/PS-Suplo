@@ -54,12 +54,18 @@
   --sh-3: 0 12px 32px rgba(16, 24, 40, .16);
   --sh-modal: 0 24px 64px rgba(8, 15, 26, .28);
 
-  /* --- Estados da transferência entre obras ----------------- */
+  /* --- Estados da transferência entre obras -----------------
+     Uma cor por FAMÍLIA de estado, não por card. Dois estados que
+     dizem a mesma coisa na lista compartilham a família e, portanto,
+     a cor: "Reservado · envio pendente" e "Aprovado · envio pendente"
+     são os dois `--st-reservado`. O card que agrupa a transferência
+     reusa a cor da família — nunca o contrário.
+     ---------------------------------------------------------- */
   --st-reservado-fg: var(--purple-fg);  --st-reservado-bg: var(--purple-bg);  --st-reservado: var(--purple);
   --st-aprovacao-fg: var(--amber-fg);   --st-aprovacao-bg: var(--amber-bg);   --st-aprovacao: var(--amber);
-  --st-aprovado-fg:  var(--blue-fg);    --st-aprovado-bg:  var(--blue-bg);    --st-aprovado: var(--blue);
   --st-transito-fg:  var(--cyan-fg);    --st-transito-bg:  var(--cyan-bg);    --st-transito: var(--cyan);
-  --st-fvm-fg:       #7a4a00;           --st-fvm-bg:       #fff1dd;           --st-fvm: #e08a15;
+  --st-fvm-fg:       #9a3f00;           --st-fvm-bg:       #ffe8d4;           --st-fvm: #f2711c;
+  --st-nf-fg:        var(--blue-fg);    --st-nf-bg:        var(--blue-bg);    --st-nf: var(--blue);
   --st-ok-fg:        var(--green-fg);   --st-ok-bg:        var(--green-bg);   --st-ok: var(--green);
   --st-diverg-fg:    var(--red-fg);     --st-diverg-bg:    var(--red-bg);     --st-diverg: var(--red);
   --st-reprovado-fg: #8f1d1d;           --st-reprovado-bg: #fbe3e3;           --st-reprovado: var(--red-deep);

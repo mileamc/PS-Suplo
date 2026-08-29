@@ -226,7 +226,12 @@ export function TelaDetalhe({
       {sheet === 'despacho' && <SheetDespacho t={t} onFechar={() => setSheet(null)} />}
       {sheet === 'reprovar' && <SheetReprovar t={t} onFechar={() => setSheet(null)} />}
       {sheet === 'cancelar' && <SheetCancelar t={t} onFechar={() => setSheet(null)} />}
-      {sheet === 'chegada' && <SheetChegada t={t} onFechar={() => setSheet(null)} />}
+      {sheet === 'chegada' && (
+        <SheetChegada
+          t={t} onFechar={() => setSheet(null)}
+          onSeguirParaFvm={() => { setSheet(null); onFvm(t.id); }}
+        />
+      )}
       {sheet === 'nf' && <SheetNf t={t} onFechar={() => setSheet(null)} />}
     </>
   );
@@ -282,7 +287,7 @@ function Trilha({ t }: { t: Transferencia }) {
             </span>
             <div>
               <div className={`mob-trilha__rot ${eAtual || erro ? 'atual' : ''}`}>
-                {erro ? 'Recebido com divergência' : STATUS_META[p].curto}
+                {erro ? 'Recebido com divergência' : STATUS_META[p].passo ?? STATUS_META[p].curto}
               </div>
               {q && (feita || eAtual || erro) && (
                 <div className="mob-trilha__quando">{fmtDataHora(q)}</div>
@@ -471,26 +476,40 @@ function SheetCancelar({ t, onFechar }: { t: Transferencia; onFechar: () => void
   );
 }
 
-function SheetChegada({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
+/**
+ * Alegar o recebimento tira a carga do trânsito e emenda direto na FVM —
+ * o material está no pátio agora, é a hora natural de conferir. Quem não
+ * puder conferir na hora reencontra a transferência no chip "FVM pendente".
+ */
+function SheetChegada({
+  t, onFechar, onSeguirParaFvm,
+}: { t: Transferencia; onFechar: () => void; onSeguirParaFvm: () => void }) {
   const { dispatch } = useStore();
+
+  function alegarRecebimento(seguir: boolean) {
+    dispatch({ type: 'registrar_chegada', id: t.id });
+    if (seguir) onSeguirParaFvm(); else onFechar();
+  }
+
   return (
     <Sheet
       titulo="O material chegou?" sub={t.codigo} onFechar={onFechar}
       rodape={
         <>
-          <button
-            className="mob-btn mob-btn--primario"
-            onClick={() => { dispatch({ type: 'registrar_chegada', id: t.id }); onFechar(); }}
-          >
-            <PackageCheck size={19} /> Sim, chegou
+          <button className="mob-btn mob-btn--primario" onClick={() => alegarRecebimento(true)}>
+            <PackageCheck size={19} /> Chegou — conferir agora
           </button>
-          <button className="mob-btn mob-btn--sm" onClick={onFechar}>Ainda não</button>
+          <button className="mob-btn mob-btn--sm" onClick={() => alegarRecebimento(false)}>
+            Chegou, faço a FVM depois
+          </button>
+          <button className="mob-btn mob-btn--sm" onClick={onFechar}>Ainda não chegou</button>
         </>
       }
     >
-      <MobAviso tom="info">
-        Registrar a chegada abre a <strong>Avaliação de entrega (FVM)</strong>. A conferência de
-        quantidade é obrigatória — é ela que captura o "saíram 10, chegaram 8".
+      <MobAviso tom="info" titulo="Ainda não entrou no estoque">
+        Alegar o recebimento só tira a carga do trânsito. Quem faz o material entrar no estoque é a{' '}
+        <strong>Avaliação de entrega (FVM)</strong> — a conferência de quantidade que captura o
+        "saíram 10, chegaram 8". Sem ela, a transferência fica em <strong>FVM pendente</strong>.
       </MobAviso>
       <div className="mob-cartao" style={{ marginBottom: 16 }}>
         <Linha r="De" v={nomeObra(t.obraOrigemId)} />
