@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Plus, AlertCircle,
-  ClipboardCheck, Truck, PackageCheck, SlidersHorizontal, Send, FileText, Eye,
+  ClipboardCheck, Truck, PackageCheck, SlidersHorizontal, Send, FileText, Eye, UserCheck,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
-import { nomeObra } from '../../data/obras';
+import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { STATUS_META } from '../../domain/status';
 // Os grupos são os mesmos da versão web — a definição vive em domain/grupos.ts
 // para as duas telas não saírem do lugar uma da outra.
 import {
-  atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Direcao, type Grupo,
+  atrasada, noGrupo, gruposVisiveis, rotuloGrupo, type Direcao, type Grupo,
 } from '../../domain/grupos';
-import { acoesDoPapel } from '../../domain/machine';
+import { acoesDoUsuario } from '../../domain/machine';
 import { fmtData } from '../../domain/notificacoes';
 import { BadgeStatus, BadgeDivergencia, corDoStatus } from '../../components/ui';
 import type { Transferencia } from '../../domain/types';
@@ -20,9 +20,16 @@ import { MobTop, MobVazio, MobCarregando, brl } from './comuns';
 export function TelaTransferencias({
   onAbrir, onNova, onConfig,
 }: { onAbrir: (id: string, leitura?: boolean) => void; onNova: () => void; onConfig: () => void }) {
-  const { state, aEnviar, aReceber } = useStore();
+  const { state, dispatch, aEnviar, aReceber, aguardandoOutraEmpresa } = useStore();
   const [direcao, setDirecao] = useState<Direcao>('enviar');
   const [filtro, setFiltro] = useState<Grupo>('total');
+
+  // Igual ao web: no modo de simulação só existe o que sai daqui e
+  // espera o ok da outra empresa.
+  const simulando = state.modoAprovador;
+  useEffect(() => {
+    if (simulando) { setDirecao('enviar'); setFiltro('aprovacoes'); }
+  }, [simulando]);
 
   const base = direcao === 'enviar' ? aEnviar : aReceber;
   const somenteLeitura = filtro === 'total';
@@ -33,11 +40,11 @@ export function TelaTransferencias({
   const abertas = (l: Transferencia[]) => l.filter((t) => !STATUS_META[t.status].terminal).length;
   const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g, direcao)).length;
 
-  // "Aprovações pendentes" é chip só de quem aprova; para os outros papéis
-  // a pendência aparece apenas como tag no card da transferência.
-  const filtros = gruposDoPapel(state.papel);
+  // "Aprovações pendentes" é chip só de quem aprova daquele lado; para os
+  // demais a pendência aparece apenas como tag no card da transferência.
+  const filtros = useMemo(() => gruposVisiveis(direcao, simulando), [direcao, simulando]);
   useEffect(() => {
-    if (!filtros.some((f) => f.grupo === filtro)) setFiltro('total');
+    if (!filtros.some((f) => f.grupo === filtro)) setFiltro(filtros[0].grupo);
   }, [filtros, filtro]);
 
   return (
@@ -46,13 +53,39 @@ export function TelaTransferencias({
         eyebrow={nomeObra('ob-002')}
         titulo="Transferências"
         acoes={
-          <button className="mob-icone" onClick={onConfig} aria-label="Configurações da demo">
-            <SlidersHorizontal size={18} />
-          </button>
+          <>
+            <BotaoSimulacao
+              pendentes={aguardandoOutraEmpresa.length}
+              ativo={simulando}
+              onEntrar={() => dispatch({ type: 'set_modo_aprovador', valor: true })}
+            />
+            <button className="mob-icone" onClick={onConfig} aria-label="Configurações da demo">
+              <SlidersHorizontal size={18} />
+            </button>
+          </>
         }
       />
 
       <div className="mob-corpo">
+        {simulando && (
+          <div className="mob-pad" style={{ paddingBottom: 0 }}>
+            <div className="mob-simul-faixa">
+              <UserCheck size={16} />
+              <div>
+                <b>Simulando a outra empresa</b>
+                O que {nomeObra(OBRA_ATUAL)} enviou e depende do ok de quem vai receber.
+              </div>
+              <button
+                className="mob-btn mob-btn--sm"
+                onClick={() => dispatch({ type: 'set_modo_aprovador', valor: false })}
+              >
+                Voltar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!simulando && (
         <div className="mob-pad" style={{ paddingBottom: 0 }}>
           <div className="mob-seg">
             {/* Mesmo vocabulário da web, encurtado para a largura do
@@ -67,6 +100,7 @@ export function TelaTransferencias({
             </button>
           </div>
         </div>
+        )}
 
         <div className="mob-chips">
           {filtros.filter((f) => f.grupo === 'total' || conta(f.grupo) > 0).map((f) => (
@@ -90,7 +124,7 @@ export function TelaTransferencias({
             texto={direcao === 'enviar'
               ? 'Quando esta obra tiver sobra de material, crie uma transferência para reservar a quantidade.'
               : 'Assim que outra obra despachar material para cá, ele aparece aqui com a previsão de chegada.'}
-            acao={direcao === 'enviar' && filtro === 'total'
+            acao={!simulando && direcao === 'enviar' && filtro === 'total'
               ? <button className="mob-btn mob-btn--primario mob-btn--sm" onClick={onNova}>
                   <Plus size={18} /> Nova transferência
                 </button>
@@ -120,12 +154,37 @@ export function TelaTransferencias({
 
       {/* Criar não é agir sobre uma transferência existente: o atalho de
           criação continua disponível inclusive na visão Total. */}
-      {direcao === 'enviar' && state.estadoTela === 'normal' && lista.length > 0 && (
+      {!simulando && direcao === 'enviar' && state.estadoTela === 'normal' && lista.length > 0 && (
         <button className="mob-fab" onClick={onNova}>
           <Plus size={19} /> Nova
         </button>
       )}
+
     </>
+  );
+}
+
+/* ---------------- Botão da empresa simulada -------------------
+   Apagado até que algo saia daqui e pare na aprovação; aceso e
+   piscando quando isso acontece.
+   -------------------------------------------------------------- */
+function BotaoSimulacao({
+  pendentes, ativo, onEntrar,
+}: { pendentes: number; ativo: boolean; onEntrar: () => void }) {
+  if (ativo) return null;
+  const disponivel = pendentes > 0;
+  return (
+    <button
+      className={`mob-icone ${disponivel ? 'mob-icone--aceso' : ''}`}
+      disabled={!disponivel}
+      onClick={onEntrar}
+      aria-label={disponivel
+        ? `Simular a aprovação da outra empresa (${pendentes} pendente(s))`
+        : 'Só liga quando alguma transferência sua espera o ok da outra empresa'}
+    >
+      <UserCheck size={18} />
+      {disponivel && <span className="mob-icone__n">{pendentes}</span>}
+    </button>
   );
 }
 
@@ -138,7 +197,7 @@ function CardTransferencia({
 }) {
   const { state } = useStore();
   const total = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
-  const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
+  const acoes = somenteLeitura ? [] : acoesDoUsuario(t, OBRA_ATUAL, state.modoAprovador);
   // O atalho do card sugere sempre a ação que faz o fluxo andar;
   // cancelar e reprovar ficam só dentro do detalhe.
   const principal = acoes.find((a) => a.tom !== 'perigo');

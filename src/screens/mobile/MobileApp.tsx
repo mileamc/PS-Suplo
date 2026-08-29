@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeftRight, Boxes, ArrowUpDown, Bell } from 'lucide-react';
 import { useStore, type EstadoTela } from '../../state/store';
+import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { STATUS_META } from '../../domain/status';
-import { ROLE_LABEL } from '../../domain/notificacoes';
-import type { Role } from '../../domain/types';
-import { Sheet } from './comuns';
+import { Sheet, MobAviso } from './comuns';
 import { TelaTransferencias } from './TelaTransferencias';
 import { TelaDetalhe } from './TelaDetalhe';
 import { TelaNova } from './TelaNova';
@@ -37,7 +36,7 @@ const ABAS = [
 const RAIZES = ABAS.map((a) => a.t) as string[];
 
 export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {}) {
-  const { state, notificacoesDoPapel } = useStore();
+  const { state, dispatch, notificacoesDoPapel, aguardandoOutraEmpresa } = useStore();
   const [pilha, setPilha] = useState<Tela[]>([{ t: 'transferencias' }]);
   const [config, setConfig] = useState(false);
 
@@ -59,6 +58,16 @@ export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {})
   }, [atual, state.transferencias]);
 
   const naoLidas = notificacoesDoPapel.filter((n) => !n.lida).length;
+
+  // A aprovação acontece na tela de detalhe, empilhada: o aviso de fim
+  // precisa morar acima da pilha para aparecer onde quer que o usuário
+  // esteja quando a fila da outra empresa zerar.
+  const simulando = state.modoAprovador;
+  const [avisoFim, setAvisoFim] = useState(false);
+  useEffect(() => { if (!simulando) setAvisoFim(false); }, [simulando]);
+  useEffect(() => {
+    if (simulando && aguardandoOutraEmpresa.length === 0) setAvisoFim(true);
+  }, [simulando, aguardandoOutraEmpresa.length]);
 
   function conteudo() {
     switch (atual.t) {
@@ -134,6 +143,13 @@ export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {})
 
       <span className="mob-gesto" aria-hidden="true" />
       {config && <SheetConfig onFechar={() => setConfig(false)} />}
+      {avisoFim && (
+        <SheetFimSimulacao onVoltar={() => {
+          setAvisoFim(false);
+          dispatch({ type: 'set_modo_aprovador', valor: false });
+          voltarARaiz();
+        }} />
+      )}
     </div>
   );
 }
@@ -147,52 +163,10 @@ function SheetConfig({ onFechar }: { onFechar: () => void }) {
   return (
     <Sheet
       titulo="Controles do protótipo"
-      sub="Os mesmos parâmetros da barra de demonstração da versão web."
+      sub="Os mesmos parâmetros da barra de demonstração da versão web. O protótipo simula o painel de uma empresa só."
       onFechar={onFechar}
       rodape={<button className="mob-btn mob-btn--escuro" onClick={onFechar}>Fechar</button>}
     >
-      <div className="mob-campo">
-        <label className="mob-rot">Ver como</label>
-        {(['origem', 'aprovador', 'destino'] as Role[]).map((p) => (
-          <button
-            key={p} className="mob-opcao" aria-pressed={state.papel === p}
-            onClick={() => dispatch({ type: 'set_papel', valor: p })}
-          >
-            <div className="mob-opcao__txt">
-              <div className="mob-opcao__nome">{ROLE_LABEL[p]}</div>
-              <div className="mob-opcao__meta">
-                {p === 'origem' ? 'Cria, cancela e despacha'
-                  : p === 'aprovador' ? 'Aprova ou reprova'
-                  : 'Registra chegada e confere a entrega'}
-              </div>
-            </div>
-            {state.papel === p && <span className="mob-opcao__check">●</span>}
-          </button>
-        ))}
-        <p className="mob-dica">
-          Muda quais ações ficam disponíveis em cada estado, conforme a tabela de atores.
-        </p>
-      </div>
-
-      <div className="mob-campo">
-        <label className="mob-rot">Aprovação obrigatória</label>
-        <button
-          className="mob-opcao" aria-pressed={state.aprovacaoAtiva}
-          onClick={() => dispatch({ type: 'set_aprovacao', valor: !state.aprovacaoAtiva })}
-        >
-          <div className="mob-opcao__txt">
-            <div className="mob-opcao__nome">{state.aprovacaoAtiva ? 'Ligada' : 'Desligada'}</div>
-            <div className="mob-opcao__meta">
-              {state.aprovacaoAtiva
-                ? 'O estado "Aguardando aprovação" existe no fluxo'
-                : 'O fluxo pula de Reservado direto para o despacho'}
-            </div>
-          </div>
-          {state.aprovacaoAtiva && <span className="mob-opcao__check">●</span>}
-        </button>
-        <p className="mob-dica">Parâmetro por cliente — decide se o estado existe, sem duplicar lógica.</p>
-      </div>
-
       <div className="mob-campo">
         <label className="mob-rot">Estado da tela</label>
         {(['normal', 'carregando', 'vazio', 'erro'] as EstadoTela[]).map((e) => (
@@ -222,6 +196,33 @@ function SheetConfig({ onFechar }: { onFechar: () => void }) {
         </div>
       </div>
       <div style={{ height: 10 }} />
+    </Sheet>
+  );
+}
+
+/* ============================================================
+   Fim da simulação — traz o usuário de volta para a própria obra
+   ============================================================ */
+function SheetFimSimulacao({ onVoltar }: { onVoltar: () => void }) {
+  return (
+    <Sheet
+      titulo="Aprovação registrada"
+      sub="Nada mais depende da outra empresa"
+      onFechar={onVoltar}
+      rodape={
+        <button className="mob-btn mob-btn--primario" onClick={onVoltar}>
+          Voltar para o fluxo da minha obra
+        </button>
+      }
+    >
+      <MobAviso tom="ok" titulo="A fila de aprovação zerou">
+        Volte para o painel de {nomeObra(OBRA_ATUAL)} para seguir o fluxo — despachar o que foi
+        aprovado, acompanhar o trânsito e conferir o que chegar.
+      </MobAviso>
+      <p className="mob-dica">
+        O modo de simulação volta a ficar apagado até que outra transferência sua precise do ok de
+        quem vai receber.
+      </p>
     </Sheet>
   );
 }

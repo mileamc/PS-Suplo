@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Boxes, ArrowLeftRight, Bell, Smartphone, Building2, BookOpen, Check, X, AlertTriangle,
+  UserCheck, ArrowLeft,
 } from 'lucide-react';
 import { useStore, USUARIO_POR_PAPEL } from '../state/store';
 import type { Role } from '../domain/types';
+import { OBRA_ATUAL, nomeObra } from '../data/obras';
 import { ROLE_LABEL, fmtDataHora } from '../domain/notificacoes';
-import { Segmentado, Switch } from './ui';
+import { Segmentado } from './ui';
 import type { Rota } from '../state/rotas';
 
 /* ============================================================
@@ -97,7 +99,9 @@ function SinoNotificacoes() {
               <div>
                 <div className="popover__titulo">Notificações</div>
                 <div className="txt-11 txt-muted" style={{ marginTop: 2 }}>
-                  Vendo como <strong>{ROLE_LABEL[state.papel]}</strong> · {USUARIO_POR_PAPEL[state.papel]}
+                  {state.modoAprovador
+                    ? <>Simulando o <strong>Aprovador</strong> da outra empresa</>
+                    : <>O que <strong>{nomeObra(OBRA_ATUAL)}</strong> é avisada</>}
                 </div>
               </div>
               <button className="modal__fechar" onClick={() => setAberto(false)}><X size={16} /></button>
@@ -105,7 +109,7 @@ function SinoNotificacoes() {
             <div className="popover__lista">
               {notificacoesDoPapel.length === 0 ? (
                 <div style={{ padding: 26, textAlign: 'center' }} className="txt-12 txt-muted">
-                  Nenhuma notificação para este papel ainda.<br />
+                  Nenhuma notificação ainda.<br />
                   Execute uma ação no fluxo para ver quem é avisado.
                 </div>
               ) : notificacoesDoPapel.map((n) => (
@@ -141,32 +145,18 @@ function SinoNotificacoes() {
 
 /* ============================================================
    Barra de controles do protótipo
+
+   O protótipo é o painel de UMA empresa: não há mais troca de
+   persona. Sobra um único controle de papel — o de emprestar,
+   por um instante, o Aprovador da empresa que vai receber, sem
+   o qual o que sai daqui nunca sairia da aprovação.
    ============================================================ */
 export function DemoBar() {
   const { state, dispatch } = useStore();
   return (
     <div className="demobar">
-      <div className="demobar__grupo">
-        <span className="demobar__rotulo">Ver como</span>
-        <Segmentado<Role>
-          valor={state.papel}
-          onMudar={(v) => dispatch({ type: 'set_papel', valor: v })}
-          opcoes={[
-            { valor: 'origem', rotulo: 'Obra de origem' },
-            { valor: 'aprovador', rotulo: 'Aprovador' },
-            { valor: 'destino', rotulo: 'Obra de destino' },
-          ]}
-        />
-      </div>
-      <div className="demobar__grupo">
-        <span className="demobar__rotulo">Aprovação obrigatória (parâmetro do cliente)</span>
-        <Switch
-          ligado={state.aprovacaoAtiva}
-          rotulo="Aprovação obrigatória"
-          onMudar={(v) => dispatch({ type: 'set_aprovacao', valor: v })}
-        />
-        <span className="demobar__rotulo">{state.aprovacaoAtiva ? 'ligada' : 'desligada'}</span>
-      </div>
+      <BotaoAprovador />
+      <div className="demobar__espaco" />
       <div className="demobar__grupo">
         <span className="demobar__rotulo">Estado da tela</span>
         <Segmentado
@@ -180,6 +170,75 @@ export function DemoBar() {
           ]}
         />
       </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------
+   O botão da empresa simulada.
+
+   Fica apagado enquanto nada depende da outra ponta. Assim que
+   uma transferência sai daqui e para na aprovação, ele acende e
+   se anuncia — e volta a apagar quando a fila zera.
+   ------------------------------------------------------------ */
+function BotaoAprovador() {
+  const { state, dispatch, aguardandoOutraEmpresa } = useStore();
+  const pendentes = aguardandoOutraEmpresa.length;
+  const ativo = state.modoAprovador;
+  const disponivel = pendentes > 0 || ativo;
+
+  // A dica se anuncia sozinha quando a pendência aparece; depois de
+  // dispensada, só volta se a fila zerar e encher de novo.
+  const [dicaVista, setDicaVista] = useState(false);
+  useEffect(() => { if (pendentes === 0) setDicaVista(false); }, [pendentes]);
+  const mostrarDica = pendentes > 0 && !ativo && !dicaVista;
+
+  if (ativo) {
+    return (
+      <div className="demobar__grupo">
+        <span className="simul__selo"><UserCheck size={14} /> Simulando a outra empresa</span>
+        <span className="demobar__rotulo">
+          Você está como Aprovador de quem vai receber — {USUARIO_POR_PAPEL.aprovador}
+        </span>
+        <button
+          className="btn btn--sm"
+          onClick={() => dispatch({ type: 'set_modo_aprovador', valor: false })}
+        >
+          <ArrowLeft size={13} /> Voltar para minha obra
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="simul">
+      <button
+        className={`simul__btn ${disponivel ? 'simul__btn--aceso' : ''}`}
+        disabled={!disponivel}
+        onClick={() => { setDicaVista(true); dispatch({ type: 'set_modo_aprovador', valor: true }); }}
+        title={disponivel
+          ? 'Entrar no modo de simulação para aprovar como a outra empresa'
+          : 'Este modo só liga quando alguma transferência sua está esperando o ok da outra empresa.'}
+      >
+        <UserCheck size={15} />
+        Aprovador da outra empresa
+        {pendentes > 0 && <span className="simul__n">{pendentes}</span>}
+      </button>
+
+      {mostrarDica && (
+        <div className="simul__dica" role="status">
+          <span className="simul__dica-seta" aria-hidden="true" />
+          <strong>Precisa do ok da outra empresa</strong>
+          <p>
+            {pendentes === 1 ? 'Uma transferência sua saiu' : `${pendentes} transferências suas saíram`}{' '}
+            e {pendentes === 1 ? 'está' : 'estão'} parada{pendentes === 1 ? '' : 's'} na aprovação de
+            quem vai receber. Para simular essa aprovação como a outra empresa, clique aqui.
+          </p>
+          <button className="simul__dica-x" onClick={() => setDicaVista(true)} aria-label="Dispensar">
+            <X size={13} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

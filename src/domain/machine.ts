@@ -126,6 +126,52 @@ export function acoesDoPapel(t: Transferencia, papel: Role): Acao[] {
   return acoesDisponiveis(t).filter((a) => a.papel === papel);
 }
 
+/* ============================================================
+   Uma empresa só, e a outra ponta simulada
+
+   O protótipo é o painel de UMA empresa. Ela é a origem no que sai
+   daqui e é o destino no que chega — e, como o Aprovador é sempre da
+   obra que recebe, ela também aprova o que chega para ela.
+
+   O único papel que ela não tem é o de Aprovador da OUTRA empresa,
+   que precisa dar o ok no que sai daqui. É exatamente esse papel que
+   o modo de simulação empresta, e só ele: sem isso o fluxo não fecha
+   dentro de um painel único.
+   ============================================================ */
+
+export function papeisDoUsuario(
+  t: Transferencia, obraAtual: string, modoAprovador: boolean,
+): Role[] {
+  if (modoAprovador) {
+    // Emprestado: Aprovador da empresa que vai receber o que sai daqui.
+    return t.obraOrigemId === obraAtual ? ['aprovador'] : [];
+  }
+  const papeis: Role[] = [];
+  if (t.obraOrigemId === obraAtual) papeis.push('origem');
+  if (t.obraDestinoId === obraAtual) papeis.push('destino', 'aprovador');
+  return papeis;
+}
+
+export function acoesDoUsuario(
+  t: Transferencia, obraAtual: string, modoAprovador: boolean,
+): Acao[] {
+  const papeis = papeisDoUsuario(t, obraAtual, modoAprovador);
+  return acoesDisponiveis(t).filter((a) => papeis.includes(a.papel));
+}
+
+/**
+ * O que só a outra empresa pode destravar: transferências saindo desta
+ * obra e paradas na aprovação. É o gatilho do modo de simulação — sem
+ * nenhuma delas, o modo não tem por que existir.
+ */
+export function pendentesDeAprovacaoExterna(
+  transferencias: Transferencia[], obraAtual: string,
+): Transferencia[] {
+  return transferencias.filter(
+    (t) => t.obraOrigemId === obraAtual && t.status === 'aguardando_aprovacao',
+  );
+}
+
 /** Passos exibidos no stepper do detalhe da transferência. */
 export function trilha(aprovacaoAtiva: boolean): TransferStatus[] {
   const base: TransferStatus[] = aprovacaoAtiva

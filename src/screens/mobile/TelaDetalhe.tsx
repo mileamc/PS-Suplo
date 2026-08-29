@@ -4,10 +4,10 @@ import {
   FileText, Star, Paperclip, Wallet, AlertTriangle,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
-import { nomeObra } from '../../data/obras';
+import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { STATUS_META, divergenciaPendente } from '../../domain/status';
-import { acoesDoPapel, trilha, indiceNaTrilha } from '../../domain/machine';
-import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
+import { acoesDoUsuario, trilha, indiceNaTrilha } from '../../domain/machine';
+import { fmtData, fmtDataHora } from '../../domain/notificacoes';
 import { FICHAS, nomeCriterio } from '../../data/avaliacao';
 import { linhaPorId } from '../../data/orcamento';
 import { BadgeStatus, BadgeDivergencia } from '../../components/ui';
@@ -24,7 +24,7 @@ export function TelaDetalhe({
 }) {
   const { state, dispatch } = useStore();
   const [sheet, setSheet] = useState<SheetAberto>(null);
-  const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
+  const acoes = somenteLeitura ? [] : acoesDoUsuario(t, OBRA_ATUAL, state.modoAprovador);
   const custo = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
   const divergente = divergenciaPendente(t) || t.status === 'encerrado_divergencia';
 
@@ -197,7 +197,11 @@ export function TelaDetalhe({
                   ? 'Visão geral, só leitura. As ações ficam nos filtros por estado.'
                   : STATUS_META[t.status].terminal
                     ? 'Transferência encerrada.'
-                    : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado.`}
+                    : state.modoAprovador
+                      ? 'Nada a decidir aqui como a outra empresa.'
+                      : t.status === 'aguardando_aprovacao'
+                        ? `Esperando o ok de ${nomeObra(t.obraDestinoId)}. Use o botão de aprovador no topo para simular.`
+                        : `Nada para ${nomeObra(OBRA_ATUAL)} fazer neste estado.`}
               </p>
             ) : acoes.map((a) => {
               const classe = a.tom === 'primario' ? 'mob-btn mob-btn--primario'

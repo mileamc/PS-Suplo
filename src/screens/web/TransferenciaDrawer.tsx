@@ -6,9 +6,9 @@ import {
 } from 'lucide-react';
 import { BadgeStatus, BadgeDivergencia, Aviso } from '../../components/ui';
 import { STATUS_META, divergenciaPendente } from '../../domain/status';
-import { acoesDoPapel, trilha, indiceNaTrilha } from '../../domain/machine';
-import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
-import { nomeObra } from '../../data/obras';
+import { acoesDoUsuario, trilha, indiceNaTrilha } from '../../domain/machine';
+import { fmtData, fmtDataHora } from '../../domain/notificacoes';
+import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { useStore } from '../../state/store';
 import type { Transferencia, TransferEvento } from '../../domain/types';
 import {
@@ -25,7 +25,7 @@ export function TransferenciaDrawer({
 }: { t: Transferencia; onFechar: () => void; somenteLeitura?: boolean }) {
   const { state, dispatch } = useStore();
   const [modal, setModal] = useState<ModalAberto>(null);
-  const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
+  const acoes = somenteLeitura ? [] : acoesDoUsuario(t, OBRA_ATUAL, state.modoAprovador);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape' && !modal) onFechar(); };
@@ -253,9 +253,13 @@ export function TransferenciaDrawer({
                 ? 'Visão geral, só leitura. As ações ficam nos filtros por estado.'
                 : STATUS_META[t.status].terminal
                   ? 'Transferência encerrada.'
-                  : divergenciaAberta
-                    ? `A divergência está com a obra de origem: só ela encerra o caso ou envia o saldo faltante. Nenhuma ação para ${ROLE_LABEL[state.papel]} aqui.`
-                    : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado. Troque de papel na barra do topo.`}
+                  : state.modoAprovador
+                    ? 'Nada a decidir aqui como a outra empresa. Volte para o painel da sua obra.'
+                    : divergenciaAberta
+                      ? 'A divergência está com a obra de origem: só ela encerra o caso ou envia o saldo faltante.'
+                      : t.status === 'aguardando_aprovacao'
+                        ? `Esperando o ok de ${nomeObra(t.obraDestinoId)}. Use "Aprovador da outra empresa", na barra do topo, para simular essa aprovação.`
+                        : `Nada para ${nomeObra(OBRA_ATUAL)} fazer neste estado.`}
             </div>
           ) : acoes.map((a) => {
             const classe = a.tom === 'primario' ? 'btn btn--primario' : a.tom === 'perigo' ? 'btn btn--perigo' : 'btn';

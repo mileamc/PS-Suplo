@@ -3,17 +3,18 @@ import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Search, ChevronLeft, ChevronRight,
   AlertCircle, CalendarClock, Plus, Package, Calendar as CalIcon, List,
   Archive, Truck, CheckCircle2, AlertTriangle, FileText, XCircle, Eye,
-  Stamp, ClipboardCheck,
+  Stamp, ClipboardCheck, UserCheck, ArrowLeft,
 } from 'lucide-react';
 import { TelaHeader } from '../../components/Shell';
 import {
   BadgeStatus, BadgeDivergencia, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus,
+  Modal, Aviso,
 } from '../../components/ui';
 import { useStore } from '../../state/store';
 import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { STATUS_META, STATUS_EM_ROTA } from '../../domain/status';
 import {
-  HOJE, atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Direcao, type Grupo,
+  HOJE, atrasada, noGrupo, gruposVisiveis, rotuloGrupo, type Direcao, type Grupo,
 } from '../../domain/grupos';
 import { fmtData } from '../../domain/notificacoes';
 import type { Transferencia } from '../../domain/types';
@@ -51,12 +52,27 @@ const COR_SEM_FAMILIA: Partial<Record<Grupo, string>> = {
 export function TransferenciasScreen({
   onAbrir, onVerMobile,
 }: { onAbrir: (id: string) => void; onVerMobile?: () => void }) {
-  const { state, aEnviar, aReceber } = useStore();
+  const { state, dispatch, aEnviar, aReceber, aguardandoOutraEmpresa } = useStore();
   const [direcao, setDirecao] = useState<Direcao>('enviar');
   const [visao, setVisao] = useState<Visao>('lista');
   const [grupo, setGrupo] = useState<Grupo>('total');
   const [busca, setBusca] = useState('');
   const [modalSaida, setModalSaida] = useState(false);
+
+  // No modo de simulação só existe um assunto: o que sai daqui e espera
+  // o ok da outra empresa. A tela vai direto para ele.
+  const simulando = state.modoAprovador;
+  const [avisoFim, setAvisoFim] = useState(false);
+  useEffect(() => {
+    if (simulando) { setDirecao('enviar'); setGrupo('aprovacoes'); setVisao('lista'); }
+    else setAvisoFim(false);
+  }, [simulando]);
+  // Fila zerada dentro do modo: o trabalho da outra empresa acabou e o
+  // usuário precisa ser trazido de volta, senão fica olhando uma lista
+  // vazia sem saber que já pode sair.
+  useEffect(() => {
+    if (simulando && aguardandoOutraEmpresa.length === 0) setAvisoFim(true);
+  }, [simulando, aguardandoOutraEmpresa.length]);
 
   const base = direcao === 'enviar' ? aEnviar : aReceber;
   const somenteLeitura = grupo === 'total';
@@ -70,12 +86,13 @@ export function TransferenciasScreen({
 
   const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g, direcao)).length;
 
-  // "Aprovações pendentes" é card só para quem aprova. Se o papel muda com
-  // o filtro aberto, o card some — a lista volta para a visão geral em vez
-  // de ficar filtrando por um card que não está mais na tela.
-  const cards = gruposDoPapel(state.papel);
+  // "Aprovações pendentes" é card só para quem aprova daquele lado, e na
+  // simulação é o único card. Se o card selecionado some ao trocar de
+  // direção ou de modo, a lista cai no primeiro card que sobrou — nunca
+  // num grupo que não está mais na tela.
+  const cards = useMemo(() => gruposVisiveis(direcao, simulando), [direcao, simulando]);
   useEffect(() => {
-    if (!cards.some((c) => c.grupo === grupo)) setGrupo('total');
+    if (!cards.some((c) => c.grupo === grupo)) setGrupo(cards[0].grupo);
   }, [cards, grupo]);
 
   const atrasadas = base.filter((t) => atrasada(t));
@@ -95,10 +112,14 @@ export function TransferenciasScreen({
         onVerMobile={onVerMobile}
       />
 
+      {simulando && <FaixaSimulacao onSair={() => dispatch({ type: 'set_modo_aprovador', valor: false })} />}
+
       {/* Primeira camada de navegação: de que lado desta obra a
           transferência está. Os cards de status abaixo só existem dentro
           da direção escolhida — por isso ela vem antes, e com mais peso
-          visual do que eles. */}
+          visual do que eles. Durante a simulação ela não existe: a outra
+          empresa só tem assunto com o que sai daqui. */}
+      {!simulando && (
       <div className="direcao" role="group" aria-label="Direção da transferência">
         <OpcaoDirecao
           ativa={direcao === 'enviar'}
@@ -117,6 +138,7 @@ export function TransferenciasScreen({
           onClick={() => { setDirecao('receber'); setGrupo('total'); }}
         />
       </div>
+      )}
 
       <div className="cards-status">
         {cards.map((c) => (
@@ -134,9 +156,11 @@ export function TransferenciasScreen({
       </div>
 
       <div className="toolbar">
-        <button className="btn btn--primario" onClick={() => setModalSaida(true)}>
-          <Plus size={15} /> Nova transferência
-        </button>
+        {!simulando && (
+          <button className="btn btn--primario" onClick={() => setModalSaida(true)}>
+            <Plus size={15} /> Nova transferência
+          </button>
+        )}
         <div className="campo-busca">
           <Search size={15} />
           <input placeholder="Pesquisar por código, obra ou insumo..." value={busca} onChange={(e) => setBusca(e.target.value)} />
@@ -164,7 +188,7 @@ export function TransferenciasScreen({
           texto={direcao === 'enviar'
             ? 'Quando esta obra tiver sobra de material, registre uma Saída de Estoque do tipo Transferência para reservar a quantidade e mandar para outra obra.'
             : 'Assim que outra obra despachar material para cá, ele aparece aqui com a previsão de chegada.'}
-          acao={direcao === 'enviar' && grupo === 'total'
+          acao={!simulando && direcao === 'enviar' && grupo === 'total'
             ? <button className="btn btn--primario" onClick={() => setModalSaida(true)}><Plus size={15} /> Nova transferência</button>
             : undefined}
         />
@@ -198,7 +222,62 @@ export function TransferenciasScreen({
       )}
 
       {modalSaida && <RegistrarSaidaModal onFechar={() => setModalSaida(false)} />}
+      {avisoFim && (
+        <ModalFimSimulacao onVoltar={() => {
+          setAvisoFim(false);
+          dispatch({ type: 'set_modo_aprovador', valor: false });
+        }} />
+      )}
     </>
+  );
+}
+
+/* ============================================================
+   Modo de simulação — a outra ponta, emprestada
+
+   O protótipo é o painel de uma empresa só. Aqui o usuário veste,
+   por um instante, o Aprovador de quem vai receber — e a tela
+   deixa isso explícito o tempo todo, para ninguém confundir o que
+   está vendo com o painel da própria obra.
+   ============================================================ */
+function FaixaSimulacao({ onSair }: { onSair: () => void }) {
+  return (
+    <div className="simul-faixa">
+      <UserCheck size={17} />
+      <div>
+        <strong>Você está simulando a outra empresa</strong>
+        Estas são as transferências que <b>{nomeObra(OBRA_ATUAL)}</b> enviou e que dependem do ok de
+        quem vai receber. Aprovar ou reprovar aqui é o que destrava o fluxo — no sistema real, quem
+        faria isso é o Aprovador da outra obra.
+      </div>
+      <button className="btn btn--sm" onClick={onSair}>
+        <ArrowLeft size={13} /> Voltar para minha obra
+      </button>
+    </div>
+  );
+}
+
+function ModalFimSimulacao({ onVoltar }: { onVoltar: () => void }) {
+  return (
+    <Modal
+      titulo="Aprovação registrada"
+      largura="estreito" onFechar={onVoltar}
+      rodape={
+        <button className="btn btn--primario" onClick={onVoltar}>
+          <ArrowLeft size={15} /> Voltar para o fluxo da minha obra
+        </button>
+      }
+    >
+      <Aviso tom="sucesso" titulo="Nada mais depende da outra empresa">
+        A fila de aprovação zerou. Volte para o painel de {nomeObra(OBRA_ATUAL)} para seguir o
+        fluxo — despachar o que foi aprovado, acompanhar o trânsito e conferir o que chegar.
+      </Aviso>
+      <p className="txt-12 txt-muted" style={{ marginTop: 12 }}>
+        O modo de simulação volta a ficar apagado até que outra transferência sua precise do ok de
+        quem vai receber.
+      </p>
+      <div style={{ height: 4 }} />
+    </Modal>
   );
 }
 

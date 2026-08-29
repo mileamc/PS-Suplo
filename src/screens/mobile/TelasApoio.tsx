@@ -190,7 +190,7 @@ export function TelaNotificacoes({ onAbrir }: { onAbrir: (id: string) => void })
   return (
     <>
       <MobTop
-        eyebrow={`Vendo como ${ROLE_LABEL[state.papel]}`}
+        eyebrow={state.modoAprovador ? 'Simulando a outra empresa' : nomeObra(OBRA_ATUAL)}
         titulo="Notificações"
       />
       <div className="mob-corpo">

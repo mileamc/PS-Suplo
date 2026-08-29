@@ -3,6 +3,7 @@ import type {
   AvaliacaoEntrega, Notificacao, Role, TransferItem, Transferencia, TransferStatus, EventoTipo,
 } from '../domain/types';
 import { STATUS_RESERVA, STATUS_TRANSITO, temDivergencia } from '../domain/status';
+import { pendentesDeAprovacaoExterna } from '../domain/machine';
 import { REGRAS } from '../domain/notificacoes';
 import { TRANSFERENCIAS_SEED } from '../data/transferencias';
 import { INSUMOS } from '../data/insumos';
@@ -25,10 +26,18 @@ export interface AppState {
   transferencias: Transferencia[];
   notificacoes: Notificacao[];
   toasts: Toast[];
-  /** Parâmetro por cliente (seção 2). Desligado = pula "Aguardando aprovação". */
+  /**
+   * Parâmetro por cliente (seção 2). Fixo em ligado no protótipo: é a
+   * aprovação que cria a única pendência da outra empresa, e é ela que o
+   * modo de simulação existe para resolver.
+   */
   aprovacaoAtiva: boolean;
-  /** Persona ativa na demo — muda quais ações ficam habilitadas (seção 3). */
-  papel: Role;
+  /**
+   * Modo de simulação: o usuário empresta, por um instante, o papel de
+   * Aprovador da empresa que vai receber. Fora dele o protótipo é o
+   * painel de uma empresa só.
+   */
+  modoAprovador: boolean;
   estadoTela: EstadoTela;
   saldoDelta: Record<string, number>;
   seq: number;
@@ -45,7 +54,7 @@ const initialState: AppState = {
   notificacoes: [],
   toasts: [],
   aprovacaoAtiva: true,
-  papel: 'origem',
+  modoAprovador: false,
   estadoTela: 'normal',
   saldoDelta: {},
   seq: 144,
@@ -66,8 +75,7 @@ export type Action =
   | { type: 'cancelar'; id: string; motivo: string }
   | { type: 'reenviar'; id: string }
   | { type: 'encerrar_divergencia'; id: string; observacao: string }
-  | { type: 'set_aprovacao'; valor: boolean }
-  | { type: 'set_papel'; valor: Role }
+  | { type: 'set_modo_aprovador'; valor: boolean }
   | { type: 'set_estado_tela'; valor: EstadoTela }
   | { type: 'ler_notificacoes' }
   | { type: 'toast'; toast: Omit<Toast, 'id'> }
@@ -401,8 +409,7 @@ function reducer(state: AppState, action: Action): AppState {
       };
     }
 
-    case 'set_aprovacao': return { ...state, aprovacaoAtiva: action.valor };
-    case 'set_papel': return { ...state, papel: action.valor };
+    case 'set_modo_aprovador': return { ...state, modoAprovador: action.valor };
     case 'set_estado_tela': return { ...state, estadoTela: action.valor };
     case 'ler_notificacoes':
       return { ...state, notificacoes: state.notificacoes.map((n) => ({ ...n, lida: true })) };
@@ -458,6 +465,8 @@ interface Ctx {
   aReceber: Transferencia[];
   notificacoesDoPapel: Notificacao[];
   saldo: (insumoId: string) => SaldoInsumo;
+  /** Transferências saindo daqui paradas na aprovação da outra empresa. */
+  aguardandoOutraEmpresa: Transferencia[];
 }
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -473,9 +482,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     () => state.transferencias.filter((t) => t.obraDestinoId === OBRA_ATUAL),
     [state.transferencias],
   );
+  // No painel da própria empresa, interessa o que ela recebe como origem
+  // ou destino; dentro do modo de simulação, o que a outra ponta recebe.
   const notificacoesDoPapel = useMemo(
-    () => state.notificacoes.filter((n) => n.destinatarios.includes(state.papel)),
-    [state.notificacoes, state.papel],
+    () => state.notificacoes.filter((n) => (state.modoAprovador
+      ? n.destinatarios.includes('aprovador')
+      : n.destinatarios.some((p) => p === 'origem' || p === 'destino'))),
+    [state.notificacoes, state.modoAprovador],
+  );
+  const aguardandoOutraEmpresa = useMemo(
+    () => pendentesDeAprovacaoExterna(state.transferencias, OBRA_ATUAL),
+    [state.transferencias],
   );
   const saldo = useCallback(
     (insumoId: string) => saldosDoInsumo(insumoId, state.transferencias, state.saldoDelta),
@@ -483,8 +500,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ state, dispatch, aEnviar, aReceber, notificacoesDoPapel, saldo }),
-    [state, aEnviar, aReceber, notificacoesDoPapel, saldo],
+    () => ({ state, dispatch, aEnviar, aReceber, notificacoesDoPapel, saldo, aguardandoOutraEmpresa }),
+    [state, aEnviar, aReceber, notificacoesDoPapel, saldo, aguardandoOutraEmpresa],
   );
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

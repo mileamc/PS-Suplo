@@ -1,4 +1,4 @@
-import type { Role, Transferencia } from './types';
+import type { Transferencia } from './types';
 import {
   STATUS_APROVACAO, STATUS_ATIVOS, STATUS_CANCELADOS, STATUS_EM_ROTA,
   STATUS_FVM, STATUS_RESERVA, divergenciaPendente,
@@ -55,20 +55,20 @@ export interface DefGrupo {
   rotulo: string;
   /** Família de estado que dá a cor do card — a mesma da tag. */
   familia: string;
-  /** Card exclusivo de um papel; ausente = todo mundo vê. */
-  soPara?: Role;
+  /** Card que só existe para quem pode decidir a aprovação. */
+  soParaAprovador?: boolean;
 }
 
 /**
  * Ordem dos cards. "Aprovações pendentes" fica ao lado de "Reservados"
- * porque é um recorte dele: para o Aprovador, é a fila de trabalho.
- * Para os outros papéis o card não existe — a pendência aparece só como
- * tag na linha da transferência.
+ * porque é um recorte dele: para quem decide a aprovação, é a fila de
+ * trabalho. Para os demais o card não existe — a pendência aparece só
+ * como tag na linha da transferência.
  */
 export const GRUPOS: DefGrupo[] = [
   { grupo: 'total', rotulo: 'Total', familia: '' },
   { grupo: 'reservados', rotulo: 'Reservados', familia: 'reservado' },
-  { grupo: 'aprovacoes', rotulo: 'Aprovações pendentes', familia: 'aprovacao', soPara: 'aprovador' },
+  { grupo: 'aprovacoes', rotulo: 'Aprovações pendentes', familia: 'aprovacao', soParaAprovador: true },
   { grupo: 'transito', rotulo: 'Em trânsito', familia: 'transito' },
   { grupo: 'atrasados', rotulo: 'Atrasados', familia: '' },
   { grupo: 'fvm', rotulo: 'FVM pendente', familia: 'fvm' },
@@ -78,8 +78,18 @@ export const GRUPOS: DefGrupo[] = [
   { grupo: 'cancelados', rotulo: 'Cancelados', familia: 'cancelado' },
 ];
 
-export function gruposDoPapel(papel: Role): DefGrupo[] {
-  return GRUPOS.filter((g) => !g.soPara || g.soPara === papel);
+/**
+ * Quem aprova depende do lado da tela: a própria obra decide o que chega
+ * até ela, e a empresa simulada decide o que sai daqui. Fora dessas duas
+ * combinações o card de aprovações não tem dono, então não aparece.
+ *
+ * Dentro da simulação sobra só ele: a outra empresa não tem o que fazer
+ * com o estoque, o trânsito ou a conferência desta obra, e deixar esses
+ * cards clicáveis só levaria a listas onde ela não decide nada.
+ */
+export function gruposVisiveis(direcao: Direcao, modoAprovador: boolean): DefGrupo[] {
+  if (modoAprovador) return GRUPOS.filter((g) => g.grupo === 'aprovacoes');
+  return GRUPOS.filter((g) => !g.soParaAprovador || direcao === 'receber');
 }
 
 export function rotuloGrupo(g: Grupo): string {

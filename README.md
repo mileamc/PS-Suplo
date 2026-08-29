@@ -43,15 +43,25 @@ Os caminhos seguem os citados no fluxograma (*"card em /stocks/transfers (2 obra
 
 ## Barra de demonstração (topo)
 
-Três controles que existem para tornar a especificação verificável na tela:
+O protótipo é o painel de **uma empresa só** — a obra atual. Ela é a origem no que sai daqui e o
+destino no que chega, e como o Aprovador é sempre da obra que recebe, ela também aprova o que chega
+até ela. Não há troca de persona: em qualquer tela, quem age é ela.
 
-- **Ver como** — alterna o papel ativo (Obra de origem · Aprovador · Obra de destino). Muda quais
-  ações ficam habilitadas no detalhe e quais notificações aparecem no sino. É a seção 3 e a seção 4
-  ficando visíveis.
-- **Aprovação obrigatória** — o parâmetro por cliente da seção 2. Desligado, o fluxo pula
-  "Aguardando aprovação" e vai de Reservado direto para o despacho. O parâmetro só decide se o
-  estado existe, sem duplicar a árvore de decisão.
+Sobra um único papel que ela não tem: o **Aprovador da outra empresa**, que precisa dar o ok no que
+sai daqui. Sem ele o fluxo não fecha dentro de um painel único — e é só isso que a barra do topo
+ainda faz:
+
+- **Aprovador da outra empresa** — fica apagado enquanto nada depende da outra ponta. Quando uma
+  transferência sai daqui e para na aprovação, o botão acende, pulsa e se anuncia num balão. Ao
+  entrar, a tela vira a fila daquela empresa (e só ela: nem estoque, nem trânsito, nem conferência),
+  com uma faixa dizendo o tempo todo que aquilo não é o painel da própria obra. Aprovado o que havia,
+  um aviso traz o usuário de volta e o botão apaga de novo. No modo apagado, o hover explica que ele
+  só liga quando alguma transferência espera o ok de quem vai receber.
 - **Estado da tela** — Normal / Carregando / Vazio / Erro (seção 11).
+
+A aprovação obrigatória (o parâmetro por cliente da seção 2) deixou de ser um interruptor na barra e
+passou a ficar sempre ligada: é ela que cria a única pendência da outra empresa, e sem ela o modo de
+simulação não teria o que resolver.
 
 ---
 

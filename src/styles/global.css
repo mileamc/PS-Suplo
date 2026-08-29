@@ -645,6 +645,84 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 }
 .demobar__grupo { display: flex; align-items: center; gap: 7px; }
 .demobar__rotulo { color: var(--dark-text-muted); font-weight: 500; }
+.demobar__espaco { flex: 1; }
+
+/* ============================================================
+   Modo de simulação — o Aprovador da outra empresa
+
+   Apagado é o estado normal: o protótipo é o painel de UMA
+   empresa, e o botão só existe porque um passo do fluxo mora do
+   outro lado. Quando esse passo aparece, ele acende, pulsa e se
+   explica sozinho — e volta a apagar quando a fila zera.
+   ============================================================ */
+.simul { position: relative; display: flex; align-items: center; }
+.simul__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: var(--r-md);
+  border: 1px dashed rgba(255,255,255,.18); background: transparent;
+  color: rgba(255,255,255,.34); font-size: var(--fs-12); font-weight: 600;
+  cursor: not-allowed; transition: color .18s, border-color .18s, background .18s;
+}
+.simul__btn--aceso {
+  cursor: pointer; border-style: solid; border-color: var(--amber);
+  background: rgba(245,165,36,.14); color: #ffd591;
+  animation: simul-pulsa 2.4s ease-in-out infinite;
+}
+.simul__btn--aceso:hover { background: rgba(245,165,36,.24); color: #ffe1b0; }
+@keyframes simul-pulsa {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,165,36,.34); }
+  50%      { box-shadow: 0 0 0 5px rgba(245,165,36,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .simul__btn--aceso { animation: none; box-shadow: 0 0 0 2px rgba(245,165,36,.30); }
+}
+.simul__n {
+  min-width: 17px; height: 17px; padding: 0 5px; border-radius: var(--r-full);
+  background: var(--amber); color: #3d2600; font-size: var(--fs-11); font-weight: 800;
+  display: grid; place-items: center;
+}
+
+/* Balão que se anuncia quando a pendência aparece. */
+.simul__dica {
+  position: absolute; top: calc(100% + 10px); left: 0; z-index: 70;
+  width: 288px; padding: 12px 30px 12px 13px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--amber); border-radius: var(--r-lg); box-shadow: var(--sh-3);
+  animation: simul-entra .22s ease-out;
+}
+@keyframes simul-entra { from { opacity: 0; transform: translateY(-5px) } to { opacity: 1; transform: none } }
+.simul__dica strong { display: block; font-size: var(--fs-13); margin-bottom: 4px; }
+.simul__dica p { margin: 0; font-size: var(--fs-12); color: var(--text-muted); line-height: 1.5; }
+.simul__dica-seta {
+  position: absolute; top: -6px; left: 22px; width: 10px; height: 10px;
+  background: var(--surface); border-left: 1px solid var(--amber); border-top: 1px solid var(--amber);
+  transform: rotate(45deg);
+}
+.simul__dica-x {
+  position: absolute; top: 7px; right: 7px; width: 20px; height: 20px;
+  border: 0; background: transparent; color: var(--text-faint);
+  display: grid; place-items: center; border-radius: var(--r-sm);
+}
+.simul__dica-x:hover { background: var(--surface-3); color: var(--text-2); }
+
+/* Selo do modo ativo, dentro da própria barra. */
+.simul__selo {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: var(--r-full);
+  background: var(--amber); color: #3d2600; font-size: var(--fs-11); font-weight: 800;
+  text-transform: uppercase; letter-spacing: .03em;
+}
+
+/* Faixa dentro da tela: enquanto durar, nada aqui é o painel da obra. */
+.simul-faixa {
+  display: flex; align-items: center; gap: 12px; margin-top: 16px;
+  padding: 12px 14px; border-radius: var(--r-lg);
+  background: var(--amber-bg); border: 1px solid var(--amber); color: var(--amber-fg);
+}
+.simul-faixa > svg { flex-shrink: 0; }
+.simul-faixa > div { flex: 1; font-size: var(--fs-12); line-height: 1.5; }
+.simul-faixa strong { display: block; font-size: var(--fs-13); margin-bottom: 2px; }
+.simul-faixa .btn { flex-shrink: 0; }
 .segmentado { display: inline-flex; background: rgba(255,255,255,.07); border-radius: var(--r-md); padding: 2px; gap: 2px; }
 .segmentado button {
   border: 0; background: transparent; color: var(--dark-text-muted);
