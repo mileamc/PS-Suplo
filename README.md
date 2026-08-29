@@ -51,12 +51,15 @@ Sobra um único papel que ela não tem: o **Aprovador da outra empresa**, que pr
 sai daqui. Sem ele o fluxo não fecha dentro de um painel único — e é só isso que a barra do topo
 ainda faz:
 
-- **Aprovador da outra empresa** — fica apagado enquanto nada depende da outra ponta. Quando uma
-  transferência sai daqui e para na aprovação, o botão acende, pulsa e se anuncia num balão. Ao
-  entrar, a tela vira a fila daquela empresa (e só ela: nem estoque, nem trânsito, nem conferência),
-  com uma faixa dizendo o tempo todo que aquilo não é o painel da própria obra. Aprovado o que havia,
-  um aviso traz o usuário de volta e o botão apaga de novo. No modo apagado, o hover explica que ele
-  só liga quando alguma transferência espera o ok de quem vai receber.
+- **Aprovador da outra empresa** — o protótipo abre com a fila vazia e o botão apagado: nada nasce
+  esperando o ok de fora. Quando o próprio usuário cria uma transferência e ela para na aprovação, o
+  botão acende, pulsa e se anuncia num balão. Ao entrar, a tela continua sendo um painel completo —
+  quem aprova precisa ver o que já mandou, o que está na estrada e o que chegou para decidir bem — e
+  ganha uma **seção a mais no topo**, "Aguardando sua aprovação", onde a decisão acontece com as duas
+  ações à mão, sem abrir a transferência. Uma faixa lembra o tempo todo que aquilo não é o painel da
+  própria obra. Aprovado o que havia, um aviso traz o usuário de volta e o botão apaga de novo. No
+  modo apagado, o hover explica que ele só liga quando alguma transferência espera o ok de quem vai
+  receber.
 - **Estado da tela** — Normal / Carregando / Vazio / Erro (seção 11).
 
 A aprovação obrigatória (o parâmetro por cliente da seção 2) deixou de ser um interruptor na barra e

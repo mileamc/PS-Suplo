@@ -713,6 +713,42 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
   text-transform: uppercase; letter-spacing: .03em;
 }
 
+/* ------------------------------------------------------------
+   A seção a mais de quem aprova. O resto da tela é o painel de
+   sempre; aqui é o único lugar em que se decide, então ela fica
+   no topo, marcada, e resolve o caso simples sem abrir nada.
+   ------------------------------------------------------------ */
+.aprov {
+  margin-top: 14px; padding: 14px 16px 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--st-aprovacao); border-radius: var(--r-lg);
+  box-shadow: var(--sh-1);
+}
+.aprov__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.aprov__titulo {
+  display: flex; align-items: center; gap: 8px; margin: 0;
+  font-size: var(--fs-14); font-weight: 700; color: var(--text);
+}
+.aprov__titulo > svg { color: var(--st-aprovacao); }
+.aprov__n {
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--r-full);
+  background: var(--st-aprovacao-bg); color: var(--st-aprovacao-fg);
+  font-size: var(--fs-11); font-weight: 800; display: grid; place-items: center;
+}
+.aprov__sub { margin: 5px 0 0; font-size: var(--fs-12); color: var(--text-muted); line-height: 1.5; }
+.aprov__vazio {
+  display: flex; align-items: center; gap: 7px; padding: 12px 0 14px;
+  font-size: var(--fs-12); color: var(--green-fg); font-weight: 600;
+}
+.aprov__item {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 13px 0; border-top: 1px solid var(--border);
+}
+.aprov__item:first-of-type { margin-top: 12px; }
+.aprov__dados { flex: 1; min-width: 240px; text-align: left; border: 0; background: none; cursor: pointer; }
+.aprov__dados:hover .item-transf__codigo { color: var(--brand-700); }
+.aprov__acoes { display: flex; gap: 8px; flex-shrink: 0; }
+
 /* Faixa dentro da tela: enquanto durar, nada aqui é o painel da obra. */
 .simul-faixa {
   display: flex; align-items: center; gap: 12px; margin-top: 16px;

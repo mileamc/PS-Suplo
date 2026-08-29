@@ -83,13 +83,13 @@ export const GRUPOS: DefGrupo[] = [
  * até ela, e a empresa simulada decide o que sai daqui. Fora dessas duas
  * combinações o card de aprovações não tem dono, então não aparece.
  *
- * Dentro da simulação sobra só ele: a outra empresa não tem o que fazer
- * com o estoque, o trânsito ou a conferência desta obra, e deixar esses
- * cards clicáveis só levaria a listas onde ela não decide nada.
+ * Dentro da simulação a tela continua completa — quem aprova precisa ver
+ * o que já mandou, o que está na estrada e o que chegou para decidir bem;
+ * a fila de aprovação ganha uma seção própria em cima, não a tela inteira.
  */
 export function gruposVisiveis(direcao: Direcao, modoAprovador: boolean): DefGrupo[] {
-  if (modoAprovador) return GRUPOS.filter((g) => g.grupo === 'aprovacoes');
-  return GRUPOS.filter((g) => !g.soParaAprovador || direcao === 'receber');
+  const podeAprovar = modoAprovador ? direcao === 'enviar' : direcao === 'receber';
+  return GRUPOS.filter((g) => !g.soParaAprovador || podeAprovar);
 }
 
 export function rotuloGrupo(g: Grupo): string {

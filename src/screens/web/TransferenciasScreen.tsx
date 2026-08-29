@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Search, ChevronLeft, ChevronRight,
-  AlertCircle, CalendarClock, Plus, Package, Calendar as CalIcon, List,
+  AlertCircle, CalendarClock, Plus, Package, Calendar as CalIcon, List, X,
   Archive, Truck, CheckCircle2, AlertTriangle, FileText, XCircle, Eye,
-  Stamp, ClipboardCheck, UserCheck, ArrowLeft,
+  Stamp, ClipboardCheck, UserCheck, ArrowLeft, Check,
 } from 'lucide-react';
 import { TelaHeader } from '../../components/Shell';
 import {
@@ -19,6 +19,7 @@ import {
 import { fmtData } from '../../domain/notificacoes';
 import type { Transferencia } from '../../domain/types';
 import { RegistrarSaidaModal } from './RegistrarSaidaModal';
+import { ReprovarModal } from './TransferenciaModais';
 
 type Visao = 'lista' | 'calendario';
 
@@ -64,7 +65,9 @@ export function TransferenciasScreen({
   const simulando = state.modoAprovador;
   const [avisoFim, setAvisoFim] = useState(false);
   useEffect(() => {
-    if (simulando) { setDirecao('enviar'); setGrupo('aprovacoes'); setVisao('lista'); }
+    // Abre no panorama, não na fila: a fila tem seção própria logo acima
+    // dos cards, e quem aprova precisa do resto da tela para decidir.
+    if (simulando) { setDirecao('enviar'); setGrupo('total'); setVisao('lista'); }
     else setAvisoFim(false);
   }, [simulando]);
   // Fila zerada dentro do modo: o trabalho da outra empresa acabou e o
@@ -113,6 +116,13 @@ export function TransferenciasScreen({
       />
 
       {simulando && <FaixaSimulacao onSair={() => dispatch({ type: 'set_modo_aprovador', valor: false })} />}
+      {simulando && (
+        <PainelAprovacoes
+          pendentes={aguardandoOutraEmpresa}
+          onAbrir={onAbrir}
+          onVerTodas={() => setGrupo('aprovacoes')}
+        />
+      )}
 
       {/* Primeira camada de navegação: de que lado desta obra a
           transferência está. Os cards de status abaixo só existem dentro
@@ -254,6 +264,88 @@ function FaixaSimulacao({ onSair }: { onSair: () => void }) {
         <ArrowLeft size={13} /> Voltar para minha obra
       </button>
     </div>
+  );
+}
+
+/**
+ * A seção a mais de quem aprova.
+ *
+ * O resto da tela segue sendo o painel completo — o que já foi mandado, o
+ * que está na estrada, o que chegou. Esta seção é o único lugar onde a
+ * decisão acontece, e por isso fica no topo, com as duas ações à mão: não
+ * é preciso abrir a transferência para aprovar o caso simples.
+ */
+function PainelAprovacoes({
+  pendentes, onAbrir, onVerTodas,
+}: { pendentes: Transferencia[]; onAbrir: (id: string) => void; onVerTodas: () => void }) {
+  const { dispatch } = useStore();
+  const [reprovando, setReprovando] = useState<Transferencia | null>(null);
+
+  const total = pendentes.reduce(
+    (s, t) => s + t.itens.reduce((v, i) => v + i.qtdEnviada * i.custoUnitario, 0), 0,
+  );
+
+  return (
+    <section className="aprov">
+      <header className="aprov__topo">
+        <div>
+          <h2 className="aprov__titulo">
+            <Stamp size={16} /> Aguardando sua aprovação
+            <span className="aprov__n">{pendentes.length}</span>
+          </h2>
+          <p className="aprov__sub">
+            {pendentes.length === 0
+              ? 'Nada parado na sua mesa. O resto da tela é o acompanhamento do que já foi decidido.'
+              : `${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} em material esperando uma decisão. Enquanto não houver uma, a quantidade fica travada no estoque de quem envia.`}
+          </p>
+        </div>
+        {pendentes.length > 0 && (
+          <button className="btn btn--sm" onClick={onVerTodas}>Ver no filtro</button>
+        )}
+      </header>
+
+      {pendentes.length === 0 ? (
+        <div className="aprov__vazio">
+          <Check size={15} /> Fila limpa.
+        </div>
+      ) : pendentes.map((t) => (
+        <div className="aprov__item" key={t.id}>
+          <button className="aprov__dados" onClick={() => onAbrir(t.id)}>
+            <div className="linha" style={{ gap: 9 }}>
+              <span className="item-transf__codigo">{t.codigo}</span>
+              <BadgeStatus status={t.status} compacto />
+              {t.ciclo > 0 && <span className="badge badge--roxo">{t.ciclo}º reenvio</span>}
+            </div>
+            <div className="rota mt-8">
+              <span className="rota__obra">{nomeObra(t.obraOrigemId)}</span>
+              <ArrowRight size={13} />
+              <span className="rota__obra">{nomeObra(t.obraDestinoId)}</span>
+            </div>
+            <div className="item-transf__resumo">
+              {t.itens.length === 1
+                ? `${t.itens[0].nome} · ${t.itens[0].qtdEnviada.toLocaleString('pt-BR')} ${t.itens[0].unidade}`
+                : `${t.itens.length} insumos · ${t.itens.reduce((s, i) => s + i.qtdEnviada, 0).toLocaleString('pt-BR')} un. no total`}
+              {' · '}
+              {t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0)
+                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </div>
+          </button>
+          <div className="aprov__acoes">
+            <button className="btn btn--sm" onClick={() => setReprovando(t)}>
+              <X size={13} /> Reprovar
+            </button>
+            <button
+              className="btn btn--sm btn--primario"
+              onClick={() => dispatch({ type: 'aprovar', id: t.id })}
+            >
+              <Check size={13} /> Aprovar
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {reprovando && <ReprovarModal t={reprovando} onFechar={() => setReprovando(null)} />}
+    </section>
   );
 }
 

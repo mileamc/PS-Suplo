@@ -82,6 +82,32 @@
 .mob-simul-faixa > div { flex: 1; font-size: 12.5px; line-height: 1.45; }
 .mob-simul-faixa b { display: block; font-size: 13.5px; margin-bottom: 2px; }
 .mob-simul-faixa .mob-btn { flex-shrink: 0; width: auto; padding: 0 14px; min-height: 36px; }
+
+/* A seção a mais de quem aprova, acima dos chips de estado. */
+.mob-aprov {
+  margin-bottom: 14px; padding: 12px 13px 4px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--st-aprovacao); border-radius: 14px;
+}
+.mob-aprov__t {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13.5px; font-weight: 700; color: var(--text);
+}
+.mob-aprov__t > svg { color: var(--st-aprovacao); }
+.mob-aprov__n {
+  min-width: 19px; height: 19px; padding: 0 6px; border-radius: var(--r-full);
+  background: var(--st-aprovacao-bg); color: var(--st-aprovacao-fg);
+  font-size: 11px; font-weight: 800; display: grid; place-items: center;
+}
+.mob-aprov__vazio { margin: 8px 0 10px; font-size: 12.5px; color: var(--text-muted); }
+.mob-aprov__item {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 11px 0; border-top: 1px solid var(--border); margin-top: 10px;
+}
+.mob-aprov__dados { flex: 1; min-width: 150px; text-align: left; border: 0; background: none; }
+.mob-aprov__dados b { display: block; font-size: 14.5px; font-weight: 700; }
+.mob-aprov__dados span { display: block; margin-top: 3px; font-size: 12.5px; color: var(--text-muted); }
+.mob-aprov__item .mob-btn { width: auto; padding: 0 16px; min-height: 40px; flex-shrink: 0; }
 .mob-icone__ponto {
   position: absolute; top: 6px; right: 6px; width: 9px; height: 9px;
   border-radius: 50%; background: var(--brand-500); border: 2px solid #10202b;

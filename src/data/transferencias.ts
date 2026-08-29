@@ -99,16 +99,21 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     itens: [item('in-2995-p', 300)],
     eventos: [ev('criada', '2026-08-28T16:20:00', 'Rafael Menezes', 'origem', 'Suplos Tower II')],
   },
+  /* Nasce já aprovada de propósito: o protótipo começa sem nada esperando
+     o ok da outra empresa, e o botão de simulação só acende quando o
+     próprio usuário cria uma transferência. */
   {
-    id: 'tr-140', codigo: 'TR-000140', status: 'aguardando_aprovacao',
+    id: 'tr-140', codigo: 'TR-000140', status: 'aprovado',
     obraOrigemId: 'ob-002', obraDestinoId: 'ob-007',
     criadaPor: 'Rafael Menezes', criadaEm: '2026-08-27T11:05:00',
     entrada: 'requisicao', requisicaoCodigo: 'REQ-4471',
     observacao: 'Atende a requisição interna 4471 da Tower VII.',
     assinatura: ASSINATURA_MOCK, ciclo: 0,
     itens: [item('in-12113-a', 2000)],
+    aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-08-27T14:30:00',
     eventos: [
       ev('criada', '2026-08-27T11:05:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
+      ev('aprovada', '2026-08-27T14:30:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower VII'),
     ],
   },
   {

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Plus, AlertCircle,
   ClipboardCheck, Truck, PackageCheck, SlidersHorizontal, Send, FileText, Eye, UserCheck,
+  Stamp, Check,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { OBRA_ATUAL, nomeObra } from '../../data/obras';
@@ -28,7 +29,8 @@ export function TelaTransferencias({
   // espera o ok da outra empresa.
   const simulando = state.modoAprovador;
   useEffect(() => {
-    if (simulando) { setDirecao('enviar'); setFiltro('aprovacoes'); }
+    // Abre no panorama: a fila tem seção própria acima dos chips.
+    if (simulando) { setDirecao('enviar'); setFiltro('total'); }
   }, [simulando]);
 
   const base = direcao === 'enviar' ? aEnviar : aReceber;
@@ -81,6 +83,34 @@ export function TelaTransferencias({
               >
                 Voltar
               </button>
+            </div>
+
+            {/* A seção a mais: o resto da tela continua sendo o painel
+                completo, e é só aqui que se decide. */}
+            <div className="mob-aprov">
+              <div className="mob-aprov__t">
+                <Stamp size={15} /> Aguardando sua aprovação
+                <span className="mob-aprov__n">{aguardandoOutraEmpresa.length}</span>
+              </div>
+              {aguardandoOutraEmpresa.length === 0 ? (
+                <p className="mob-aprov__vazio">Fila limpa. Abaixo, o acompanhamento do resto.</p>
+              ) : aguardandoOutraEmpresa.map((t) => (
+                <div className="mob-aprov__item" key={t.id}>
+                  <button className="mob-aprov__dados" onClick={() => onAbrir(t.id)}>
+                    <b>{t.codigo}</b>
+                    <span>
+                      para {nomeObra(t.obraDestinoId)} ·{' '}
+                      {brl(t.itens.reduce((s2, i) => s2 + i.qtdEnviada * i.custoUnitario, 0))}
+                    </span>
+                  </button>
+                  <button
+                    className="mob-btn mob-btn--primario mob-btn--sm"
+                    onClick={() => dispatch({ type: 'aprovar', id: t.id })}
+                  >
+                    <Check size={16} /> Aprovar
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
