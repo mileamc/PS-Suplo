@@ -206,7 +206,8 @@ depois dela, e isso deixava os iframes do protótipo em branco em redes que não
 nos fallbacks (Georgia para o display, system sans para o corpo).
 
 **Publicação.** As rotas do protótipo são caminhos reais, então o host precisa de fallback de
-SPA (servir `index.html` para qualquer rota). `npm run preview` já faz isso.
+SPA (servir `index.html` para qualquer rota). `npm run preview` já faz isso localmente, e o
+`vercel.json` na raiz configura o mesmo comportamento no Vercel.
 
 
 ---

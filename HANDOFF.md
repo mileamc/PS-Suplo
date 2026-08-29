@@ -51,6 +51,10 @@ npm run build    # tsc -b && vite build — precisa passar antes de qualquer com
 npm run lint     # tsc --noEmit
 ```
 
+No Vercel, `vercel.json` reescreve as rotas da SPA para `index.html`. Sem esse
+arquivo, acessos diretos a `/stocks`, `/stocks/transfers` e `/embed/mobile`
+retornam 404, mesmo que a página inicial funcione.
+
 Não há suíte de testes. **A verificação é visual**: suba o dev server e dirija a
 tela com Playwright (Chromium já vem instalado em
 `/opt/pw-browsers/chromium`; não rode `playwright install`). Foi assim que todas
