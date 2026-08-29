@@ -1,0 +1,106 @@
+<svg viewBox="0 0 1920 700" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="1920" height="700" fill="#ffffff"/>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#575c62" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<!-- main line arrows -->
+<line x1="160" y1="350" x2="216" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="400" y1="350" x2="426" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="610" y1="350" x2="666" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="850" y1="350" x2="906" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="1090" y1="350" x2="1116" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="1300" y1="350" x2="1356" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="1580" y1="350" x2="1636" y2="350" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- branch: reprovado -->
+<line x1="520" y1="420" x2="520" y2="476" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M520 540 L520 600 L100 600 L100 391" fill="none" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- branch: cancelado -->
+<line x1="310" y1="385" x2="310" y2="476" stroke="#575c62" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+<path d="M310 540 L310 600" fill="none" stroke="#575c62" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+
+<!-- branch: recebido ok -->
+<line x1="1210" y1="280" x2="1210" y2="234" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- branch: divergencia final -->
+<line x1="1740" y1="420" x2="1740" y2="476" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- loop: reenviar -> em transito -->
+<path d="M1740 280 L1740 140 L760 140 L760 311" fill="none" stroke="#575c62" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- labels -->
+<text x="520" y="450" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
+<text x="300" y="588" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">reprovado volta ao estoque</text>
+<text x="1235" y="255" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
+<text x="1740" y="450" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">não</text>
+<text x="1650" y="260" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">sim</text>
+<text x="1150" y="130" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="middle">reenvia corrigido</text>
+<text x="330" y="430" font-family="sans-serif" font-size="14" fill="#383b3f" text-anchor="start">cancelado pelo criador</text>
+
+<!-- Estoque -->
+<rect x="40" y="325" width="120" height="50" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
+<text x="100" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Estoque</text>
+
+<!-- Reservado -->
+<rect x="220" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
+<text x="310" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Reservado</text>
+<text x="310" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Quantidade travada</text>
+
+<!-- Cancelado -->
+<rect x="230" y="480" width="160" height="60" rx="8" fill="#ecf0f5" stroke="#092549" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="310" y="505" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Cancelado</text>
+<text x="310" y="526" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Volta ao estoque</text>
+
+<!-- Diamond 1 -->
+<polygon points="520,280 610,350 520,420 430,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
+<text x="520" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Aprovado?</text>
+
+<!-- Reprovado -->
+<rect x="440" y="480" width="160" height="60" rx="8" fill="#ecf0f5" stroke="#092549" stroke-width="1"/>
+<text x="520" y="505" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Reprovado</text>
+<text x="520" y="526" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Volta ao estoque</text>
+
+<!-- Em transito -->
+<rect x="670" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
+<text x="760" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Em trânsito</text>
+<text x="760" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Material despachado</text>
+
+<!-- Avaliacao -->
+<rect x="910" y="315" width="180" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
+<text x="1000" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Avaliação de entrega</text>
+<text x="1000" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Confere qtd. recebida</text>
+
+<!-- Diamond 2 -->
+<polygon points="1210,280 1300,350 1210,420 1120,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
+<text x="1210" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Divergência?</text>
+
+<!-- Recebido ok -->
+<rect x="1120" y="164" width="180" height="70" rx="8" fill="#f0f6f9" stroke="#2d668e" stroke-width="1"/>
+<text x="1210" y="194" font-family="sans-serif" font-size="15" font-weight="600" fill="#1d435d" text-anchor="middle">Recebido ok</text>
+<text x="1210" y="217" font-family="sans-serif" font-size="13" fill="#2d668e" text-anchor="middle">Sem divergência</text>
+
+<!-- Recebido divergente -->
+<rect x="1360" y="315" width="220" height="70" rx="8" fill="#f2f5f7" stroke="#575c62" stroke-width="1"/>
+<text x="1470" y="345" font-family="sans-serif" font-size="15" font-weight="600" fill="#282b2e" text-anchor="middle">Recebido com divergência</text>
+<text x="1470" y="368" font-family="sans-serif" font-size="13" fill="#575c62" text-anchor="middle">Notifica remetente</text>
+
+<!-- Diamond 3 -->
+<polygon points="1740,280 1840,350 1740,420 1640,350" fill="#e6f0fb" stroke="#185ea5" stroke-width="1"/>
+<text x="1740" y="355" font-family="sans-serif" font-size="15" font-weight="600" fill="#0f4479" text-anchor="middle">Vai reenviar?</text>
+
+<!-- Divergencia final -->
+<rect x="1630" y="480" width="220" height="70" rx="8" fill="#e3e9f1" stroke="#071e3b" stroke-width="1"/>
+<text x="1740" y="510" font-family="sans-serif" font-size="15" font-weight="600" fill="#071e3b" text-anchor="middle">Divergência final</text>
+<text x="1740" y="533" font-family="sans-serif" font-size="13" fill="#071e3b" text-anchor="middle">Registrada para auditoria</text>
+
+<!-- legend -->
+<circle cx="60" cy="650" r="7" fill="#f2f5f7" stroke="#575c62"/><text x="76" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">processo</text>
+<circle cx="190" cy="650" r="7" fill="#e6f0fb" stroke="#185ea5"/><text x="206" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">decisão</text>
+<circle cx="310" cy="650" r="7" fill="#ecf0f5" stroke="#092549"/><text x="326" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">reprovado / cancelado</text>
+<circle cx="500" cy="650" r="7" fill="#f0f6f9" stroke="#2d668e"/><text x="516" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">fim ok</text>
+<circle cx="600" cy="650" r="7" fill="#e3e9f1" stroke="#071e3b"/><text x="616" y="655" font-family="sans-serif" font-size="13" fill="#383b3f">fim com divergência</text>
+</svg>

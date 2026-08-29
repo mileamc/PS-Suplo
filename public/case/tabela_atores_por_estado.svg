@@ -1,0 +1,89 @@
+<svg viewBox="0 0 1380 640" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="1380" height="640" fill="#ffffff"/>
+
+<text x="40" y="30" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e">Quem age em cada estado da transferência</text>
+
+<!-- header -->
+<rect x="40" y="50" width="1300" height="50" fill="#282b2e"/>
+<text x="60" y="80" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Estado</text>
+<text x="380" y="80" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Quem age</text>
+<text x="720" y="80" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Ação possível</text>
+
+<!-- row backgrounds -->
+<rect x="46" y="100" width="1294" height="70" fill="#f2f5f7"/>
+<rect x="46" y="170" width="1294" height="70" fill="#ffffff"/>
+<rect x="46" y="240" width="1294" height="70" fill="#f2f5f7"/>
+<rect x="46" y="310" width="1294" height="70" fill="#ffffff"/>
+<rect x="46" y="380" width="1294" height="70" fill="#f2f5f7"/>
+<rect x="46" y="450" width="1294" height="70" fill="#ffffff"/>
+<rect x="46" y="520" width="1294" height="70" fill="#f2f5f7"/>
+
+<!-- left color bars -->
+<rect x="40" y="100" width="6" height="70" fill="#307bb0"/>
+<rect x="40" y="170" width="6" height="70" fill="#378add"/>
+<rect x="40" y="240" width="6" height="70" fill="#7d848b"/>
+<rect x="40" y="310" width="6" height="70" fill="#7d848b"/>
+<rect x="40" y="380" width="6" height="70" fill="#378add"/>
+<rect x="40" y="450" width="6" height="70" fill="#307bb0"/>
+<rect x="40" y="520" width="6" height="70" fill="#307bb0"/>
+
+<!-- outer border + column dividers -->
+<rect x="40" y="50" width="1300" height="540" fill="none" stroke="#aaaeb3" stroke-width="1"/>
+<line x1="360" y1="50" x2="360" y2="590" stroke="#aaaeb3" stroke-width="1"/>
+<line x1="700" y1="50" x2="700" y2="590" stroke="#aaaeb3" stroke-width="1"/>
+<line x1="40" y1="100" x2="1340" y2="100" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="170" x2="1340" y2="170" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="240" x2="1340" y2="240" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="310" x2="1340" y2="310" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="380" x2="1340" y2="380" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="450" x2="1340" y2="450" stroke="#d1d4d7" stroke-width="1"/>
+<line x1="40" y1="520" x2="1340" y2="520" stroke="#d1d4d7" stroke-width="1"/>
+
+<!-- row 1: Reservado - Origem -->
+<text x="60" y="140" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Reservado</text>
+<rect x="380" y="118" width="90" height="28" rx="14" fill="#f1f6f9" stroke="#307bb0" stroke-width="1"/>
+<text x="425" y="136" font-family="sans-serif" font-size="12" font-weight="600" fill="#1d435d" text-anchor="middle">Origem</text>
+<text x="720" y="140" font-family="sans-serif" font-size="13" fill="#383b3f">Pode cancelar a transferência</text>
+
+<!-- row 2: Aguardando aprovação - Destino -->
+<text x="60" y="197" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Aguardando aprovação</text>
+<rect x="380" y="188" width="90" height="28" rx="14" fill="#e6f0fb" stroke="#378add" stroke-width="1"/>
+<text x="425" y="206" font-family="sans-serif" font-size="12" font-weight="600" fill="#0a2b4d" text-anchor="middle">Destino</text>
+<text x="380" y="228" font-family="sans-serif" font-size="12" fill="#7d848b">papel definido pelo cliente</text>
+<text x="720" y="210" font-family="sans-serif" font-size="13" fill="#383b3f">Aprova ou reprova a transferência</text>
+
+<!-- row 3: Reprovado - Sistema -->
+<text x="60" y="280" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Reprovado</text>
+<rect x="380" y="258" width="90" height="28" rx="14" fill="#f2f5f7" stroke="#7d848b" stroke-width="1"/>
+<text x="425" y="276" font-family="sans-serif" font-size="12" font-weight="600" fill="#282b2e" text-anchor="middle">Sistema</text>
+<text x="720" y="280" font-family="sans-serif" font-size="13" fill="#383b3f">Devolve a quantidade ao disponível da origem</text>
+
+<!-- row 4: Em trânsito - nenhum -->
+<text x="60" y="350" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Em trânsito</text>
+<text x="380" y="350" font-family="sans-serif" font-size="13" fill="#7d848b">— nenhum ator ativo</text>
+<text x="720" y="350" font-family="sans-serif" font-size="13" fill="#383b3f">Nenhuma ação disponível, aguarda chegada</text>
+
+<!-- row 5: Avaliação de entrega (FVM) - Destino -->
+<text x="60" y="410" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Avaliação de entrega (FVM)</text>
+<rect x="380" y="388" width="90" height="28" rx="14" fill="#e6f0fb" stroke="#378add" stroke-width="1"/>
+<text x="425" y="406" font-family="sans-serif" font-size="12" font-weight="600" fill="#0a2b4d" text-anchor="middle">Destino</text>
+<text x="380" y="428" font-family="sans-serif" font-size="12" fill="#7d848b">papel definido pelo cliente</text>
+<text x="720" y="410" font-family="sans-serif" font-size="13" fill="#383b3f">Confirma recebimento ou registra divergência</text>
+
+<!-- row 6: Recebido com divergência - Origem -->
+<text x="60" y="490" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Recebido com divergência</text>
+<rect x="380" y="468" width="90" height="28" rx="14" fill="#f1f6f9" stroke="#307bb0" stroke-width="1"/>
+<text x="425" y="486" font-family="sans-serif" font-size="12" font-weight="600" fill="#1d435d" text-anchor="middle">Origem</text>
+<text x="720" y="490" font-family="sans-serif" font-size="13" fill="#383b3f">Reenvia corrigido ou mantém o registro</text>
+
+<!-- row 7: Cancelado - Origem -->
+<text x="60" y="560" font-family="sans-serif" font-size="14" font-weight="600" fill="#282b2e">Cancelado</text>
+<rect x="380" y="538" width="90" height="28" rx="14" fill="#f1f6f9" stroke="#307bb0" stroke-width="1"/>
+<text x="425" y="556" font-family="sans-serif" font-size="12" font-weight="600" fill="#1d435d" text-anchor="middle">Origem</text>
+<text x="720" y="560" font-family="sans-serif" font-size="13" fill="#383b3f">Devolve ao disponível, antes do despacho</text>
+
+<!-- legend -->
+<circle cx="60" cy="618" r="7" fill="#f1f6f9" stroke="#307bb0"/><text x="76" y="623" font-family="sans-serif" font-size="13" fill="#383b3f">origem (obra que envia)</text>
+<circle cx="280" cy="618" r="7" fill="#e6f0fb" stroke="#378add"/><text x="296" y="623" font-family="sans-serif" font-size="13" fill="#383b3f">destino (obra que recebe — quem exatamente, o cliente configura)</text>
+<circle cx="770" cy="618" r="7" fill="#f2f5f7" stroke="#7d848b"/><text x="786" y="623" font-family="sans-serif" font-size="13" fill="#383b3f">sistema / automático</text>
+</svg>

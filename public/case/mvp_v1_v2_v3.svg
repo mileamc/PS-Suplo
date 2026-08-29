@@ -1,0 +1,99 @@
+<svg viewBox="0 0 1680 760" xmlns="http://www.w3.org/2000/svg">
+<rect width="1680" height="760" fill="#ffffff"/>
+<text x="40" y="34" font-family="sans-serif" font-size="18" font-weight="700" fill="#1b2733">Priorização — MVP, V.1, V.2 e V.3</text>
+<text x="40" y="56" font-family="sans-serif" font-size="13" fill="#5b6a7a">Ancorada nos quatro pedidos explícitos do time de CS, com mesmo peso entre eles.</text>
+
+<!-- MVP -->
+<rect x="40" y="90" width="380" height="600" rx="10" fill="#f4f7fa" stroke="#c7d2de"/>
+<rect x="40" y="90" width="380" height="56" rx="10" fill="#1e3e5f"/>
+<rect x="40" y="120" width="380" height="26" fill="#1e3e5f"/>
+<text x="60" y="124" font-family="sans-serif" font-size="16" font-weight="700" fill="#ffffff">MVP</text>
+<text x="60" y="170" font-family="sans-serif" font-size="12" fill="#3d4b5a">Resolve o problema central do case</text>
+<text x="60" y="186" font-family="sans-serif" font-size="12" fill="#3d4b5a">— sem isso, o risco real continua.</text>
+
+<text x="60" y="205" font-family="sans-serif" font-size="12" font-weight="700" fill="#1e3e5f">Inclui</text>
+<text x="60" y="225" font-family="sans-serif" font-size="12" fill="#2c3a49">• Reservado (quantidade travada)</text>
+<text x="60" y="245" font-family="sans-serif" font-size="12" fill="#2c3a49">• Aguardando aprovação / Aprovado / Reprovado</text>
+<text x="60" y="265" font-family="sans-serif" font-size="12" fill="#2c3a49">• Em trânsito</text>
+<text x="60" y="285" font-family="sans-serif" font-size="12" fill="#2c3a49">• Avaliação de entrega — registra divergência</text>
+<text x="60" y="305" font-family="sans-serif" font-size="12" fill="#2c3a49">• Cancelado</text>
+<text x="60" y="325" font-family="sans-serif" font-size="12" fill="#2c3a49">• Painel de visibilidade por obra</text>
+<text x="72" y="343" font-family="sans-serif" font-size="11" fill="#5b6a7a">  ("A Enviar" / "A Receber")</text>
+
+<text x="60" y="385" font-family="sans-serif" font-size="12" font-weight="700" fill="#828990">Por quê</text>
+<text x="60" y="405" font-family="sans-serif" font-size="11" fill="#5b6a7a">Os 4 itens vêm do mesmo pedido do</text>
+<text x="60" y="421" font-family="sans-serif" font-size="11" fill="#5b6a7a">CS (slide 5), com peso igual entre si —</text>
+<text x="60" y="437" font-family="sans-serif" font-size="11" fill="#5b6a7a">nenhum fica de fora.</text>
+
+<text x="60" y="475" font-family="sans-serif" font-size="12" font-weight="700" fill="#828990">Fica de fora, de propósito</text>
+<text x="60" y="495" font-family="sans-serif" font-size="11" fill="#5b6a7a">Correção automática da divergência —</text>
+<text x="60" y="511" font-family="sans-serif" font-size="11" fill="#5b6a7a">ela é registrada, mas resolvida</text>
+<text x="60" y="527" font-family="sans-serif" font-size="11" fill="#5b6a7a">manualmente por enquanto.</text>
+
+<!-- V1 -->
+<rect x="440" y="90" width="380" height="600" rx="10" fill="#f4f7fa" stroke="#c7d2de"/>
+<rect x="440" y="90" width="380" height="56" rx="10" fill="#2c5b8a"/>
+<rect x="440" y="120" width="380" height="26" fill="#2c5b8a"/>
+<text x="460" y="124" font-family="sans-serif" font-size="16" font-weight="700" fill="#ffffff">V.1</text>
+<text x="460" y="170" font-family="sans-serif" font-size="12" fill="#3d4b5a">Resolve a conveniência de corrigir</text>
+<text x="460" y="186" font-family="sans-serif" font-size="12" fill="#3d4b5a">uma divergência sem sair do sistema.</text>
+
+<text x="460" y="205" font-family="sans-serif" font-size="12" font-weight="700" fill="#2c5b8a">Inclui</text>
+<text x="460" y="225" font-family="sans-serif" font-size="12" fill="#2c3a49">• Loop "Vai reenviar?"</text>
+<text x="472" y="243" font-family="sans-serif" font-size="11" fill="#5b6a7a">Remetente corrige e reenvia; a</text>
+<text x="472" y="259" font-family="sans-serif" font-size="11" fill="#5b6a7a">transferência volta ao estado</text>
+<text x="472" y="275" font-family="sans-serif" font-size="11" fill="#5b6a7a">Reservado — não direto para</text>
+<text x="472" y="291" font-family="sans-serif" font-size="11" fill="#5b6a7a">Em trânsito.</text>
+
+<text x="460" y="330" font-family="sans-serif" font-size="12" font-weight="700" fill="#828990">Trade-off assumido</text>
+<text x="460" y="350" font-family="sans-serif" font-size="11" fill="#5b6a7a">O reenvio passa pela aprovação de</text>
+<text x="460" y="366" font-family="sans-serif" font-size="11" fill="#5b6a7a">novo, do zero. É mais fricção para</text>
+<text x="460" y="382" font-family="sans-serif" font-size="11" fill="#5b6a7a">quem já errou uma vez — decisão</text>
+<text x="460" y="398" font-family="sans-serif" font-size="11" fill="#5b6a7a">deliberada, para não reabrir a</text>
+<text x="460" y="414" font-family="sans-serif" font-size="11" fill="#5b6a7a">mesma brecha que o case pede</text>
+<text x="460" y="430" font-family="sans-serif" font-size="11" fill="#5b6a7a">para fechar: saída sem validação.</text>
+
+<!-- V2 -->
+<rect x="840" y="90" width="380" height="600" rx="10" fill="#f4f7fa" stroke="#c7d2de"/>
+<rect x="840" y="90" width="380" height="56" rx="10" fill="#4a7bad"/>
+<rect x="840" y="120" width="380" height="26" fill="#4a7bad"/>
+<text x="860" y="124" font-family="sans-serif" font-size="16" font-weight="700" fill="#ffffff">V.2</text>
+<text x="860" y="170" font-family="sans-serif" font-size="12" fill="#3d4b5a">Proposta própria — não vem de nenhum pedido do CS.</text>
+
+<text x="860" y="205" font-family="sans-serif" font-size="12" font-weight="700" fill="#4a7bad">Inclui</text>
+<text x="860" y="225" font-family="sans-serif" font-size="12" fill="#2c3a49">• Sugestão automática de destino</text>
+<text x="872" y="243" font-family="sans-serif" font-size="11" fill="#5b6a7a">Ao reservar, cruza o item com</text>
+<text x="872" y="259" font-family="sans-serif" font-size="11" fill="#5b6a7a">obras marcadas com "Estoque</text>
+<text x="872" y="275" font-family="sans-serif" font-size="11" fill="#5b6a7a">Baixo" daquele mesmo material</text>
+<text x="872" y="291" font-family="sans-serif" font-size="11" fill="#5b6a7a">(recurso que já existe no produto)</text>
+<text x="872" y="307" font-family="sans-serif" font-size="11" fill="#5b6a7a">e sugere. A pessoa confirma —</text>
+<text x="872" y="323" font-family="sans-serif" font-size="11" fill="#5b6a7a">não decide sozinho pelo sistema.</text>
+
+<text x="860" y="365" font-family="sans-serif" font-size="12" font-weight="700" fill="#828990">Por que é iniciativa, não pedido</text>
+<text x="860" y="385" font-family="sans-serif" font-size="11" fill="#5b6a7a">Deixo isso explícito para o time:</text>
+<text x="860" y="401" font-family="sans-serif" font-size="11" fill="#5b6a7a">é design proativo, não resposta a</text>
+<text x="860" y="417" font-family="sans-serif" font-size="11" fill="#5b6a7a">uma dor relatada.</text>
+
+<!-- V3 -->
+<rect x="1240" y="90" width="400" height="600" rx="10" fill="#f4f7fa" stroke="#c7d2de"/>
+<rect x="1240" y="90" width="400" height="56" rx="10" fill="#7b9fc4"/>
+<rect x="1240" y="120" width="400" height="26" fill="#7b9fc4"/>
+<text x="1260" y="124" font-family="sans-serif" font-size="16" font-weight="700" fill="#ffffff">V.3</text>
+<text x="1260" y="170" font-family="sans-serif" font-size="12" fill="#3d4b5a">O case pede melhoria além do fluxo atual, não só fechar lacunas.</text>
+
+<text x="1260" y="205" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b81a8">Inclui</text>
+<text x="1260" y="225" font-family="sans-serif" font-size="12" fill="#2c3a49">• Transportador confirma carregamento</text>
+<text x="1272" y="243" font-family="sans-serif" font-size="11" fill="#5b6a7a">segundo ponto de conferência, na saída</text>
+<text x="1260" y="265" font-family="sans-serif" font-size="12" fill="#2c3a49">• SLA de trânsito com alerta de atraso</text>
+<text x="1272" y="283" font-family="sans-serif" font-size="11" fill="#5b6a7a">reaproveita o padrão já existente</text>
+<text x="1272" y="299" font-family="sans-serif" font-size="11" fill="#5b6a7a">na tela de Entregas</text>
+<text x="1260" y="321" font-family="sans-serif" font-size="12" fill="#2c3a49">• Indicador de confiabilidade por obra/rota</text>
+<text x="1260" y="343" font-family="sans-serif" font-size="12" fill="#2c3a49">• Modo offline no mobile</text>
+<text x="1272" y="361" font-family="sans-serif" font-size="11" fill="#5b6a7a">quem confirma está no canteiro,</text>
+<text x="1272" y="377" font-family="sans-serif" font-size="11" fill="#5b6a7a">no sol, de luva, com conexão ruim</text>
+
+<!-- fora de escopo -->
+<rect x="40" y="700" width="1600" height="46" rx="8" fill="#edf1f5" stroke="#c7d2de"/>
+<text x="60" y="727" font-family="sans-serif" font-size="12" font-weight="700" fill="#3d4b5a">Fora de escopo em qualquer versão (decisão consciente):</text>
+<text x="470" y="727" font-family="sans-serif" font-size="12" fill="#5b6a7a">cancelamento/devolução após recebimento confirmado · aprovação 100% automática por valor ou histórico</text>
+</svg>

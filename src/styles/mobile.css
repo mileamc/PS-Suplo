@@ -130,3 +130,7 @@
   content: ''; position: absolute; left: 0; top: 7px; width: 6px; height: 6px;
   border-radius: 50%; background: var(--brand-600);
 }
+
+/* Embutido no frame de celular do site: ocupa todo o iframe. */
+.mob-tela--nua { border-radius: 0; height: 100vh; }
+.mob-tela--nua .mob-header { padding-top: 30px; }

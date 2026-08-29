@@ -1,0 +1,44 @@
+<svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="560" fill="#ffffff"/>
+<text x="40" y="30" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e">Print 3 — Movimentações (aba do estoque com o histórico)</text>
+
+<rect x="40" y="50" width="1120" height="330" rx="10" fill="#f2f5f7" stroke="#d1d4d7"/>
+<rect x="40" y="50" width="1120" height="44" rx="10" fill="#282b2e"/>
+<text x="60" y="78" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Estoque de Materiais — Movimentações</text>
+
+<rect x="60" y="110" width="1080" height="30" fill="#f2f5f7"/>
+<text x="75" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Data/Hora</text>
+<text x="200" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Tipo</text>
+<text x="290" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Subtipo</text>
+<text x="400" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Item</text>
+<text x="650" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Quantidade</text>
+<text x="780" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Usuário</text>
+<text x="900" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Local</text>
+<text x="1020" y="130" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Observação</text>
+
+<circle cx="330" cy="125" r="14" fill="#0f3c78"/><text x="330" y="130" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+
+<rect x="60" y="140" width="1080" height="34" fill="#ffffff"/>
+<rect x="60" y="174" width="1080" height="34" fill="#f2f5f7"/>
+<line x1="60" y1="140" x2="1140" y2="140" stroke="#d1d4d7"/>
+<line x1="60" y1="174" x2="1140" y2="174" stroke="#d1d4d7"/>
+<line x1="60" y1="208" x2="1140" y2="208" stroke="#d1d4d7"/>
+<text x="75" y="161" font-family="sans-serif" font-size="12" fill="#383b3f">22/08/2026 14:52</text>
+<text x="200" y="161" font-family="sans-serif" font-size="12" fill="#0f3c78">↑ Saída</text>
+<text x="290" y="161" font-family="sans-serif" font-size="12" fill="#383b3f">Transferência</text>
+<text x="400" y="161" font-family="sans-serif" font-size="12" fill="#383b3f">Terminal de compressão 25mm</text>
+<text x="650" y="161" font-family="sans-serif" font-size="12" fill="#383b3f">5 un</text>
+<text x="75" y="195" font-family="sans-serif" font-size="12" fill="#383b3f">21/08/2026 11:22</text>
+<text x="200" y="195" font-family="sans-serif" font-size="12" fill="#307bb0">↓ Entrada</text>
+<text x="290" y="195" font-family="sans-serif" font-size="12" fill="#383b3f">Transferência</text>
+
+<circle cx="220" cy="190" r="14" fill="#0f3c78"/><text x="220" y="195" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+
+<rect x="40" y="420" width="1120" height="130" rx="8" fill="#ecf0f5" stroke="#124991"/>
+<text x="60" y="448" font-family="sans-serif" font-size="13" font-weight="700" fill="#071e3b">1 — "Transferência" só aparece como histórico já concluído</text>
+<text x="70" y="466" font-family="sans-serif" font-size="12" fill="#071e3b">Não existe visão do que está pendente ou em andamento agora — só o que já aconteceu.</text>
+<text x="70" y="483" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ resolvido por uma view dedicada de transferências, filtrável por estado</text>
+
+<text x="60" y="511" font-family="sans-serif" font-size="13" font-weight="700" fill="#071e3b">2 — Saída e entrada aparecem como dois eventos desconectados</text>
+<text x="70" y="529" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ resolvido ao tratar a transferência como uma única entidade com estados, não dois registros soltos</text>
+</svg>

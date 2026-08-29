@@ -1,0 +1,60 @@
+<svg viewBox="0 0 1200 620" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="620" fill="#ffffff"/>
+<text x="40" y="30" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e">Print 1 — Estoque de Materiais</text>
+
+<rect x="40" y="50" width="1120" height="380" rx="10" fill="#f2f5f7" stroke="#d1d4d7"/>
+<rect x="40" y="50" width="1120" height="44" rx="10" fill="#282b2e"/>
+<text x="60" y="78" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Estoque de Materiais</text>
+
+<rect x="60" y="110" width="330" height="90" rx="8" fill="#ffffff" stroke="#aaaeb3"/>
+<text x="80" y="135" font-family="sans-serif" font-size="12" fill="#575c62">Materiais Reservados</text>
+<text x="80" y="165" font-family="sans-serif" font-size="20" font-weight="700" fill="#282b2e">95</text>
+<text x="80" y="188" font-family="sans-serif" font-size="11" fill="#7d848b">Terminal de compressão 25mm — 5 un</text>
+
+<rect x="410" y="110" width="330" height="90" rx="8" fill="#ffffff" stroke="#aaaeb3"/>
+<text x="430" y="135" font-family="sans-serif" font-size="12" fill="#575c62">Estoque Baixo</text>
+<text x="430" y="165" font-family="sans-serif" font-size="20" font-weight="700" fill="#282b2e">6</text>
+
+<rect x="760" y="110" width="330" height="90" rx="8" fill="#ffffff" stroke="#aaaeb3"/>
+<text x="780" y="135" font-family="sans-serif" font-size="12" fill="#575c62">Kits de Material</text>
+<text x="780" y="165" font-family="sans-serif" font-size="20" font-weight="700" fill="#282b2e">5/13</text>
+
+<circle cx="90" cy="105" r="14" fill="#0f3c78"/><text x="90" y="110" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+
+<text x="60" y="235" font-family="sans-serif" font-size="13" font-weight="600" fill="#282b2e">Estoque</text>
+<text x="140" y="235" font-family="sans-serif" font-size="13" fill="#7d848b">Movimentações</text>
+<line x1="60" y1="242" x2="105" y2="242" stroke="#282b2e" stroke-width="2"/>
+
+<rect x="60" y="255" width="1080" height="30" fill="#f2f5f7"/>
+<text x="75" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">ID</text>
+<text x="150" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Nome</text>
+<text x="430" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Categoria</text>
+<text x="600" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Tipo</text>
+<text x="720" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Quantidade</text>
+<text x="880" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Estoque Mín.</text>
+<text x="1020" y="275" font-family="sans-serif" font-size="12" font-weight="600" fill="#575c62">Últ. Movimento</text>
+
+<circle cx="900" cy="270" r="14" fill="#0f3c78"/><text x="900" y="275" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+
+<rect x="60" y="285" width="1080" height="34" fill="#ffffff"/>
+<rect x="60" y="319" width="1080" height="34" fill="#f2f5f7"/>
+<rect x="60" y="353" width="1080" height="34" fill="#ffffff"/>
+<line x1="60" y1="285" x2="1140" y2="285" stroke="#d1d4d7"/>
+<line x1="60" y1="319" x2="1140" y2="319" stroke="#d1d4d7"/>
+<line x1="60" y1="353" x2="1140" y2="353" stroke="#d1d4d7"/>
+<line x1="60" y1="387" x2="1140" y2="387" stroke="#d1d4d7"/>
+<text x="75" y="306" font-family="sans-serif" font-size="12" fill="#383b3f">12113</text>
+<text x="150" y="306" font-family="sans-serif" font-size="12" fill="#383b3f">Terminal de compressão 25mm</text>
+<text x="720" y="306" font-family="sans-serif" font-size="12" fill="#383b3f">31526 un</text>
+<text x="75" y="340" font-family="sans-serif" font-size="12" fill="#383b3f">15347</text>
+<text x="150" y="340" font-family="sans-serif" font-size="12" fill="#383b3f">Curva 90° PVC rígido</text>
+<text x="720" y="340" font-family="sans-serif" font-size="12" fill="#383b3f">110 un</text>
+
+<rect x="40" y="450" width="1120" height="150" rx="8" fill="#ecf0f5" stroke="#124991"/>
+<text x="60" y="478" font-family="sans-serif" font-size="13" font-weight="700" fill="#071e3b">1 — Card "Materiais Reservados" só cobre requisição interna</text>
+<text x="70" y="498" font-family="sans-serif" font-size="12" fill="#071e3b">Não existe equivalente de reserva para transferência entre obras.</text>
+<text x="70" y="516" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ resolvido pelo estado "Reservado" do fluxo novo</text>
+<text x="60" y="548" font-family="sans-serif" font-size="13" font-weight="700" fill="#071e3b">2 — Coluna "Quantidade" mostra saldo único</text>
+<text x="70" y="568" font-family="sans-serif" font-size="12" fill="#071e3b">Não distingue disponível de reservado ou em trânsito — decisão de compra pode se basear em número que não reflete a realidade física.</text>
+<text x="70" y="586" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ requer novo indicador de saldo "em trânsito" na tela de estoque</text>
+</svg>

@@ -14,7 +14,7 @@ type Passo = { tela: 'lista' } | { tela: 'conferencia'; id: string } | { tela: '
 /* ============================================================
    Tela mobile de confirmação de recebimento (seção 7, item 4)
    ============================================================ */
-export function MobileScreen() {
+export function MobileScreen({ semMoldura = false }: { semMoldura?: boolean } = {}) {
   const { aReceber, state } = useStore();
   const [passo, setPasso] = useState<Passo>({ tela: 'lista' });
 
@@ -23,29 +23,36 @@ export function MobileScreen() {
     [aReceber],
   );
 
+  const tela = (
+    <>
+      {!semMoldura && <div className="mob-notch">Suplos · 9:41</div>}
+      {passo.tela === 'lista' && (
+        <TelaLista lista={chegando} onAbrir={(id) => setPasso({ tela: 'conferencia', id })} vazio={state.estadoTela === 'vazio'} />
+      )}
+      {passo.tela === 'conferencia' && (
+        <TelaConferencia
+          t={aReceber.find((t) => t.id === passo.id)!}
+          onVoltar={() => setPasso({ tela: 'lista' })}
+          onPronto={(divergente) => setPasso({ tela: 'fim', id: passo.id, divergente })}
+        />
+      )}
+      {passo.tela === 'fim' && (
+        <TelaFim
+          t={aReceber.find((t) => t.id === passo.id)!}
+          divergente={passo.divergente}
+          onVoltar={() => setPasso({ tela: 'lista' })}
+        />
+      )}
+    </>
+  );
+
+  // Embutido no frame de celular do site: só a tela, sem moldura nem notas.
+  if (semMoldura) return <div className="mob-tela mob-tela--nua">{tela}</div>;
+
   return (
     <div className="mob-palco">
       <div className="mob-frame">
-        <div className="mob-tela">
-          <div className="mob-notch">Suplos · 9:41</div>
-          {passo.tela === 'lista' && (
-            <TelaLista lista={chegando} onAbrir={(id) => setPasso({ tela: 'conferencia', id })} vazio={state.estadoTela === 'vazio'} />
-          )}
-          {passo.tela === 'conferencia' && (
-            <TelaConferencia
-              t={aReceber.find((t) => t.id === passo.id)!}
-              onVoltar={() => setPasso({ tela: 'lista' })}
-              onPronto={(divergente) => setPasso({ tela: 'fim', id: passo.id, divergente })}
-            />
-          )}
-          {passo.tela === 'fim' && (
-            <TelaFim
-              t={aReceber.find((t) => t.id === passo.id)!}
-              divergente={passo.divergente}
-              onVoltar={() => setPasso({ tela: 'lista' })}
-            />
-          )}
-        </div>
+        <div className="mob-tela">{tela}</div>
       </div>
 
       <div className="mob-notas">

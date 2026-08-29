@@ -6,8 +6,12 @@ notificado, telas que mudam) + o fluxograma **Fluxo de transferência V1**.
 
 ```bash
 npm install
-npm run dev     # http://localhost:5173/stocks/transfers
+npm run dev       # http://localhost:5173/  → site do case
+npm run build && npm run preview
 ```
+
+O repositório entrega duas coisas: o **site de apresentação do case** (`/`) e o
+**protótipo funcional** (`/stocks/...`), que o site embute em frames de navegador e de celular.
 
 ---
 
@@ -25,6 +29,8 @@ Este protótipo modela esse intervalo e essa divergência.
 
 | Caminho | Tela |
 |---|---|
+| `/` | Site de apresentação do case — 10 seções, do diagnóstico ao protótipo |
+| `/embed/mobile` | Protótipo mobile sem moldura, para o frame de celular do site |
 | `/stocks` | Estoque de Materiais (cards + abas Estoque / Movimentações) |
 | `/stocks/transfers` | Painel de visibilidade por obra — **A Enviar** e **A Receber** |
 | `/stocks/transfers/:id` | Detalhe da transferência (drawer com estado, dados e histórico) |
@@ -153,3 +159,32 @@ A máquina de estados fica isolada em `src/domain/machine.ts`: quem pode fazer o
 
 O **V1** (loop de reenvio após divergência) foi incluído, já que a especificação permitia caso
 sobrasse tempo. Está marcado como `(V1)` no botão.
+
+
+---
+
+## Site de apresentação do case
+
+Em `/`, um site único em ordem cronológica com o processo inteiro: introdução, overview,
+etapas, fluxogramas originais comentados, prints anotados, fluxo de estados, fluxo enriquecido
+com tabelas de atores e notificações, priorização MVP/V.1/V.2/V.3, o protótipo interativo e o
+encerramento.
+
+**Paleta.** O site usa apenas azuis e neutros. Os SVGs originais vieram multicoloridos e foram
+recoloridos por um mapeamento de matiz que preserva a distinção semântica: o que era vermelho
+(discordância) virou azul escuro e saturado; o que era verde ou azul (premissa confirmada) virou
+azul claro. Os arquivos recoloridos estão em `public/case/`.
+
+**Separação visual.** O protótipo mantém a identidade da Suplos, sem recolorir nada. Ele entra
+na seção 09 dentro de iframes — um frame de navegador para a versão web e um frame de celular
+para a mobile — sobre um fundo escuro que o isola do resto do site. O iframe também garante que
+o CSS do site não vaze para dentro do protótipo.
+
+**Fonte não-bloqueante.** O `<link>` do Google Fonts usa `rel="preload"` com troca para
+`stylesheet` no `onload`. Uma folha de estilo pendente bloqueia a execução dos scripts que vêm
+depois dela, e isso deixava os iframes do protótipo em branco em redes que não alcançam o
+`fonts.googleapis.com`. Com o preload, a página e o protótipo carregam mesmo sem a fonte, caindo
+nos fallbacks (Georgia para o display, system sans para o corpo).
+
+**Publicação.** As rotas do protótipo são caminhos reais, então o host precisa de fallback de
+SPA (servir `index.html` para qualquer rota). `npm run preview` já faz isso.

@@ -3,10 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Suplos — Transferência entre Obras</title>
+    <title>Case Suplos — Transferência de material entre obras</title>
+    <meta name="description" content="Processo completo do case: diagnóstico, modelagem de estados, priorização e protótipo funcional web e mobile." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonte carregada sem bloquear: um <link rel="stylesheet"> pendente trava a
+         execução dos scripts que vêm depois, e isso deixava os iframes do protótipo
+         em branco quando a rede não alcançava o Google Fonts. -->
+    <link
+      rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650;700&family=Instrument+Serif:ital@0;1&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650;700&family=Instrument+Serif:ital@0;1&display=swap" />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>
