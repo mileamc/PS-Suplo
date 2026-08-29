@@ -20,14 +20,20 @@ export const ROTA_EMBED_MOBILE = '/embed/mobile';
 export type Destino =
   | { tela: 'site' }
   | { tela: 'embed-mobile' }
-  | { tela: 'prototipo'; rota: Rota; id: string | null };
+  | { tela: 'prototipo'; rota: Rota; id: string | null; somenteLeitura?: boolean };
 
 export function resolver(pathname: string): Destino {
   if (pathname.startsWith(ROTA_EMBED_MOBILE)) return { tela: 'embed-mobile' };
   if (pathname.startsWith(ROTAS.mobile)) return { tela: 'prototipo', rota: 'mobile', id: null };
   if (pathname.startsWith(ROTAS.transferencias)) {
     const resto = pathname.slice(ROTAS.transferencias.length).replace(/^\//, '');
-    return { tela: 'prototipo', rota: 'transferencias', id: resto || null };
+    // O sufixo ?leitura abre o detalhe sem as ações — é como a visão Total
+    // aponta para uma transferência sem virar atalho de execução.
+    const [id, marca] = resto.split('?');
+    return {
+      tela: 'prototipo', rota: 'transferencias',
+      id: id || null, somenteLeitura: marca === 'leitura',
+    };
   }
   if (pathname.startsWith(ROTAS.estoque)) return { tela: 'prototipo', rota: 'estoque', id: null };
   return { tela: 'site' };

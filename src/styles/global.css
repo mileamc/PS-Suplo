@@ -659,3 +659,64 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 .opcao-entrada--ativa svg { color: var(--brand-700); }
 .opcao-entrada strong { display: block; font-size: var(--fs-13); font-weight: 600; }
 .opcao-entrada em { display: block; font-size: var(--fs-11); color: var(--text-muted); font-style: normal; margin-top: 2px; }
+
+/* ============================================================
+   Avaliação de entrega — fichas, estrelas e anexos
+   ============================================================ */
+.fichas { display: grid; gap: 8px; }
+.ficha {
+  display: flex; align-items: flex-start; gap: 10px; text-align: left;
+  border: 1px solid var(--border-strong); border-radius: var(--r-md);
+  background: var(--surface); padding: 11px 13px;
+}
+.ficha:hover { background: var(--surface-2); }
+.ficha--on { border-color: var(--brand-600); background: var(--brand-50); }
+.ficha__box {
+  width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+  border: 1.5px solid var(--border-strong); background: var(--surface);
+  display: grid; place-items: center; color: #fff;
+}
+.ficha--on .ficha__box { background: var(--brand-600); border-color: var(--brand-600); }
+.ficha strong { display: block; font-size: var(--fs-13); font-weight: 600; }
+.ficha em { display: block; font-style: normal; font-size: var(--fs-11); color: var(--text-muted); margin-top: 2px; }
+
+.estrelas { display: inline-flex; gap: 3px; }
+.estrela {
+  border: 0; background: transparent; padding: 2px; line-height: 0;
+  color: var(--border-strong); transition: color .15s, transform .12s;
+}
+.estrela:hover { transform: scale(1.12); }
+.estrela--on { color: var(--amber); }
+
+.anexar {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px dashed var(--border-strong); border-radius: var(--r-md);
+  background: var(--surface-2); color: var(--text-2);
+  padding: 13px; font-size: var(--fs-13); font-weight: 500;
+}
+.anexar:hover { background: var(--surface-3); border-color: var(--text-faint); }
+.anexar--erro { border-color: var(--red); color: var(--red-fg); }
+.anexos { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.anexo {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface-3); border-radius: var(--r-sm);
+  padding: 5px 8px 5px 9px; font-size: var(--fs-12); color: var(--text-2);
+}
+.anexo button {
+  border: 0; background: transparent; color: var(--text-faint);
+  display: grid; place-items: center; padding: 0; line-height: 0;
+}
+.anexo button:hover { color: var(--red-fg); }
+
+/* Linha de orçamento (apropriação de custos) */
+.orcamento {
+  border: 1px solid var(--blue-bg); background: #f6faff;
+  border-radius: var(--r-md); padding: 11px 12px; margin-top: 12px;
+}
+.orcamento__t {
+  font-size: var(--fs-11); font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--blue-fg); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.orcamento__saldos { display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; }
+.orcamento__saldo { font-size: var(--fs-11); color: var(--text-muted); }
+.orcamento__saldo b { display: block; font-size: var(--fs-13); color: var(--text); margin-top: 2px; }

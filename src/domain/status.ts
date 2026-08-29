@@ -11,23 +11,23 @@ export interface StatusMeta {
 
 export const STATUS_META: Record<TransferStatus, StatusMeta> = {
   reservado: {
-    label: 'Reservado',
-    curto: 'Reservado',
-    descricao: 'Quantidade travada no estoque da obra de origem. Ainda não saiu fisicamente.',
+    label: 'Reservado · envio pendente',
+    curto: 'Envio pendente',
+    descricao: 'Quantidade travada no estoque da obra de origem. Aprovação está desligada para este cliente, então a transferência já pode ser despachada.',
     token: 'reservado',
     terminal: false,
   },
   aguardando_aprovacao: {
-    label: 'Aguardando aprovação',
-    curto: 'Aguard. aprovação',
-    descricao: 'Aguardando decisão do Aprovador da obra de destino. Nada se moveu ainda.',
+    label: 'Reservado · aprovação pendente',
+    curto: 'Aprovação pendente',
+    descricao: 'A quantidade já está travada no estoque da origem. Aguarda a decisão do Aprovador da obra que vai receber.',
     token: 'aprovacao',
     terminal: false,
   },
   aprovado: {
-    label: 'Aprovado',
-    curto: 'Aprovado',
-    descricao: 'Liberado para despacho. A origem precisa registrar a saída e a previsão de chegada.',
+    label: 'Aprovado · envio pendente',
+    curto: 'Envio pendente',
+    descricao: 'Aprovado pela obra de destino. A origem precisa registrar a saída e a previsão de chegada.',
     token: 'aprovado',
     terminal: false,
   },
@@ -43,6 +43,13 @@ export const STATUS_META: Record<TransferStatus, StatusMeta> = {
     curto: 'Avaliação de entrega',
     descricao: 'Material chegou. Aguardando conferência de quantidade pela obra de destino.',
     token: 'fvm',
+    terminal: false,
+  },
+  aguardando_nf: {
+    label: 'Aguardando NF',
+    curto: 'Aguardando NF',
+    descricao: 'Material conferido e já no estoque do destino. Falta confirmar a nota fiscal da transferência e anexá-la.',
+    token: 'nf',
     terminal: false,
   },
   recebido_ok: {
@@ -81,7 +88,17 @@ export const STATUS_RESERVA: TransferStatus[] = ['reservado', 'aguardando_aprova
 /** Estados em que o material já saiu e ainda não foi conferido. */
 export const STATUS_TRANSITO: TransferStatus[] = ['em_transito', 'avaliacao_entrega'];
 
+/** Encerrados sem entrega. */
+export const STATUS_CANCELADOS: TransferStatus[] = ['cancelado', 'reprovado'];
+
 /** Estados em que a movimentação já foi concluída (entrou no destino). */
 export const STATUS_CONCLUIDO: TransferStatus[] = ['recebido_ok', 'recebido_divergencia'];
 
-export const STATUS_ABERTOS: TransferStatus[] = [...STATUS_RESERVA, ...STATUS_TRANSITO];
+export const STATUS_ABERTOS: TransferStatus[] = [
+  ...STATUS_RESERVA, ...STATUS_TRANSITO, 'aguardando_nf',
+];
+
+/** Transferências ativas — tudo que ainda pede acompanhamento. */
+export const STATUS_ATIVOS: TransferStatus[] = [
+  ...STATUS_ABERTOS, 'recebido_divergencia',
+];

@@ -61,7 +61,7 @@ Três controles que existem para tornar a especificação verificável na tela:
 |---|---|
 | Entrada **Requisição de material** (pedido interno da obra) | Campo "Origem da transferência" → *Requisição de material*, com seletor que puxa insumos e quantidades da requisição |
 | Entrada **Estoque (saída direta)** | Campo "Origem da transferência" → *Saída direta* |
-| **Reservado** — quantidade travada · *Modal: Registrar Saída de Estoque* | Estado `reservado`; o modal cria a reserva em vez de executar a movimentação |
+| **Reservado** — quantidade travada · *Modal: Registrar Saída de Estoque* | A transferência nasce já reservada: com o parâmetro ligado entra direto em "Reservado · aprovação pendente"; desligado, em "Reservado · envio pendente" |
 | **Aprovado?** | Estados `aguardando_aprovacao` → `aprovado`/`reprovado`, condicionados ao parâmetro |
 | **Reprovado** — volta ao estoque · *mensagem de recusa + observação* | Modal de reprovação com motivo obrigatório; devolve ao disponível e notifica a origem |
 | **Cancelado** — volta ao estoque · *mensagem de cancelamento* | Ação de cancelar, disponível em toda a fase pré-despacho |
@@ -218,3 +218,41 @@ conferência e divergência — com a navegação refeita para o polegar. Dimens
   timeline, e o enviado × recebido virou um par de blocos lado a lado.
 - A conferência usa contadores de 56 px em vez de campo numérico, e "Chegou tudo certo" fecha o
   caso comum em um toque. A divergência só aparece quando alguma quantidade muda.
+
+
+---
+
+## Ajustes da última rodada
+
+**Cards de status seguem o vocabulário de Entregas.** Total, Pendentes, Em trânsito, Atrasados,
+Aguardando NF, Com divergência, Completos e Cancelados — cada card agrupa os estados do fluxo em
+vez de expor um estado por card.
+
+**Total é só visualização.** Mostra o que está entrando e saindo e em que estado está. Os atalhos
+de ação somem dos cards e o detalhe abre em modo leitura; para agir, a pessoa escolhe o card do
+estado. Criar transferência continua disponível ali, porque não é uma ação sobre um registro
+existente.
+
+**A criação não espera um segundo clique.** Ao salvar, a quantidade trava e a transferência já
+entra em aprovação pendente (ou em envio pendente, se o parâmetro de aprovação estiver desligado).
+O passo "Enviar para aprovação" deixou de existir.
+
+**Despacho pede as duas datas.** Data efetiva de saída e previsão de chegada, no mesmo modal, com
+validação de que a previsão não é anterior à saída.
+
+**Avaliação de entrega em duas etapas.** Primeiro a conferência de quantidade (enviado × recebido,
+sempre obrigatória); depois a avaliação por critérios — fichas selecionáveis, estrelas e sim/não,
+observação e anexos. As fichas são configuração do cliente: com ficha selecionada, todos os
+critérios travam a conclusão; sem ficha, a conferência sozinha conclui.
+
+**Aguardando NF.** Depois da conferência o material já entra no estoque do destino, mas a
+transferência fica Aguardando NF até alguém confirmar o número da nota e anexar o arquivo. Só então
+ela vira Completa ou Com divergência.
+
+**Apropriação de custos.** Item de pedido exige linha de orçamento, num select que mostra o saldo
+na obra de origem e na de destino. Item avulso não pede o campo — o mesmo modal atende os dois.
+As linhas em `src/data/orcamento.ts` são placeholders no formato de EAP.
+
+**Estoque manteve todas as colunas originais.** ID, Nome, Categoria, Tipo, Quantidade, Estoque mín
+e Último movimento seguem iguais; Quantidade mostra o saldo do item com o disponível logo abaixo, e
+uma coluna nova, Situação da transferência, acrescenta reservado, em trânsito e a receber.

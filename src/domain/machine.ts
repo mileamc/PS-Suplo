@@ -12,13 +12,13 @@ import { STATUS_META } from './status';
    ============================================================ */
 
 export type AcaoId =
-  | 'enviar_aprovacao'
   | 'despachar'
   | 'cancelar'
   | 'aprovar'
   | 'reprovar'
   | 'registrar_chegada'
   | 'avaliar_entrega'
+  | 'confirmar_nf'
   | 'reenviar'
   | 'encerrar_divergencia';
 
@@ -34,10 +34,6 @@ export interface Acao {
 }
 
 const A = {
-  enviar_aprovacao: {
-    id: 'enviar_aprovacao', label: 'Enviar para aprovação',
-    papel: 'origem', destino: 'aguardando_aprovacao', tom: 'primario',
-  },
   despachar: {
     id: 'despachar', label: 'Registrar despacho',
     papel: 'origem', destino: 'em_transito', tom: 'primario',
@@ -62,6 +58,10 @@ const A = {
     id: 'avaliar_entrega', label: 'Avaliar entrega (FVM)',
     papel: 'destino', destino: null, tom: 'primario',
   },
+  confirmar_nf: {
+    id: 'confirmar_nf', label: 'Confirmar NF',
+    papel: 'destino', destino: null, tom: 'primario',
+  },
   reenviar: {
     id: 'reenviar', label: 'Reenviar corrigido',
     papel: 'origem', destino: 'reservado', tom: 'primario', v1: true,
@@ -75,17 +75,15 @@ const A = {
 /**
  * Ações disponíveis num estado.
  *
- * `aprovacaoAtiva` é o parâmetro por cliente da seção 2: quando desligado,
- * o fluxo pula de Reservado direto para Em trânsito, sem duplicar a árvore
- * de decisão (discordância registrada na seção 9).
+ * O parâmetro de aprovação por cliente decide em qual estado a transferência
+ * NASCE (Aguardando aprovação ou Reservado pronto para despacho), e não
+ * duplica a árvore de decisão daqui para a frente.
  */
-export function acoesDisponiveis(
-  status: TransferStatus,
-  aprovacaoAtiva: boolean,
-): Acao[] {
+export function acoesDisponiveis(status: TransferStatus): Acao[] {
   switch (status) {
     case 'reservado':
-      return [aprovacaoAtiva ? A.enviar_aprovacao : A.despachar, A.cancelar];
+      // Só existe quando a aprovação está desligada: já nasce pronta para despacho.
+      return [A.despachar, A.cancelar];
     case 'aguardando_aprovacao':
       return [A.aprovar, A.reprovar, A.cancelar];
     case 'aprovado':
@@ -94,6 +92,8 @@ export function acoesDisponiveis(
       return [A.registrar_chegada];
     case 'avaliacao_entrega':
       return [A.avaliar_entrega];
+    case 'aguardando_nf':
+      return [A.confirmar_nf];
     case 'recebido_divergencia':
       return [A.reenviar, A.encerrar_divergencia];
     default:
@@ -114,19 +114,16 @@ export function podeCancelar(status: TransferStatus): boolean {
 }
 
 /** Ações que o papel selecionado pode executar agora. */
-export function acoesDoPapel(
-  t: Transferencia,
-  papel: Role,
-  aprovacaoAtiva: boolean,
-): Acao[] {
-  return acoesDisponiveis(t.status, aprovacaoAtiva).filter((a) => a.papel === papel);
+export function acoesDoPapel(t: Transferencia, papel: Role): Acao[] {
+  return acoesDisponiveis(t.status).filter((a) => a.papel === papel);
 }
 
 /** Passos exibidos no stepper do detalhe da transferência. */
 export function trilha(aprovacaoAtiva: boolean): TransferStatus[] {
-  const base: TransferStatus[] = ['reservado'];
-  if (aprovacaoAtiva) base.push('aguardando_aprovacao', 'aprovado');
-  base.push('em_transito', 'avaliacao_entrega', 'recebido_ok');
+  const base: TransferStatus[] = aprovacaoAtiva
+    ? ['aguardando_aprovacao', 'aprovado']
+    : ['reservado'];
+  base.push('em_transito', 'avaliacao_entrega', 'aguardando_nf', 'recebido_ok');
   return base;
 }
 

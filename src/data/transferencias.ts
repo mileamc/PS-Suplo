@@ -9,14 +9,32 @@ function ev(
   return { id: `evt-${++evSeq}`, tipo, em, porNome, porPapel, obra, detalhe };
 }
 
+/* Item de pedido sempre carrega a linha de orçamento onde o custo é
+   apropriado; item avulso não exige esse campo. */
+const LINHA_POR_INSUMO: Record<string, string> = {
+  'in-12113-p': 'lo-0302',
+  'in-897-p': 'lo-0201',
+  'in-11654-p': 'lo-0501',
+  'in-11843-p': 'lo-0702',
+  'in-2995-p': 'lo-0304',
+};
+
 function item(insumoId: string, qtdEnviada: number, qtdRecebida: number | null = null, motivo?: string): TransferItem {
   const i = INSUMOS.find((x) => x.id === insumoId)!;
   return {
     insumoId: i.id, codigo: i.codigo, nome: i.nome, unidade: i.unidade,
     tipo: i.tipo, custoUnitario: i.custoUnitario,
+    linhaOrcamento: i.tipo === 'pedido' ? LINHA_POR_INSUMO[i.id] : undefined,
     qtdEnviada, qtdRecebida, motivoDivergencia: motivo,
   };
 }
+
+const AVALIACAO_OK = {
+  fichas: ['fc-teste', 'fc-alvenaria'],
+  respostas: { 'cr-pontualidade': 5, 'cr-avaria': false, 'cr-qualidade': 5, 'cr-a': 4, 'cr-b': 5, 'cr-c': false },
+  observacao: 'Carga conferida item a item na descarga, sem intercorrência.',
+  anexos: ['canhoto-assinado.pdf'],
+};
 
 const ASSINATURA_MOCK =
   'data:image/svg+xml;utf8,' +
@@ -42,16 +60,27 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
       item('in-12113-a', 500, 500),
     ],
     aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-08-14T15:40:00',
-    despachadaEm: '2026-08-15T07:30:00', previsaoChegada: '2026-08-19T00:00:00',
+    dataSaida: '2026-08-15', despachadaEm: '2026-08-15T07:30:00', previsaoChegada: '2026-08-19T00:00:00',
     chegadaEm: '2026-08-20T08:05:00',
     recebidaPor: 'Josué Barbosa', recebidaEm: '2026-08-20T08:41:00',
+    avaliacao: {
+      fichas: ['fc-teste', 'fc-alvenaria'],
+      respostas: { 'cr-pontualidade': 2, 'cr-avaria': true, 'cr-qualidade': 3, 'cr-a': 3, 'cr-b': 3, 'cr-c': true },
+      observacao: 'Volume não conferia já na chegada. Motorista não soube informar onde as peças ficaram.',
+      anexos: ['foto-descarga-1.jpg', 'foto-descarga-2.jpg'],
+      avaliadaPor: 'Josué Barbosa', avaliadaEm: '2026-08-20T08:41:00',
+    },
+    nf: {
+      numero: '000.398.771', anexo: 'nf-tr-000136.pdf',
+      confirmadaPor: 'Josué Barbosa', confirmadaEm: '2026-08-21T10:12:00',
+    },
     eventos: [
       ev('criada', '2026-08-14T09:12:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-14T09:13:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('aprovada', '2026-08-14T15:40:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower IV'),
       ev('despachada', '2026-08-15T07:30:00', 'Rafael Menezes', 'origem', 'Suplos Tower II', 'Previsão de chegada: 19/08/2026'),
       ev('chegada_registrada', '2026-08-20T08:05:00', 'Josué Barbosa', 'destino', 'Suplos Tower IV', 'Chegou 1 dia após a previsão'),
       ev('recebida_divergencia', '2026-08-20T08:41:00', 'Josué Barbosa', 'destino', 'Suplos Tower IV', 'Faltaram 28 un de Curva 90° PVC'),
+      ev('nf_confirmada', '2026-08-21T10:12:00', 'Josué Barbosa', 'destino', 'Suplos Tower IV', 'NF 000.398.771'),
     ],
   },
 
@@ -76,7 +105,6 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     itens: [item('in-12113-a', 2000)],
     eventos: [
       ev('criada', '2026-08-27T11:05:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-27T11:06:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
     ],
   },
   {
@@ -90,7 +118,6 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     aprovadaPor: 'Marina Coelho', aprovadaEm: '2026-08-26T14:02:00',
     eventos: [
       ev('criada', '2026-08-26T08:44:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-26T08:45:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('aprovada', '2026-08-26T14:02:00', 'Marina Coelho', 'aprovador', 'Suplos Tower III'),
     ],
   },
@@ -103,10 +130,9 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     assinatura: ASSINATURA_MOCK, ciclo: 0,
     itens: [item('in-11843-p', 40), item('in-12113-p', 800)],
     aprovadaPor: 'Marina Coelho', aprovadaEm: '2026-08-25T17:22:00',
-    despachadaEm: '2026-08-27T06:50:00', previsaoChegada: '2026-09-01T00:00:00',
+    dataSaida: '2026-08-27', despachadaEm: '2026-08-27T06:50:00', previsaoChegada: '2026-09-01T00:00:00',
     eventos: [
       ev('criada', '2026-08-25T10:10:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-25T10:11:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('aprovada', '2026-08-25T17:22:00', 'Marina Coelho', 'aprovador', 'Suplos Tower III'),
       ev('despachada', '2026-08-27T06:50:00', 'Rafael Menezes', 'origem', 'Suplos Tower II', 'Previsão de chegada: 01/09/2026'),
     ],
@@ -120,16 +146,21 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     assinatura: ASSINATURA_MOCK, ciclo: 0,
     itens: [item('in-15727-a', 50, 50)],
     aprovadaPor: 'Marina Coelho', aprovadaEm: '2026-08-10T16:30:00',
-    despachadaEm: '2026-08-11T07:15:00', previsaoChegada: '2026-08-14T00:00:00',
+    dataSaida: '2026-08-11', despachadaEm: '2026-08-11T07:15:00', previsaoChegada: '2026-08-14T00:00:00',
     chegadaEm: '2026-08-14T09:20:00',
     recebidaPor: 'Tiago Lemos', recebidaEm: '2026-08-14T09:35:00',
+    avaliacao: { ...AVALIACAO_OK, avaliadaPor: 'Tiago Lemos', avaliadaEm: '2026-08-14T09:35:00' },
+    nf: {
+      numero: '000.377.104', anexo: 'nf-tr-000131.pdf',
+      confirmadaPor: 'Tiago Lemos', confirmadaEm: '2026-08-14T15:02:00',
+    },
     eventos: [
       ev('criada', '2026-08-10T13:00:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-10T13:01:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('aprovada', '2026-08-10T16:30:00', 'Marina Coelho', 'aprovador', 'Suplos Tower III'),
       ev('despachada', '2026-08-11T07:15:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('chegada_registrada', '2026-08-14T09:20:00', 'Tiago Lemos', 'destino', 'Suplos Tower III'),
       ev('recebida_ok', '2026-08-14T09:35:00', 'Tiago Lemos', 'destino', 'Suplos Tower III'),
+      ev('nf_confirmada', '2026-08-14T15:02:00', 'Tiago Lemos', 'destino', 'Suplos Tower III', 'NF 000.377.104'),
     ],
   },
   {
@@ -143,7 +174,6 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     motivoReprovacao: 'A Tower V já recebeu carga equivalente no pedido 800075.',
     eventos: [
       ev('criada', '2026-08-18T09:00:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
-      ev('enviada_aprovacao', '2026-08-18T09:01:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
       ev('reprovada', '2026-08-18T11:47:00', 'AnaPrado', 'aprovador', 'Suplos Tower V', 'A Tower V já recebeu carga equivalente no pedido 800075.'),
     ],
   },
@@ -171,14 +201,35 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     assinatura: ASSINATURA_MOCK, ciclo: 0,
     itens: [item('in-897-p', 500), item('in-11654-a', 300)],
     aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-08-24T10:12:00',
-    despachadaEm: '2026-08-25T06:40:00', previsaoChegada: '2026-08-29T00:00:00',
+    dataSaida: '2026-08-25', despachadaEm: '2026-08-25T06:40:00', previsaoChegada: '2026-08-29T00:00:00',
     chegadaEm: '2026-08-29T07:50:00',
     eventos: [
       ev('criada', '2026-08-24T08:00:00', 'Ana Prado', 'origem', 'Suplos Tower V'),
-      ev('enviada_aprovacao', '2026-08-24T08:01:00', 'Ana Prado', 'origem', 'Suplos Tower V'),
       ev('aprovada', '2026-08-24T10:12:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower II'),
       ev('despachada', '2026-08-25T06:40:00', 'Ana Prado', 'origem', 'Suplos Tower V', 'Previsão de chegada: 29/08/2026'),
       ev('chegada_registrada', '2026-08-29T07:50:00', 'Rafael Menezes', 'destino', 'Suplos Tower II'),
+    ],
+  },
+  {
+    id: 'tr-137', codigo: 'TR-000137', status: 'aguardando_nf',
+    obraOrigemId: 'ob-003', obraDestinoId: 'ob-002',
+    criadaPor: 'Marina Coelho', criadaEm: '2026-08-21T09:15:00',
+    entrada: 'saida_direta',
+    observacao: 'Disjuntores excedentes do quadro provisório da Tower III.',
+    assinatura: ASSINATURA_MOCK, ciclo: 0,
+    itens: [item('in-15348-a', 18, 18)],
+    aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-08-21T11:40:00',
+    dataSaida: '2026-08-22', despachadaEm: '2026-08-22T07:10:00',
+    previsaoChegada: '2026-08-26T00:00:00',
+    chegadaEm: '2026-08-26T09:05:00',
+    recebidaPor: 'Rafael Menezes', recebidaEm: '2026-08-26T09:30:00',
+    avaliacao: { ...AVALIACAO_OK, avaliadaPor: 'Rafael Menezes', avaliadaEm: '2026-08-26T09:30:00' },
+    eventos: [
+      ev('criada', '2026-08-21T09:15:00', 'Marina Coelho', 'origem', 'Suplos Tower III'),
+      ev('aprovada', '2026-08-21T11:40:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower II'),
+      ev('despachada', '2026-08-22T07:10:00', 'Marina Coelho', 'origem', 'Suplos Tower III', 'Saiu em 22/08/2026 · previsão de chegada 26/08/2026'),
+      ev('chegada_registrada', '2026-08-26T09:05:00', 'Rafael Menezes', 'destino', 'Suplos Tower II'),
+      ev('recebida_ok', '2026-08-26T09:30:00', 'Rafael Menezes', 'destino', 'Suplos Tower II'),
     ],
   },
   {
@@ -191,7 +242,6 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     itens: [item('in-15727-a', 200)],
     eventos: [
       ev('criada', '2026-08-28T09:30:00', 'Bruno Sales', 'origem', 'Suplos Tower VI'),
-      ev('enviada_aprovacao', '2026-08-28T09:31:00', 'Bruno Sales', 'origem', 'Suplos Tower VI'),
     ],
   },
   {
@@ -203,10 +253,9 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
     assinatura: ASSINATURA_MOCK, ciclo: 0,
     itens: [item('in-12113-a', 1500)],
     aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-08-26T18:10:00',
-    despachadaEm: '2026-08-28T06:20:00', previsaoChegada: '2026-08-30T00:00:00',
+    dataSaida: '2026-08-28', despachadaEm: '2026-08-28T06:20:00', previsaoChegada: '2026-08-30T00:00:00',
     eventos: [
       ev('criada', '2026-08-26T15:00:00', 'Helena Duarte', 'origem', 'Suplos Tower'),
-      ev('enviada_aprovacao', '2026-08-26T15:01:00', 'Helena Duarte', 'origem', 'Suplos Tower'),
       ev('aprovada', '2026-08-26T18:10:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower II'),
       ev('despachada', '2026-08-28T06:20:00', 'Helena Duarte', 'origem', 'Suplos Tower', 'Previsão de chegada: 30/08/2026'),
     ],

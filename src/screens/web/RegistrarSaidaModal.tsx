@@ -1,11 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
-import { Plus, Trash2, Pencil, Check, Lock, ShieldCheck, ClipboardList, PackageOpen } from 'lucide-react';
+import { Plus, Trash2, Pencil, Check, Lock, ShieldCheck, ClipboardList, PackageOpen, Wallet, ChevronDown } from 'lucide-react';
 import { Dropdown } from '../../components/Dropdown';
 import { Modal, Rotulo, Aviso } from '../../components/ui';
 import { Assinatura } from '../../components/Assinatura';
 import { INSUMOS, rotuloInsumo } from '../../data/insumos';
 import { REQUISICOES } from '../../data/requisicoes';
-import { OBRAS, OBRA_ATUAL } from '../../data/obras';
+import { LINHAS_ORCAMENTO, rotuloLinha, linhaPorId } from '../../data/orcamento';
+import { OBRAS, OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { useStore } from '../../state/store';
 import type { TransferItem } from '../../domain/types';
 
@@ -21,6 +22,8 @@ const TIPOS = [
 interface Rascunho {
   insumoId: string;
   quantidade: string;
+  /** Só usada por item de pedido — item avulso não exige apropriação. */
+  linhaOrcamento: string;
 }
 
 export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
@@ -32,7 +35,7 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
   const [observacao, setObservacao] = useState('');
   const [assinatura, setAssinatura] = useState('');
   const [itens, setItens] = useState<TransferItem[]>([]);
-  const [rascunho, setRascunho] = useState<Rascunho | null>({ insumoId: '', quantidade: '' });
+  const [rascunho, setRascunho] = useState<Rascunho | null>({ insumoId: '', quantidade: '', linhaOrcamento: '' });
   const [erros, setErros] = useState<string[]>([]);
 
   const ehTransferencia = tipo === 'transferencia';
@@ -48,12 +51,18 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
       setErros([`Quantidade acima do estoque disponível (${disponivel.toLocaleString('pt-BR')} ${insumo.unidade}).`]);
       return;
     }
+    // Material de pedido exige apropriação de custos; avulso não.
+    if (insumo.tipo === 'pedido' && !rascunho.linhaOrcamento) {
+      setErros(['Escolha a linha de orçamento para apropriar o custo deste item de pedido.']);
+      return;
+    }
     setErros([]);
     setItens((v) => [
       ...v.filter((i) => i.insumoId !== insumo.id),
       {
         insumoId: insumo.id, codigo: insumo.codigo, nome: insumo.nome, unidade: insumo.unidade,
         tipo: insumo.tipo, custoUnitario: insumo.custoUnitario,
+        linhaOrcamento: insumo.tipo === 'pedido' ? rascunho.linhaOrcamento : undefined,
         qtdEnviada: qtd, qtdRecebida: null,
       },
     ]);
@@ -259,7 +268,7 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
             </div>
             <button
               className="btn btn--sm"
-              onClick={() => setRascunho({ insumoId: '', quantidade: '' })}
+              onClick={() => setRascunho({ insumoId: '', quantidade: '', linhaOrcamento: '' })}
               disabled={Boolean(rascunho) || itens.length >= 20}
             >
               <Plus size={14} /> Adicionar
@@ -279,13 +288,22 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
                     {' · '}{(it.qtdEnviada * it.custoUnitario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
                 </div>
+                {it.linhaOrcamento && (
+                  <div className="txt-11" style={{ marginTop: 4, color: 'var(--blue-fg)' }}>
+                    <Wallet size={11} style={{ verticalAlign: -1, marginRight: 4 }} />
+                    {linhaPorId(it.linhaOrcamento)?.codigo} — {linhaPorId(it.linhaOrcamento)?.nome}
+                  </div>
+                )}
               </div>
               <div className="linha" style={{ gap: 2 }}>
                 <button
                   className="icone-acao" title="Editar"
                   onClick={() => {
                     setItens((v) => v.filter((x) => x.insumoId !== it.insumoId));
-                    setRascunho({ insumoId: it.insumoId, quantidade: String(it.qtdEnviada) });
+                    setRascunho({
+                      insumoId: it.insumoId, quantidade: String(it.qtdEnviada),
+                      linhaOrcamento: it.linhaOrcamento ?? '',
+                    });
                   }}
                 >
                   <Pencil size={14} />
@@ -303,6 +321,7 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
           {rascunho && (
             <CartaoInsumo
               rascunho={rascunho}
+              obraDestino={obraDestino}
               onMudar={setRascunho}
               onRemover={() => { setRascunho(null); setErros([]); }}
               onConfirmar={confirmarRascunho}
@@ -351,12 +370,13 @@ export function RegistrarSaidaModal({ onFechar }: { onFechar: () => void }) {
    Cartão de insumo em edição (combobox + quantidade)
    ============================================================ */
 function CartaoInsumo({
-  rascunho, onMudar, onRemover, onConfirmar,
+  rascunho, onMudar, onRemover, onConfirmar, obraDestino,
 }: {
   rascunho: Rascunho;
   onMudar: (r: Rascunho) => void;
   onRemover: () => void;
   onConfirmar: () => void;
+  obraDestino: string;
 }) {
   const { saldo } = useStore();
   const [busca, setBusca] = useState('');
@@ -368,6 +388,7 @@ function CartaoInsumo({
     rotuloInsumo(i).toLowerCase().includes(busca.toLowerCase()),
   );
   const disponivel = selecionado ? saldo(selecionado.id).disponivel : null;
+  const linhaEscolhida = linhaPorId(rascunho.linhaOrcamento);
 
   return (
     <div className="insumo-card">
@@ -431,16 +452,53 @@ function CartaoInsumo({
         </div>
       </div>
 
-      {selecionado && (
-        <div className="campo__dica">
-          {selecionado.tipo === 'avulso'
-            ? 'Item avulso, sem apropriação necessária.'
-            : 'Item de pedido — a apropriação de custos acompanha a transferência.'}
+      {selecionado && selecionado.tipo === 'avulso' && (
+        <div className="campo__dica">Item avulso, sem apropriação necessária.</div>
+      )}
+
+      {/* Apropriação de custos: só existe para item de pedido. O select
+          mostra o saldo de orçamento na obra de origem e na de destino. */}
+      {selecionado && selecionado.tipo === 'pedido' && (
+        <div className="orcamento">
+          <div className="orcamento__t"><Wallet size={13} /> Apropriação de custos</div>
+          <div className="select-wrap">
+            <select
+              className="select"
+              value={rascunho.linhaOrcamento}
+              onChange={(e) => onMudar({ ...rascunho, linhaOrcamento: e.target.value })}
+            >
+              <option value="">Selecione a linha de orçamento</option>
+              {LINHAS_ORCAMENTO.map((l) => (
+                <option key={l.id} value={l.id}>{rotuloLinha(l)}</option>
+              ))}
+            </select>
+            <ChevronDown size={15} />
+          </div>
+          {linhaEscolhida && (
+            <div className="orcamento__saldos">
+              <span className="orcamento__saldo">
+                Disponível em {nomeObra(OBRA_ATUAL)}
+                <b>{(linhaEscolhida.disponivelPorObra[OBRA_ATUAL] ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b>
+              </span>
+              {obraDestino && (
+                <span className="orcamento__saldo">
+                  Disponível em {nomeObra(obraDestino)}
+                  <b>{(linhaEscolhida.disponivelPorObra[obraDestino] ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b>
+                </span>
+              )}
+            </div>
+          )}
+          <div className="campo__dica" style={{ marginTop: 8 }}>
+            Item de pedido exige linha de orçamento. Item avulso não pede este campo.
+          </div>
         </div>
       )}
 
       <div className="linha linha--fim mt-16">
-        <button className="btn btn--confirmar" onClick={onConfirmar} disabled={!rascunho.insumoId}>
+        <button
+          className="btn btn--confirmar" onClick={onConfirmar}
+          disabled={!rascunho.insumoId || (selecionado?.tipo === 'pedido' && !rascunho.linhaOrcamento)}
+        >
           <Check size={14} /> Confirmar
         </button>
       </div>

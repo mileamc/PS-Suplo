@@ -21,11 +21,11 @@ interface Ctx {
 }
 
 export const REGRAS: Partial<Record<EventoTipo, RegraNotificacao>> = {
-  enviada_aprovacao: {
+  criada: {
     destinatarios: ['aprovador'],
     titulo: (t) => `${t.codigo} aguarda sua aprovação`,
     descricao: (t, c) =>
-      `${c.obraOrigem} quer transferir ${t.itens.length} insumo(s) para ${c.obraDestino}. Nada se moveu ainda.`,
+      `${c.obraOrigem} reservou ${t.itens.length} insumo(s) para ${c.obraDestino}. A quantidade já está travada; nada se moveu fisicamente.`,
   },
   aprovada: {
     destinatarios: ['origem', 'destino'],
@@ -58,6 +58,12 @@ export const REGRAS: Partial<Record<EventoTipo, RegraNotificacao>> = {
     titulo: (t) => `${t.codigo} recebida COM divergência`,
     descricao: (_t, c) =>
       `${c.autor} registrou divergência na conferência em ${c.obraDestino}.${c.detalhe ? ` ${c.detalhe}` : ''}`,
+  },
+  nf_confirmada: {
+    destinatarios: ['origem', 'destino'],
+    titulo: (t) => `${t.codigo} encerrada`,
+    descricao: (_t, c) =>
+      `${c.autor} confirmou a nota fiscal da transferência em ${c.obraDestino}.${c.detalhe ? ` ${c.detalhe}` : ''}`,
   },
   cancelada: {
     destinatarios: ['origem'],

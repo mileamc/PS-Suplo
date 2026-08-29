@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import {
-  Check, ChevronRight, Plus, Trash2, PackageOpen, ClipboardList, Lock, Search,
+  Check, ChevronRight, Plus, Trash2, PackageOpen, ClipboardList, Lock, Search, Wallet,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { OBRAS, OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { INSUMOS, rotuloInsumo } from '../../data/insumos';
 import { REQUISICOES } from '../../data/requisicoes';
+import { LINHAS_ORCAMENTO, rotuloLinha, linhaPorId } from '../../data/orcamento';
 import type { TransferItem } from '../../domain/types';
 import { MobTop, MobAviso, MobAssinatura, Sheet, brl, num } from './comuns';
 
@@ -195,7 +196,15 @@ export function TelaNova({ onSair }: { onSair: () => void }) {
                       <b>{num(it.qtdEnviada)} {it.unidade}</b>
                     </div>
                   </div>
-                  <p className="mob-dica" style={{ marginTop: 8 }}>{brl(it.qtdEnviada * it.custoUnitario)}</p>
+                  <p className="mob-dica" style={{ marginTop: 8 }}>
+                    {brl(it.qtdEnviada * it.custoUnitario)}
+                    {it.linhaOrcamento && (
+                      <span style={{ display: 'block', color: 'var(--blue-fg)', fontWeight: 600, marginTop: 3 }}>
+                        <Wallet size={11} style={{ verticalAlign: -1, marginRight: 4 }} />
+                        {linhaPorId(it.linhaOrcamento)?.codigo} — {linhaPorId(it.linhaOrcamento)?.nome}
+                      </span>
+                    )}
+                  </p>
                 </div>
               ))}
 
@@ -292,6 +301,7 @@ export function TelaNova({ onSair }: { onSair: () => void }) {
       {sheetInsumo && (
         <SheetInsumo
           jaEscolhidos={itens.map((i) => i.insumoId)}
+          obraDestino={obraDestino}
           onFechar={() => setSheetInsumo(false)}
           onAdicionar={(item) => { setItens((v) => [...v, item]); setSheetInsumo(false); }}
         />
@@ -302,9 +312,10 @@ export function TelaNova({ onSair }: { onSair: () => void }) {
 
 /* ---------------- Sheet de seleção de insumo ------------------ */
 function SheetInsumo({
-  jaEscolhidos, onFechar, onAdicionar,
+  jaEscolhidos, obraDestino, onFechar, onAdicionar,
 }: {
   jaEscolhidos: string[];
+  obraDestino: string;
   onFechar: () => void;
   onAdicionar: (i: TransferItem) => void;
 }) {
@@ -312,6 +323,7 @@ function SheetInsumo({
   const [busca, setBusca] = useState('');
   const [escolhido, setEscolhido] = useState('');
   const [qtd, setQtd] = useState('');
+  const [linha, setLinha] = useState('');
   const [erro, setErro] = useState('');
 
   const insumo = INSUMOS.find((i) => i.id === escolhido);
@@ -333,15 +345,21 @@ function SheetInsumo({
               const q = Number(qtd);
               if (!q || q <= 0) { setErro('Informe uma quantidade maior que zero.'); return; }
               if (q > disponivel) { setErro(`Acima do disponível (${num(disponivel)} ${insumo.unidade}).`); return; }
+              if (insumo.tipo === 'pedido' && !linha) {
+                setErro('Escolha a linha de orçamento para apropriar o custo.');
+                return;
+              }
               onAdicionar({
                 insumoId: insumo.id, codigo: insumo.codigo, nome: insumo.nome, unidade: insumo.unidade,
-                tipo: insumo.tipo, custoUnitario: insumo.custoUnitario, qtdEnviada: q, qtdRecebida: null,
+                tipo: insumo.tipo, custoUnitario: insumo.custoUnitario,
+                linhaOrcamento: insumo.tipo === 'pedido' ? linha : undefined,
+                qtdEnviada: q, qtdRecebida: null,
               });
             }}
           >
             <Check size={19} /> Confirmar insumo
           </button>
-          <button className="mob-btn mob-btn--sm" onClick={() => { setEscolhido(''); setQtd(''); setErro(''); }}>
+          <button className="mob-btn mob-btn--sm" onClick={() => { setEscolhido(''); setQtd(''); setLinha(''); setErro(''); }}>
             Trocar insumo
           </button>
         </>
@@ -387,12 +405,35 @@ function SheetInsumo({
               value={qtd} onChange={(e) => { setQtd(e.target.value); setErro(''); }}
             />
             {erro && <div className="mob-erro">{erro}</div>}
-            <p className="mob-dica">
-              {insumo.tipo === 'avulso'
-                ? 'Item avulso, sem apropriação necessária.'
-                : 'Item de pedido — a apropriação de custos acompanha a transferência.'}
-            </p>
+            {insumo.tipo === 'avulso' && (
+              <p className="mob-dica">Item avulso, sem apropriação necessária.</p>
+            )}
           </div>
+
+          {/* Apropriação de custos: só para item de pedido. */}
+          {insumo.tipo === 'pedido' && (
+            <div className="mob-campo">
+              <label className="mob-rot"><Wallet size={15} /> Apropriação de custos <i>*</i></label>
+              {LINHAS_ORCAMENTO.map((l) => (
+                <button
+                  key={l.id} className="mob-opcao" aria-pressed={linha === l.id}
+                  onClick={() => { setLinha(l.id); setErro(''); }}
+                >
+                  <div className="mob-opcao__txt">
+                    <div className="mob-opcao__nome">{rotuloLinha(l)}</div>
+                    <div className="mob-opcao__meta">
+                      Aqui {brl(l.disponivelPorObra[OBRA_ATUAL] ?? 0)}
+                      {obraDestino && ` · ${nomeObra(obraDestino)} ${brl(l.disponivelPorObra[obraDestino] ?? 0)}`}
+                    </div>
+                  </div>
+                  {linha === l.id && <Check size={18} className="mob-opcao__check" />}
+                </button>
+              ))}
+              <p className="mob-dica">
+                Item de pedido exige linha de orçamento. O saldo aparece para esta obra e para a de destino.
+              </p>
+            </div>
+          )}
         </>
       )}
     </Sheet>

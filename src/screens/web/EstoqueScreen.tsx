@@ -208,6 +208,8 @@ function AbaEstoque({ onAbrirSaida }: { onAbrirSaida: () => void }) {
                 <th style={{ textAlign: 'right' }}>Quantidade</th>
                 <th style={{ textAlign: 'right' }}>Estoque mín</th>
                 <th>Último movimento</th>
+                {/* Coluna nova: complementa o saldo, sem substituir nada. */}
+                <th>Situação da transferência</th>
               </tr>
             </thead>
             <tbody>
@@ -220,35 +222,43 @@ function AbaEstoque({ onAbrirSaida }: { onAbrirSaida: () => void }) {
                     <td className="txt-muted">{i.categoria}</td>
                     <td><Badge tom={i.tipo === 'avulso' ? 'verde' : 'ambar'}>{i.tipo === 'avulso' ? 'Avulso' : 'Pedido'}</Badge></td>
                     <td>
+                      {/* Quantidade continua sendo o saldo total do item, como
+                          na tela original. O que a reserva tirou do disponível
+                          aparece logo abaixo, sem esconder o número de antes. */}
                       <div className="saldo">
                         <span className="saldo__principal">
-                          {s.disponivel.toLocaleString('pt-BR')} {i.unidade}
+                          {s.fisico.toLocaleString('pt-BR')} {i.unidade}
                         </span>
-                        {(s.reservado > 0 || s.emTransito > 0 || s.aReceber > 0) ? (
-                          <span className="saldo__detalhe">
-                            {s.reservado > 0 && (
-                              <span className="saldo__chip saldo__chip--res" title="Reservado para transferência">
-                                {s.reservado.toLocaleString('pt-BR')} reserv.
-                              </span>
-                            )}
-                            {s.emTransito > 0 && (
-                              <span className="saldo__chip saldo__chip--tra" title="Já despachado, em trânsito">
-                                {s.emTransito.toLocaleString('pt-BR')} trâns.
-                              </span>
-                            )}
-                            {s.aReceber > 0 && (
-                              <span className="saldo__chip saldo__chip--rec" title="A receber de outra obra">
-                                +{s.aReceber.toLocaleString('pt-BR')} a receber
-                              </span>
-                            )}
-                          </span>
-                        ) : (
-                          <span className="txt-11 txt-muted">disponível</span>
-                        )}
+                        <span className="txt-11 txt-muted">
+                          {s.disponivel.toLocaleString('pt-BR')} {i.unidade} disponível
+                        </span>
                       </div>
                     </td>
                     <td className="td-num txt-muted">{i.estoqueMin} {i.unidade}</td>
                     <td className="txt-muted">{i.ultimoMovimento}</td>
+                    <td>
+                      {(s.reservado > 0 || s.emTransito > 0 || s.aReceber > 0) ? (
+                        <span className="saldo__detalhe" style={{ flexWrap: 'wrap' }}>
+                          {s.reservado > 0 && (
+                            <span className="saldo__chip saldo__chip--res" title="Reservado para transferência, ainda na obra">
+                              {s.reservado.toLocaleString('pt-BR')} reservado
+                            </span>
+                          )}
+                          {s.emTransito > 0 && (
+                            <span className="saldo__chip saldo__chip--tra" title="Já despachado, a caminho de outra obra">
+                              {s.emTransito.toLocaleString('pt-BR')} em trânsito
+                            </span>
+                          )}
+                          {s.aReceber > 0 && (
+                            <span className="saldo__chip saldo__chip--rec" title="A receber de outra obra">
+                              +{s.aReceber.toLocaleString('pt-BR')} a receber
+                            </span>
+                          )}
+                        </span>
+                      ) : (
+                        <span className="txt-11 txt-muted">—</span>
+                      )}
+                    </td>
                   </tr>
                 );
               })}
@@ -257,8 +267,9 @@ function AbaEstoque({ onAbrirSaida }: { onAbrirSaida: () => void }) {
         </div>
       </div>
       <p className="txt-12 txt-muted mt-8">
-        A coluna mostra o <strong>disponível</strong>. Reservado, em trânsito e a receber aparecem como
-        chips — o saldo deixa de ser um número único.
+        As colunas originais continuam todas aqui. <strong>Quantidade</strong> segue mostrando o saldo
+        do item, com o disponível logo abaixo, e a coluna <strong>Situação da transferência</strong>
+        acrescenta o que está reservado, em trânsito ou a receber — reserva não é saída.
       </p>
     </>
   );

@@ -32,15 +32,18 @@ export default function App() {
     <StoreProvider>
       {destino.tela === 'embed-mobile'
         ? <MobileScreen semMoldura />
-        : <Prototipo rota={destino.rota} id={destino.id} navegar={navegar} />}
+        : <Prototipo
+            rota={destino.rota} id={destino.id}
+            somenteLeitura={destino.somenteLeitura} navegar={navegar}
+          />}
       <Toasts />
     </StoreProvider>
   );
 }
 
 function Prototipo({
-  rota, id, navegar,
-}: { rota: Rota; id: string | null; navegar: (destino: string) => void }) {
+  rota, id, somenteLeitura, navegar,
+}: { rota: Rota; id: string | null; somenteLeitura?: boolean; navegar: (destino: string) => void }) {
   const { state } = useStore();
   const transferencia = id ? state.transferencias.find((t) => t.id === id) ?? null : null;
 
@@ -61,7 +64,10 @@ function Prototipo({
       </div>
 
       {transferencia && (
-        <TransferenciaDrawer t={transferencia} onFechar={() => navegar(ROTAS.transferencias)} />
+        <TransferenciaDrawer
+          t={transferencia} somenteLeitura={somenteLeitura}
+          onFechar={() => navegar(ROTAS.transferencias)}
+        />
       )}
     </div>
   );

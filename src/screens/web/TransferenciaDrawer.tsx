@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   X, Check, ArrowRight, Truck, Package, ClipboardCheck, RotateCcw,
   User, Calendar, CalendarCheck, CalendarClock, Building2, Coins, PenLine, ClipboardList,
+  FileText, Star, Paperclip, Wallet,
 } from 'lucide-react';
 import { BadgeStatus, Aviso } from '../../components/ui';
 import { STATUS_META } from '../../domain/status';
@@ -10,14 +11,18 @@ import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
 import { nomeObra } from '../../data/obras';
 import { useStore } from '../../state/store';
 import type { Transferencia, TransferEvento } from '../../domain/types';
-import { ReprovarModal, DespachoModal, CancelarModal, FvmModal, ChegadaModal } from './TransferenciaModais';
+import { ReprovarModal, DespachoModal, CancelarModal, FvmModal, ChegadaModal, NfModal } from './TransferenciaModais';
+import { FICHAS, nomeCriterio } from '../../data/avaliacao';
+import { linhaPorId } from '../../data/orcamento';
 
-type ModalAberto = null | 'reprovar' | 'despacho' | 'cancelar' | 'fvm' | 'chegada';
+type ModalAberto = null | 'reprovar' | 'despacho' | 'cancelar' | 'fvm' | 'chegada' | 'nf';
 
-export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
+export function TransferenciaDrawer({
+  t, onFechar, somenteLeitura = false,
+}: { t: Transferencia; onFechar: () => void; somenteLeitura?: boolean }) {
   const { state, dispatch } = useStore();
   const [modal, setModal] = useState<ModalAberto>(null);
-  const acoes = acoesDoPapel(t, state.papel, state.aprovacaoAtiva);
+  const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape' && !modal) onFechar(); };
@@ -82,7 +87,7 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
               />
               <Dado icone={<Check size={12} />} rotulo="Quem aprovou"
                 valor={t.aprovadaPor ? `${t.aprovadaPor} · ${fmtData(t.aprovadaEm!)}` : (state.aprovacaoAtiva ? 'Ainda não aprovada' : 'Aprovação desligada')} />
-              <Dado icone={<Calendar size={12} />} rotulo="Quando saiu" valor={t.despachadaEm ? fmtDataHora(t.despachadaEm) : 'Ainda na obra de origem'} />
+              <Dado icone={<Calendar size={12} />} rotulo="Quando saiu" valor={t.dataSaida ? fmtData(t.dataSaida) : 'Ainda na obra de origem'} />
               <Dado icone={<CalendarClock size={12} />} rotulo="Previsão de chegada" valor={t.previsaoChegada ? fmtData(t.previsaoChegada) : '—'} />
               <Dado icone={<CalendarCheck size={12} />} rotulo="Quando chegou" valor={t.chegadaEm ? fmtDataHora(t.chegadaEm) : '—'} />
               <Dado icone={<Coins size={12} />} rotulo="Custo dos itens"
@@ -126,6 +131,12 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
                             {i.codigo} · {i.tipo === 'avulso' ? 'avulsa' : 'pedido'} ·{' '}
                             {i.custoUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}/{i.unidade}
                           </div>
+                          {i.linhaOrcamento && (
+                            <div className="txt-11" style={{ marginTop: 4, color: 'var(--blue-fg)' }}>
+                              <Wallet size={11} style={{ verticalAlign: -1, marginRight: 4 }} />
+                              {linhaPorId(i.linhaOrcamento)?.codigo} — {linhaPorId(i.linhaOrcamento)?.nome}
+                            </div>
+                          )}
                           {i.motivoDivergencia && (
                             <div className="txt-11" style={{ marginTop: 5, color: 'var(--red-fg)' }}>{i.motivoDivergencia}</div>
                           )}
@@ -152,6 +163,61 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
             </div>
           </div>
 
+          {t.avaliacao && (
+            <div className="bloco">
+              <div className="bloco__titulo">Avaliação de entrega</div>
+              <div className="tabela-wrap">
+                <table className="comparacao">
+                  <tbody>
+                    {Object.entries(t.avaliacao.respostas).map(([id, v]) => (
+                      <tr key={id}>
+                        <td className="td-forte">{nomeCriterio(id)}</td>
+                        <td style={{ textAlign: 'right' }}>
+                          {typeof v === 'number' ? (
+                            <span className="estrelas">
+                              {[1, 2, 3, 4, 5].map((n) => (
+                                <span key={n} className={`estrela ${v >= n ? 'estrela--on' : ''}`}>
+                                  <Star size={15} fill={v >= n ? 'currentColor' : 'none'} />
+                                </span>
+                              ))}
+                            </span>
+                          ) : (
+                            <span className={`badge ${v ? 'badge--vermelho' : 'badge--verde'}`}>{v ? 'Sim' : 'Não'}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="txt-11 txt-muted mt-8">
+                Fichas: {t.avaliacao.fichas.map((f) => FICHAS.find((x) => x.id === f)?.nome).filter(Boolean).join(' · ')}
+                {' · '}avaliada por {t.avaliacao.avaliadaPor} em {fmtDataHora(t.avaliacao.avaliadaEm)}
+              </div>
+              {t.avaliacao.observacao && (
+                <div className="timeline__detalhe mt-8">{t.avaliacao.observacao}</div>
+              )}
+              {t.avaliacao.anexos.length > 0 && (
+                <div className="anexos">
+                  {t.avaliacao.anexos.map((a) => (
+                    <span className="anexo" key={a}><Paperclip size={12} /> {a}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {t.nf && (
+            <div className="bloco">
+              <div className="bloco__titulo">Nota fiscal</div>
+              <div className="dados">
+                <Dado icone={<FileText size={12} />} rotulo="Número da NF" valor={t.nf.numero} />
+                <Dado icone={<Check size={12} />} rotulo="Confirmada por" valor={`${t.nf.confirmadaPor} · ${fmtData(t.nf.confirmadaEm)}`} />
+              </div>
+              <div className="anexos"><span className="anexo"><Paperclip size={12} /> {t.nf.anexo}</span></div>
+            </div>
+          )}
+
           {t.assinatura && (
             <div className="bloco">
               <div className="bloco__titulo">Assinatura da saída</div>
@@ -166,9 +232,11 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
         <footer className="drawer__rodape">
           {acoes.length === 0 ? (
             <div className="txt-12 txt-muted" style={{ marginRight: 'auto' }}>
-              {STATUS_META[t.status].terminal
-                ? 'Transferência encerrada.'
-                : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado. Troque de papel na barra do topo.`}
+              {somenteLeitura
+                ? 'Visão geral, só leitura. As ações ficam nos filtros por estado.'
+                : STATUS_META[t.status].terminal
+                  ? 'Transferência encerrada.'
+                  : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado. Troque de papel na barra do topo.`}
             </div>
           ) : acoes.map((a) => {
             const classe = a.tom === 'primario' ? 'btn btn--primario' : a.tom === 'perigo' ? 'btn btn--perigo' : 'btn';
@@ -177,6 +245,7 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
               : a.id === 'avaliar_entrega' ? <ClipboardCheck size={15} />
               : a.id === 'reenviar' ? <RotateCcw size={15} />
               : a.id === 'aprovar' ? <Check size={15} />
+              : a.id === 'confirmar_nf' ? <FileText size={15} />
               : a.id === 'reprovar' || a.id === 'cancelar' ? <X size={15} />
               : <ArrowRight size={15} />;
             return (
@@ -184,13 +253,13 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
                 key={a.id} className={classe}
                 onClick={() => {
                   switch (a.id) {
-                    case 'enviar_aprovacao': dispatch({ type: 'enviar_aprovacao', id: t.id }); break;
                     case 'aprovar': dispatch({ type: 'aprovar', id: t.id }); break;
                     case 'reprovar': setModal('reprovar'); break;
                     case 'despachar': setModal('despacho'); break;
                     case 'cancelar': setModal('cancelar'); break;
                     case 'registrar_chegada': setModal('chegada'); break;
                     case 'avaliar_entrega': setModal('fvm'); break;
+                    case 'confirmar_nf': setModal('nf'); break;
                     case 'reenviar': dispatch({ type: 'reenviar', id: t.id }); break;
                     case 'encerrar_divergencia': dispatch({ type: 'encerrar_divergencia', id: t.id }); onFechar(); break;
                   }
@@ -207,6 +276,7 @@ export function TransferenciaDrawer({ t, onFechar }: { t: Transferencia; onFecha
       {modal === 'despacho' && <DespachoModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'cancelar' && <CancelarModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'fvm' && <FvmModal t={t} onFechar={() => setModal(null)} />}
+      {modal === 'nf' && <NfModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'chegada' && <ChegadaModal t={t} onFechar={() => setModal(null)} />}
     </>
   );

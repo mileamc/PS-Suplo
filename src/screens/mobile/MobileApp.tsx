@@ -22,7 +22,7 @@ type Tela =
   | { t: 'estoque' }
   | { t: 'movimentacoes' }
   | { t: 'notificacoes' }
-  | { t: 'detalhe'; id: string }
+  | { t: 'detalhe'; id: string; leitura?: boolean }
   | { t: 'nova' }
   | { t: 'fvm'; id: string }
   | { t: 'fvm-fim'; id: string; divergente: boolean };
@@ -65,7 +65,7 @@ export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {})
       case 'transferencias':
         return (
           <TelaTransferencias
-            onAbrir={(id) => empilhar({ t: 'detalhe', id })}
+            onAbrir={(id, leitura) => empilhar({ t: 'detalhe', id, leitura })}
             onNova={() => empilhar({ t: 'nova' })}
             onConfig={() => setConfig(true)}
           />
@@ -78,7 +78,11 @@ export function MobileApp({ semMoldura = false }: { semMoldura?: boolean } = {})
         return <TelaNotificacoes onAbrir={(id) => empilhar({ t: 'detalhe', id })} />;
       case 'detalhe':
         return transferencia
-          ? <TelaDetalhe t={transferencia} onVoltar={voltar} onFvm={(id) => empilhar({ t: 'fvm', id })} />
+          ? <TelaDetalhe
+              t={transferencia} onVoltar={voltar}
+              somenteLeitura={atual.leitura}
+              onFvm={(id) => empilhar({ t: 'fvm', id })}
+            />
           : null;
       case 'nova':
         return <TelaNova onSair={voltar} />;

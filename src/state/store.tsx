@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useReducer, useCallback } from 'react';
 import type {
-  Notificacao, Role, TransferItem, Transferencia, TransferStatus, EventoTipo,
+  AvaliacaoEntrega, Notificacao, Role, TransferItem, Transferencia, TransferStatus, EventoTipo,
 } from '../domain/types';
 import { STATUS_RESERVA, STATUS_TRANSITO } from '../domain/status';
 import { REGRAS } from '../domain/notificacoes';
@@ -57,12 +57,12 @@ const initialState: AppState = {
 
 export type Action =
   | { type: 'criar'; itens: TransferItem[]; obraDestinoId: string; observacao: string; assinatura: string; entrada: 'saida_direta' | 'requisicao'; requisicaoCodigo?: string }
-  | { type: 'enviar_aprovacao'; id: string }
   | { type: 'aprovar'; id: string }
   | { type: 'reprovar'; id: string; motivo: string }
-  | { type: 'despachar'; id: string; previsaoChegada: string }
+  | { type: 'despachar'; id: string; dataSaida: string; previsaoChegada: string }
   | { type: 'registrar_chegada'; id: string }
-  | { type: 'confirmar_recebimento'; id: string; recebidos: Record<string, number>; motivos: Record<string, string> }
+  | { type: 'confirmar_recebimento'; id: string; recebidos: Record<string, number>; motivos: Record<string, string>; avaliacao?: AvaliacaoEntrega }
+  | { type: 'confirmar_nf'; id: string; numero: string; anexo: string }
   | { type: 'cancelar'; id: string; motivo: string }
   | { type: 'reenviar'; id: string }
   | { type: 'encerrar_divergencia'; id: string }
@@ -132,8 +132,10 @@ function reducer(state: AppState, action: Action): AppState {
       const nova: Transferencia = {
         id: nid('tr'),
         codigo,
-        // Nasce Reservado: a quantidade trava, nada se move fisicamente.
-        status: 'reservado',
+        // Nasce com a quantidade já travada. Com o parâmetro de aprovação
+        // ligado, entra direto em "aprovação pendente" — não fica esperando
+        // um segundo clique para ser enviada.
+        status: state.aprovacaoAtiva ? 'aguardando_aprovacao' : 'reservado',
         obraOrigemId: OBRA_ATUAL,
         obraDestinoId: action.obraDestinoId,
         criadaPor: autor,
@@ -153,27 +155,17 @@ function reducer(state: AppState, action: Action): AppState {
         ...state,
         seq,
         transferencias: [nova, ...state.transferencias],
+        notificacoes: state.aprovacaoAtiva ? notificar(state, nova, 'criada', autor) : state.notificacoes,
         toasts: [...state.toasts, {
           id: nid('tst'), tom: 'sucesso',
-          titulo: `${codigo} criada como Reservada`,
+          titulo: `${codigo} reservada`,
           descricao: state.aprovacaoAtiva
-            ? 'A quantidade foi travada no estoque. Envie para aprovação quando o material estiver separado.'
+            ? 'A quantidade foi travada no estoque e a obra de destino já foi avisada para aprovar.'
             : 'A quantidade foi travada no estoque. Aprovação está desligada: registre o despacho para seguir.',
         }],
       };
     }
 
-    case 'enviar_aprovacao': {
-      const autor = USUARIO_POR_PAPEL.origem;
-      const t0 = achar(state, action.id);
-      const t1 = comEvento({ ...t0, status: 'aguardando_aprovacao' }, 'enviada_aprovacao', 'origem', autor, nomeObra(t0.obraOrigemId));
-      return {
-        ...state,
-        transferencias: mapear(state, action.id, () => t1),
-        notificacoes: notificar(state, t1, 'enviada_aprovacao', autor),
-        toasts: [...state.toasts, { id: nid('tst'), tom: 'info', titulo: `${t0.codigo} enviada para aprovação`, descricao: 'O Aprovador da obra de destino foi notificado.' }],
-      };
-    }
 
     case 'aprovar': {
       const autor = USUARIO_POR_PAPEL.aprovador;
@@ -209,9 +201,12 @@ function reducer(state: AppState, action: Action): AppState {
       const autor = USUARIO_POR_PAPEL.origem;
       const t0 = achar(state, action.id);
       const t1 = comEvento(
-        { ...t0, status: 'em_transito', despachadaEm: agora(), previsaoChegada: action.previsaoChegada },
+        {
+          ...t0, status: 'em_transito', despachadaEm: agora(),
+          dataSaida: action.dataSaida, previsaoChegada: action.previsaoChegada,
+        },
         'despachada', 'origem', autor, nomeObra(t0.obraOrigemId),
-        `Previsão de chegada: ${new Date(action.previsaoChegada).toLocaleDateString('pt-BR')}`,
+        `Saiu em ${new Date(action.dataSaida).toLocaleDateString('pt-BR')} · previsão de chegada ${new Date(action.previsaoChegada).toLocaleDateString('pt-BR')}`,
       );
       // O material sai fisicamente da obra de origem neste momento.
       const delta = { ...state.saldoDelta };
@@ -250,7 +245,9 @@ function reducer(state: AppState, action: Action): AppState {
         motivoDivergencia: action.motivos[it.insumoId] || undefined,
       }));
       const temDivergencia = itens.some((it) => it.qtdRecebida !== it.qtdEnviada);
-      const status: TransferStatus = temDivergencia ? 'recebido_divergencia' : 'recebido_ok';
+      // A conferência não encerra: o material entra no estoque e a
+      // transferência fica Aguardando NF até a nota ser confirmada.
+      const status: TransferStatus = 'aguardando_nf';
       const tipo: EventoTipo = temDivergencia ? 'recebida_divergencia' : 'recebida_ok';
       const resumo = temDivergencia
         ? itens.filter((i) => i.qtdRecebida !== i.qtdEnviada)
@@ -258,7 +255,10 @@ function reducer(state: AppState, action: Action): AppState {
           .join(' · ')
         : undefined;
       const t1 = comEvento(
-        { ...t0, itens, status, recebidaPor: autor, recebidaEm: agora() },
+        {
+          ...t0, itens, status, recebidaPor: autor, recebidaEm: agora(),
+          avaliacao: action.avaliacao,
+        },
         tipo, 'destino', autor, nomeObra(t0.obraDestinoId), resumo,
       );
       const delta = { ...state.saldoDelta };
@@ -274,7 +274,38 @@ function reducer(state: AppState, action: Action): AppState {
           id: nid('tst'),
           tom: temDivergencia ? 'erro' : 'sucesso',
           titulo: temDivergencia ? `${t0.codigo} recebida com divergência` : `${t0.codigo} recebida sem divergência`,
-          descricao: 'Origem, Aprovador e destino foram notificados — este é o único evento com notificação tripla.',
+          descricao: 'Origem, Aprovador e destino foram notificados — é o único evento com notificação tripla. Falta confirmar a NF.',
+        }],
+      };
+    }
+
+    case 'confirmar_nf': {
+      const autor = USUARIO_POR_PAPEL.destino;
+      const t0 = achar(state, action.id);
+      const teveDivergencia = t0.itens.some(
+        (i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada,
+      );
+      const status: TransferStatus = teveDivergencia ? 'recebido_divergencia' : 'recebido_ok';
+      const t1 = comEvento(
+        {
+          ...t0,
+          status,
+          nf: { numero: action.numero, anexo: action.anexo, confirmadaPor: autor, confirmadaEm: agora() },
+        },
+        'nf_confirmada', 'destino', autor, nomeObra(t0.obraDestinoId),
+        `NF ${action.numero}${action.anexo ? ' · anexo enviado' : ''}`,
+      );
+      return {
+        ...state,
+        transferencias: mapear(state, action.id, () => t1),
+        notificacoes: notificar(state, t1, 'nf_confirmada', autor, `NF ${action.numero}`),
+        toasts: [...state.toasts, {
+          id: nid('tst'),
+          tom: teveDivergencia ? 'erro' : 'sucesso',
+          titulo: `${t0.codigo} encerrada`,
+          descricao: teveDivergencia
+            ? 'NF confirmada. A divergência segue registrada para auditoria.'
+            : 'NF confirmada. A transferência está completa.',
         }],
       };
     }
@@ -310,6 +341,7 @@ function reducer(state: AppState, action: Action): AppState {
           aprovadaPor: undefined, aprovadaEm: undefined,
           despachadaEm: undefined, previsaoChegada: undefined,
           chegadaEm: undefined, recebidaPor: undefined, recebidaEm: undefined,
+          dataSaida: undefined, avaliacao: undefined, nf: undefined,
         },
         'reenviada', 'origem', autor, nomeObra(t0.obraOrigemId),
         `Reenvio do saldo faltante (${t0.ciclo + 1}º ciclo)`,

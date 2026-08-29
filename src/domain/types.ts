@@ -10,6 +10,7 @@ export type TransferStatus =
   | 'aprovado'
   | 'em_transito'
   | 'avaliacao_entrega'
+  | 'aguardando_nf'
   | 'recebido_ok'
   | 'recebido_divergencia'
   | 'reprovado'
@@ -48,6 +49,11 @@ export interface TransferItem {
   unidade: string;
   tipo: TipoInsumo;
   custoUnitario: number;
+  /**
+   * Linha de orçamento à qual o custo é apropriado. Obrigatória para item
+   * de pedido; item avulso não exige apropriação.
+   */
+  linhaOrcamento?: string;
   /** Quantidade travada na reserva. Premissa da seção 2: não muda depois. */
   qtdEnviada: number;
   /** Preenchido só na Avaliação de entrega (FVM). */
@@ -58,13 +64,13 @@ export interface TransferItem {
 
 export type EventoTipo =
   | 'criada'
-  | 'enviada_aprovacao'
   | 'aprovada'
   | 'reprovada'
   | 'despachada'
   | 'chegada_registrada'
   | 'recebida_ok'
   | 'recebida_divergencia'
+  | 'nf_confirmada'
   | 'cancelada'
   | 'reenviada';
 
@@ -98,11 +104,17 @@ export interface Transferencia {
   aprovadaPor?: string;
   aprovadaEm?: string;
   motivoReprovacao?: string;
+  /** Data em que o material efetivamente saiu da obra de origem. */
+  dataSaida?: string;
   despachadaEm?: string;
   previsaoChegada?: string;
   chegadaEm?: string;
   recebidaPor?: string;
   recebidaEm?: string;
+  /** Avaliação de entrega — critérios de qualidade, configuráveis por cliente. */
+  avaliacao?: AvaliacaoEntrega;
+  /** Nota fiscal da transferência, confirmada pela obra de destino. */
+  nf?: NotaFiscal;
   /** Ciclo de reenvio (V1) — nº de vezes que voltou para Reservado. */
   ciclo: number;
   eventos: TransferEvento[];
@@ -120,4 +132,27 @@ export interface Notificacao {
   /** A confirmação de recebimento é o único evento com notificação tripla. */
   tripla: boolean;
   lida: boolean;
+}
+
+/* ============================================================
+   Avaliação de entrega (FVM) e nota fiscal
+   ============================================================ */
+
+export type RespostaCriterio = number | boolean;
+
+export interface AvaliacaoEntrega {
+  /** Fichas escolhidas — cada uma acrescenta critérios à avaliação. */
+  fichas: string[];
+  respostas: Record<string, RespostaCriterio>;
+  observacao: string;
+  anexos: string[];
+  avaliadaPor: string;
+  avaliadaEm: string;
+}
+
+export interface NotaFiscal {
+  numero: string;
+  anexo: string;
+  confirmadaPor: string;
+  confirmadaEm: string;
 }

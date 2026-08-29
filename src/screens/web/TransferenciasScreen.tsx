@@ -2,19 +2,47 @@ import { useMemo, useState } from 'react';
 import {
   ArrowRight, ArrowUpFromLine, ArrowDownToLine, Search, ChevronLeft, ChevronRight,
   AlertCircle, CalendarClock, Plus, Package, Calendar as CalIcon, List,
-  Archive, ShieldQuestion, Truck, ClipboardCheck, CheckCircle2, AlertTriangle,
+  Archive, Truck, CheckCircle2, AlertTriangle, FileText, XCircle, Eye,
 } from 'lucide-react';
 import { TelaHeader } from '../../components/Shell';
 import { BadgeStatus, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus } from '../../components/ui';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
-import { STATUS_META, STATUS_TRANSITO } from '../../domain/status';
+import {
+  STATUS_META, STATUS_TRANSITO, STATUS_RESERVA, STATUS_CANCELADOS, STATUS_ATIVOS,
+} from '../../domain/status';
 import { fmtData } from '../../domain/notificacoes';
-import type { Transferencia, TransferStatus } from '../../domain/types';
+import type { Transferencia } from '../../domain/types';
 import { RegistrarSaidaModal } from './RegistrarSaidaModal';
 
 type Direcao = 'enviar' | 'receber';
 type Visao = 'lista' | 'calendario';
+
+/* ------------------------------------------------------------
+   Os cards seguem o vocabulário que a tela de Entregas já usa
+   (Total, Pendentes, Atrasados, Aguardando NF, Completos,
+   Cancelados), e cada um agrupa os estados do fluxo.
+   ------------------------------------------------------------ */
+type Grupo =
+  | 'total' | 'pendentes' | 'transito' | 'atrasados'
+  | 'nf' | 'divergencia' | 'completos' | 'cancelados';
+
+const HOJE_G = new Date('2026-08-29T12:00:00');
+
+function noGrupo(t: Transferencia, g: Grupo): boolean {
+  switch (g) {
+    case 'total': return STATUS_ATIVOS.includes(t.status);
+    case 'pendentes': return STATUS_RESERVA.includes(t.status);
+    case 'transito': return STATUS_TRANSITO.includes(t.status);
+    case 'atrasados':
+      return STATUS_TRANSITO.includes(t.status)
+        && Boolean(t.previsaoChegada) && new Date(t.previsaoChegada!) < HOJE_G;
+    case 'nf': return t.status === 'aguardando_nf';
+    case 'divergencia': return t.status === 'recebido_divergencia';
+    case 'completos': return t.status === 'recebido_ok';
+    case 'cancelados': return STATUS_CANCELADOS.includes(t.status);
+  }
+}
 
 const HOJE = new Date('2026-08-29T12:00:00');
 
@@ -24,28 +52,31 @@ export function TransferenciasScreen({
   const { state, aEnviar, aReceber } = useStore();
   const [direcao, setDirecao] = useState<Direcao>('enviar');
   const [visao, setVisao] = useState<Visao>('lista');
-  const [filtro, setFiltro] = useState<TransferStatus | 'todos'>('todos');
+  const [grupo, setGrupo] = useState<Grupo>('total');
   const [busca, setBusca] = useState('');
   const [modalSaida, setModalSaida] = useState(false);
 
   const base = direcao === 'enviar' ? aEnviar : aReceber;
+  const somenteLeitura = grupo === 'total';
+
   const lista = useMemo(() => base
-    .filter((t) => (filtro === 'todos' ? true : t.status === filtro))
+    .filter((t) => noGrupo(t, grupo))
     .filter((t) => `${t.codigo} ${nomeObra(t.obraDestinoId)} ${nomeObra(t.obraOrigemId)} ${t.itens.map((i) => i.nome).join(' ')}`
       .toLowerCase().includes(busca.toLowerCase()))
     .sort((a, b) => b.criadaEm.localeCompare(a.criadaEm)),
-  [base, filtro, busca]);
+  [base, grupo, busca]);
 
-  const contagem = (s: TransferStatus) => base.filter((t) => t.status === s).length;
+  const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g)).length;
 
-  const cards: { status: TransferStatus | 'todos'; rotulo: string; valor: number; icone: React.ReactNode; cor: string }[] = [
-    { status: 'todos', rotulo: 'Total', valor: base.length, icone: <Package size={15} />, cor: 'var(--text-muted)' },
-    { status: 'reservado', rotulo: 'Reservado', valor: contagem('reservado'), icone: <Archive size={15} />, cor: corDoStatus('reservado') },
-    { status: 'aguardando_aprovacao', rotulo: 'Aguard. aprovação', valor: contagem('aguardando_aprovacao'), icone: <ShieldQuestion size={15} />, cor: corDoStatus('aguardando_aprovacao') },
-    { status: 'em_transito', rotulo: 'Em trânsito', valor: contagem('em_transito'), icone: <Truck size={15} />, cor: corDoStatus('em_transito') },
-    { status: 'avaliacao_entrega', rotulo: 'Avaliação de entrega', valor: contagem('avaliacao_entrega'), icone: <ClipboardCheck size={15} />, cor: corDoStatus('avaliacao_entrega') },
-    { status: 'recebido_ok', rotulo: 'Recebido ok', valor: contagem('recebido_ok'), icone: <CheckCircle2 size={15} />, cor: corDoStatus('recebido_ok') },
-    { status: 'recebido_divergencia', rotulo: 'Com divergência', valor: contagem('recebido_divergencia'), icone: <AlertTriangle size={15} />, cor: corDoStatus('recebido_divergencia') },
+  const cards: { grupo: Grupo; rotulo: string; icone: React.ReactNode; cor: string }[] = [
+    { grupo: 'total', rotulo: 'Total', icone: <Package size={15} />, cor: 'var(--text-muted)' },
+    { grupo: 'pendentes', rotulo: 'Pendentes', icone: <Archive size={15} />, cor: corDoStatus('aguardando_aprovacao') },
+    { grupo: 'transito', rotulo: 'Em trânsito', icone: <Truck size={15} />, cor: corDoStatus('em_transito') },
+    { grupo: 'atrasados', rotulo: 'Atrasados', icone: <AlertCircle size={15} />, cor: 'var(--red)' },
+    { grupo: 'nf', rotulo: 'Aguardando NF', icone: <FileText size={15} />, cor: corDoStatus('aguardando_nf') },
+    { grupo: 'divergencia', rotulo: 'Com divergência', icone: <AlertTriangle size={15} />, cor: corDoStatus('recebido_divergencia') },
+    { grupo: 'completos', rotulo: 'Completos', icone: <CheckCircle2 size={15} />, cor: corDoStatus('recebido_ok') },
+    { grupo: 'cancelados', rotulo: 'Cancelados', icone: <XCircle size={15} />, cor: corDoStatus('cancelado') },
   ];
 
   const atrasadas = base.filter((t) =>
@@ -68,24 +99,24 @@ export function TransferenciasScreen({
       <div className="cards-status">
         {cards.map((c) => (
           <button
-            key={c.status}
-            className={`card-status ${filtro === c.status ? 'card-status--ativo' : ''}`}
+            key={c.grupo}
+            className={`card-status ${grupo === c.grupo ? 'card-status--ativo' : ''}`}
             style={{ ['--c' as string]: c.cor }}
-            onClick={() => setFiltro(c.status as TransferStatus | 'todos')}
+            onClick={() => setGrupo(c.grupo)}
           >
             <div className="card-status__topo">{c.icone}</div>
-            <div className="card-status__valor">{c.valor}</div>
+            <div className="card-status__valor">{conta(c.grupo)}</div>
             <div className="card-status__rotulo">{c.rotulo}</div>
           </button>
         ))}
       </div>
 
       <div className="abas">
-        <button className={`aba ${direcao === 'enviar' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('enviar'); setFiltro('todos'); }}>
+        <button className={`aba ${direcao === 'enviar' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('enviar'); setGrupo('total'); }}>
           <ArrowUpFromLine size={15} /> A Enviar
           <span className="aba__badge">{aEnviar.filter((t) => !STATUS_META[t.status].terminal).length}</span>
         </button>
-        <button className={`aba ${direcao === 'receber' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('receber'); setFiltro('todos'); }}>
+        <button className={`aba ${direcao === 'receber' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('receber'); setGrupo('total'); }}>
           <ArrowDownToLine size={15} /> A Receber
           <span className="aba__badge">{aReceber.filter((t) => !STATUS_META[t.status].terminal).length}</span>
         </button>
@@ -116,18 +147,35 @@ export function TransferenciasScreen({
         <ListaCarregando />
       ) : state.estadoTela === 'vazio' || lista.length === 0 ? (
         <EstadoVazio
-          titulo={direcao === 'enviar' ? 'Nenhuma transferência para enviar' : 'Nenhuma transferência a receber'}
+          titulo={grupo === 'total'
+            ? (direcao === 'enviar' ? 'Nenhuma transferência ativa para enviar' : 'Nenhuma transferência ativa a receber')
+            : `Nada em ${cards.find((c) => c.grupo === grupo)?.rotulo.toLowerCase()}`}
           texto={direcao === 'enviar'
             ? 'Quando esta obra tiver sobra de material, registre uma Saída de Estoque do tipo Transferência para reservar a quantidade e mandar para outra obra.'
             : 'Assim que outra obra despachar material para cá, ele aparece aqui com a previsão de chegada.'}
-          acao={direcao === 'enviar'
+          acao={direcao === 'enviar' && grupo === 'total'
             ? <button className="btn btn--primario" onClick={() => setModalSaida(true)}><Plus size={15} /> Nova transferência</button>
             : undefined}
         />
       ) : visao === 'lista' ? (
         <div className="grade-cal">
-          <div className="lista-transf">
-            {lista.map((t) => <ItemLista key={t.id} t={t} direcao={direcao} onAbrir={onAbrir} />)}
+          <div>
+            {somenteLeitura && (
+              <div className="aviso aviso--info" style={{ marginTop: 0, marginBottom: 12 }}>
+                <Eye size={15} />
+                <div>
+                  <strong className="aviso__titulo">Visão geral, só leitura</strong>
+                  Total mostra tudo que está entrando e saindo desta obra e em que estado está.
+                  Para agir — aprovar, despachar, conferir, confirmar NF — escolha o card do estado
+                  correspondente.
+                </div>
+              </div>
+            )}
+            <div className="lista-transf">
+              {lista.map((t) => (
+                <ItemLista key={t.id} t={t} direcao={direcao} onAbrir={onAbrir} somenteLeitura={somenteLeitura} />
+              ))}
+            </div>
           </div>
           <PainelLateral atrasadas={atrasadas} proximas={proximas} onAbrir={onAbrir} />
         </div>
@@ -147,14 +195,17 @@ export function TransferenciasScreen({
    Item da lista
    ============================================================ */
 function ItemLista({
-  t, direcao, onAbrir,
-}: { t: Transferencia; direcao: Direcao; onAbrir: (id: string) => void }) {
+  t, direcao, onAbrir, somenteLeitura,
+}: { t: Transferencia; direcao: Direcao; onAbrir: (id: string) => void; somenteLeitura?: boolean }) {
   const total = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
   const atrasada = STATUS_TRANSITO.includes(t.status)
     && t.previsaoChegada && new Date(t.previsaoChegada) < HOJE;
 
   return (
-    <button className="item-transf" style={{ ['--c' as string]: corDoStatus(t.status) }} onClick={() => onAbrir(t.id)}>
+    <button
+      className="item-transf" style={{ ['--c' as string]: corDoStatus(t.status) }}
+      onClick={() => onAbrir(somenteLeitura ? `${t.id}?leitura` : t.id)}
+    >
       <div className="item-transf__corpo">
         <div className="item-transf__topo">
           <span className="item-transf__codigo">{t.codigo}</span>

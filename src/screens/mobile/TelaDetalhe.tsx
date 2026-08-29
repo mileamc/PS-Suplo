@@ -1,24 +1,30 @@
 import { useMemo, useState } from 'react';
 import {
-  ArrowRight, Check, X, Truck, PackageCheck, ClipboardCheck, RotateCcw, Send, Ban,
+  ArrowRight, Check, X, Truck, PackageCheck, ClipboardCheck, RotateCcw, Ban,
+  FileText, Star, Paperclip, Wallet,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
 import { STATUS_META } from '../../domain/status';
 import { acoesDoPapel, trilha, indiceNaTrilha } from '../../domain/machine';
 import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
+import { FICHAS, nomeCriterio } from '../../data/avaliacao';
+import { linhaPorId } from '../../data/orcamento';
 import { BadgeStatus } from '../../components/ui';
 import type { Transferencia, TransferEvento } from '../../domain/types';
 import { MobTop, MobAviso, Sheet, brl, num } from './comuns';
 
-type SheetAberto = null | 'despacho' | 'reprovar' | 'cancelar' | 'chegada';
+type SheetAberto = null | 'despacho' | 'reprovar' | 'cancelar' | 'chegada' | 'nf';
 
 export function TelaDetalhe({
-  t, onVoltar, onFvm,
-}: { t: Transferencia; onVoltar: () => void; onFvm: (id: string) => void }) {
+  t, onVoltar, onFvm, somenteLeitura = false,
+}: {
+  t: Transferencia; onVoltar: () => void;
+  onFvm: (id: string) => void; somenteLeitura?: boolean;
+}) {
   const { state, dispatch } = useStore();
   const [sheet, setSheet] = useState<SheetAberto>(null);
-  const acoes = acoesDoPapel(t, state.papel, state.aprovacaoAtiva);
+  const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
   const custo = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
   const divergente = t.status === 'recebido_divergencia';
 
@@ -60,7 +66,7 @@ export function TelaDetalhe({
               <Linha r="Criada por" v={`${t.criadaPor} · ${fmtData(t.criadaEm)}`} />
               <Linha r="Entrada no fluxo" v={t.entrada === 'requisicao' ? `Requisição ${t.requisicaoCodigo ?? ''}`.trim() : 'Saída direta'} />
               <Linha r="Quem aprovou" v={t.aprovadaPor ? `${t.aprovadaPor} · ${fmtData(t.aprovadaEm!)}` : (state.aprovacaoAtiva ? 'Ainda não aprovada' : 'Aprovação desligada')} />
-              <Linha r="Quando saiu" v={t.despachadaEm ? fmtDataHora(t.despachadaEm) : 'Ainda na origem'} />
+              <Linha r="Quando saiu" v={t.dataSaida ? fmtData(t.dataSaida) : 'Ainda na origem'} />
               <Linha r="Previsão de chegada" v={t.previsaoChegada ? fmtData(t.previsaoChegada) : '—'} />
               <Linha r="Quando chegou" v={t.chegadaEm ? fmtDataHora(t.chegadaEm) : '—'} />
               <Linha r="Custo dos itens" v={brl(custo)} />
@@ -84,6 +90,12 @@ export function TelaDetalhe({
                   <div className="mob-item__meta">
                     {i.codigo} · {i.tipo === 'avulso' ? 'avulsa' : 'pedido'} · {brl(i.custoUnitario)}/{i.unidade}
                   </div>
+                  {i.linhaOrcamento && (
+                    <div className="mob-item__meta" style={{ color: 'var(--blue-fg)', fontWeight: 600 }}>
+                      <Wallet size={11} style={{ verticalAlign: -1, marginRight: 4 }} />
+                      {linhaPorId(i.linhaOrcamento)?.codigo} — {linhaPorId(i.linhaOrcamento)?.nome}
+                    </div>
+                  )}
                   <div className="mob-item__par">
                     <div className="mob-item__qtd">
                       <span>Enviado</span>
@@ -111,6 +123,51 @@ export function TelaDetalhe({
             </div>
           </div>
 
+          {t.avaliacao && (
+            <div className="mob-bloco">
+              <div className="mob-bloco__t">Avaliação de entrega</div>
+              <div className="mob-cartao">
+                {Object.entries(t.avaliacao.respostas).map(([id, v]) => (
+                  <div className="mob-linha" key={id}>
+                    <span className="mob-linha__r" style={{ flex: 1 }}>{nomeCriterio(id)}</span>
+                    <span className="mob-linha__v">
+                      {typeof v === 'number' ? (
+                        <span style={{ display: 'inline-flex', gap: 2 }}>
+                          {[1, 2, 3, 4, 5].map((n) => (
+                            <Star
+                              key={n} size={15}
+                              color={v >= n ? 'var(--amber)' : 'var(--border-strong)'}
+                              fill={v >= n ? 'var(--amber)' : 'none'}
+                            />
+                          ))}
+                        </span>
+                      ) : (v ? 'Sim' : 'Não')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="mob-dica">
+                Fichas: {t.avaliacao.fichas.map((f) => FICHAS.find((x) => x.id === f)?.nome).filter(Boolean).join(' · ')}
+                {' · '}por {t.avaliacao.avaliadaPor}
+              </p>
+              {t.avaliacao.observacao && <p className="mob-dica">{t.avaliacao.observacao}</p>}
+              {t.avaliacao.anexos.map((a) => (
+                <p className="mob-dica" key={a}><Paperclip size={12} style={{ verticalAlign: -2 }} /> {a}</p>
+              ))}
+            </div>
+          )}
+
+          {t.nf && (
+            <div className="mob-bloco">
+              <div className="mob-bloco__t">Nota fiscal</div>
+              <div className="mob-cartao">
+                <Linha r="Número da NF" v={t.nf.numero} />
+                <Linha r="Confirmada por" v={`${t.nf.confirmadaPor} · ${fmtData(t.nf.confirmadaEm)}`} />
+                <Linha r="Anexo" v={t.nf.anexo} />
+              </div>
+            </div>
+          )}
+
           {t.assinatura && (
             <div className="mob-bloco">
               <div className="mob-bloco__t">Assinatura da saída</div>
@@ -123,9 +180,11 @@ export function TelaDetalhe({
           <div className="mob-btns" style={{ paddingBottom: 12 }}>
             {acoes.length === 0 ? (
               <p className="mob-dica" style={{ textAlign: 'center' }}>
-                {STATUS_META[t.status].terminal
-                  ? 'Transferência encerrada.'
-                  : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado.`}
+                {somenteLeitura
+                  ? 'Visão geral, só leitura. As ações ficam nos filtros por estado.'
+                  : STATUS_META[t.status].terminal
+                    ? 'Transferência encerrada.'
+                    : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado.`}
               </p>
             ) : acoes.map((a) => {
               const classe = a.tom === 'primario' ? 'mob-btn mob-btn--primario'
@@ -134,22 +193,22 @@ export function TelaDetalhe({
                 : a.id === 'registrar_chegada' ? <PackageCheck size={19} />
                 : a.id === 'avaliar_entrega' ? <ClipboardCheck size={19} />
                 : a.id === 'reenviar' ? <RotateCcw size={19} />
-                : a.id === 'enviar_aprovacao' ? <Send size={19} />
                 : a.id === 'aprovar' ? <Check size={19} />
                 : a.id === 'cancelar' ? <Ban size={19} />
+                : a.id === 'confirmar_nf' ? <FileText size={19} />
                 : a.id === 'reprovar' ? <X size={19} /> : <ArrowRight size={19} />;
               return (
                 <button
                   key={a.id} className={classe}
                   onClick={() => {
                     switch (a.id) {
-                      case 'enviar_aprovacao': dispatch({ type: 'enviar_aprovacao', id: t.id }); break;
                       case 'aprovar': dispatch({ type: 'aprovar', id: t.id }); break;
                       case 'reprovar': setSheet('reprovar'); break;
                       case 'despachar': setSheet('despacho'); break;
                       case 'cancelar': setSheet('cancelar'); break;
                       case 'registrar_chegada': setSheet('chegada'); break;
                       case 'avaliar_entrega': onFvm(t.id); break;
+                      case 'confirmar_nf': setSheet('nf'); break;
                       case 'reenviar': dispatch({ type: 'reenviar', id: t.id }); break;
                       case 'encerrar_divergencia':
                         dispatch({ type: 'encerrar_divergencia', id: t.id }); onVoltar(); break;
@@ -168,6 +227,7 @@ export function TelaDetalhe({
       {sheet === 'reprovar' && <SheetReprovar t={t} onFechar={() => setSheet(null)} />}
       {sheet === 'cancelar' && <SheetCancelar t={t} onFechar={() => setSheet(null)} />}
       {sheet === 'chegada' && <SheetChegada t={t} onFechar={() => setSheet(null)} />}
+      {sheet === 'nf' && <SheetNf t={t} onFechar={() => setSheet(null)} />}
     </>
   );
 }
@@ -198,11 +258,13 @@ function Trilha({ t }: { t: Transferencia }) {
 
   const quando: Partial<Record<string, string | undefined>> = {
     reservado: t.criadaEm,
-    aguardando_aprovacao: t.eventos.find((e) => e.tipo === 'enviada_aprovacao')?.em,
+    // A criação já entra em "aprovação pendente", então é o mesmo instante.
+    aguardando_aprovacao: t.criadaEm,
     aprovado: t.aprovadaEm,
     em_transito: t.despachadaEm,
     avaliacao_entrega: t.chegadaEm,
-    recebido_ok: t.recebidaEm,
+    aguardando_nf: t.recebidaEm,
+    recebido_ok: t.nf?.confirmadaEm,
   };
 
   return (
@@ -235,7 +297,6 @@ function Trilha({ t }: { t: Transferencia }) {
 
 const IC_EV: Record<string, React.ReactNode> = {
   criada: <PackageCheck size={11} />,
-  enviada_aprovacao: <Send size={11} />,
   aprovada: <Check size={11} color="var(--green-fg)" />,
   reprovada: <X size={11} color="var(--red-fg)" />,
   despachada: <Truck size={11} color="var(--cyan-fg)" />,
@@ -244,10 +305,10 @@ const IC_EV: Record<string, React.ReactNode> = {
   recebida_divergencia: <X size={11} color="var(--red-fg)" />,
   cancelada: <Ban size={11} />,
   reenviada: <RotateCcw size={11} color="var(--purple-fg)" />,
+  nf_confirmada: <FileText size={11} color="var(--green-fg)" />,
 };
 const T_EV: Record<string, string> = {
   criada: 'Criada — quantidade reservada',
-  enviada_aprovacao: 'Enviada para aprovação',
   aprovada: 'Aprovada',
   reprovada: 'Reprovada',
   despachada: 'Despachada — saiu da obra',
@@ -256,6 +317,7 @@ const T_EV: Record<string, string> = {
   recebida_divergencia: 'Recebida com divergência',
   cancelada: 'Cancelada',
   reenviada: 'Reenviada — voltou para Reservado',
+  nf_confirmada: 'NF confirmada — transferência encerrada',
 };
 
 function ItemHistorico({ e }: { e: TransferEvento }) {
@@ -279,7 +341,10 @@ function SheetDespacho({ t, onFechar }: { t: Transferencia; onFechar: () => void
     d.setDate(d.getDate() + 4);
     return d.toISOString().slice(0, 10);
   }, []);
+  const hoje = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const [saida, setSaida] = useState(hoje);
   const [previsao, setPrevisao] = useState(padrao);
+  const [erro, setErro] = useState('');
 
   return (
     <Sheet
@@ -291,7 +356,15 @@ function SheetDespacho({ t, onFechar }: { t: Transferencia; onFechar: () => void
           <button
             className="mob-btn mob-btn--primario"
             onClick={() => {
-              dispatch({ type: 'despachar', id: t.id, previsaoChegada: new Date(`${previsao}T08:00:00`).toISOString() });
+              if (new Date(previsao) < new Date(saida)) {
+                setErro('A previsão não pode ser anterior à data de saída.');
+                return;
+              }
+              dispatch({
+                type: 'despachar', id: t.id,
+                dataSaida: new Date(`${saida}T08:00:00`).toISOString(),
+                previsaoChegada: new Date(`${previsao}T08:00:00`).toISOString(),
+              });
               onFechar();
             }}
           >
@@ -305,9 +378,16 @@ function SheetDespacho({ t, onFechar }: { t: Transferencia; onFechar: () => void
         Até agora a quantidade estava só reservada. Depois do despacho não há cancelamento.
       </MobAviso>
       <div className="mob-campo">
+        <label className="mob-rot">Data de saída <i>*</i></label>
+        <input className="mob-input" type="date" value={saida}
+          onChange={(e) => { setSaida(e.target.value); setErro(''); }} />
+      </div>
+      <div className="mob-campo">
         <label className="mob-rot">Previsão de chegada <i>*</i></label>
-        <input className="mob-input" type="date" value={previsao} onChange={(e) => setPrevisao(e.target.value)} />
+        <input className="mob-input" type="date" value={previsao}
+          onChange={(e) => { setPrevisao(e.target.value); setErro(''); }} />
         <p className="mob-dica">O trânsito real leva de 3 a 7 dias. A obra de destino é notificada com esta data.</p>
+        {erro && <div className="mob-erro">{erro}</div>}
       </div>
       <div className="mob-bloco">
         <div className="mob-bloco__t">Sai agora</div>
@@ -416,6 +496,77 @@ function SheetChegada({ t, onFechar }: { t: Transferencia; onFechar: () => void 
         <Linha r="De" v={nomeObra(t.obraOrigemId)} />
         <Linha r="Saiu em" v={t.despachadaEm ? fmtData(t.despachadaEm) : '—'} />
         <Linha r="Previsão" v={t.previsaoChegada ? fmtData(t.previsaoChegada) : '—'} />
+      </div>
+    </Sheet>
+  );
+}
+
+/* ---------------- Confirmação da NF --------------------------- */
+function SheetNf({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
+  const { dispatch } = useStore();
+  const [numero, setNumero] = useState('');
+  const [anexo, setAnexo] = useState('');
+  const [erro, setErro] = useState(false);
+  const divergente = t.itens.some((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada);
+
+  return (
+    <Sheet
+      titulo="Confirmar NF" sub={`${t.codigo} · material já conferido e no estoque`}
+      onFechar={onFechar}
+      rodape={
+        <>
+          <button
+            className="mob-btn mob-btn--primario"
+            onClick={() => {
+              if (!numero.trim() || !anexo) { setErro(true); return; }
+              dispatch({ type: 'confirmar_nf', id: t.id, numero: numero.trim(), anexo });
+              onFechar();
+            }}
+          >
+            <Check size={19} /> Confirmar recebimento da NF
+          </button>
+          <button className="mob-btn mob-btn--sm" onClick={onFechar}>Agora não</button>
+        </>
+      }
+    >
+      <MobAviso tom={divergente ? 'atencao' : 'info'}>
+        {divergente
+          ? 'A conferência registrou divergência. A NF encerra a transferência e a diferença fica registrada para auditoria.'
+          : 'A conferência fechou sem divergência. Confirmar a NF encerra a transferência.'}
+      </MobAviso>
+
+      <div className="mob-campo">
+        <label className="mob-rot">Número da NF <i>*</i></label>
+        <input
+          className="mob-input" placeholder="Ex.: 000.412.889" inputMode="numeric"
+          value={numero} onChange={(e) => { setNumero(e.target.value); setErro(false); }}
+        />
+      </div>
+
+      <div className="mob-campo">
+        <label className="mob-rot">Anexo da NF <i>*</i></label>
+        {anexo ? (
+          <div className="mob-opcao" aria-pressed="true">
+            <Paperclip size={17} className="mob-opcao__check" />
+            <div className="mob-opcao__txt"><div className="mob-opcao__nome">{anexo}</div></div>
+            <button
+              className="mob-icone"
+              style={{ width: 38, height: 38, background: 'var(--red-bg)', borderColor: 'transparent', color: 'var(--red-fg)' }}
+              onClick={() => setAnexo('')} aria-label="Remover"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ) : (
+          <button
+            className="mob-btn mob-btn--sm"
+            onClick={() => setAnexo(`nf-${t.codigo.toLowerCase()}.pdf`)}
+          >
+            <Paperclip size={17} /> Anexar a nota fiscal
+          </button>
+        )}
+        <p className="mob-dica">PDF ou XML da nota. Máximo 10MB.</p>
+        {erro && <div className="mob-erro">Informe o número da NF e anexe o arquivo.</div>}
       </div>
     </Sheet>
   );
