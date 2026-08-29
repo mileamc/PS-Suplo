@@ -652,3 +652,111 @@ export function NfModal({ t, onFechar }: { t: Transferencia; onFechar: () => voi
     </Modal>
   );
 }
+
+/* ============================================================
+   Encerrar a divergência — a decisão que fecha o caso.
+
+   É a obra de ORIGEM que encerra, não a de destino. O destino
+   pode ter anexado a nota fiscal; ainda assim a transferência
+   segue aberta até quem mandou dizer se ainda vem material.
+   ============================================================ */
+export function EncerrarDivergenciaModal({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
+  const { dispatch } = useStore();
+  const [observacao, setObservacao] = useState('');
+
+  const faltas = t.itens
+    .filter((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada)
+    .map((i) => ({ ...i, falta: i.qtdEnviada - (i.qtdRecebida ?? 0) }));
+  const perda = faltas.reduce((s, i) => s + i.falta * i.custoUnitario, 0);
+
+  return (
+    <Modal
+      titulo={`Encerrar com divergência — ${t.codigo}`}
+      sub={`${nomeObra(t.obraOrigemId)} → ${nomeObra(t.obraDestinoId)}`}
+      largura="medio" onFechar={onFechar}
+      rodapeEsquerda={
+        <div className="txt-12 txt-muted">
+          Perda assumida{' '}
+          <strong style={{ color: 'var(--red-fg)' }}>
+            {perda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </strong>
+        </div>
+      }
+      rodape={
+        <>
+          <button className="btn" onClick={onFechar}>Voltar</button>
+          <button
+            className="btn btn--perigo"
+            onClick={() => { dispatch({ type: 'encerrar_divergencia', id: t.id, observacao }); onFechar(); }}
+          >
+            <Check size={15} /> Encerrar assumindo a falta
+          </button>
+        </>
+      }
+    >
+      <Aviso tom="atencao" titulo="Esta é a decisão que fecha a transferência">
+        Encerrar significa que <strong>não vem mais material</strong>: a diferença entre o que saiu e
+        o que chegou passa a ser perda assumida por {nomeObra(t.obraOrigemId)}. A transferência sai
+        dos Reservados e vai para <strong>Finalizadas c/ divergência</strong>, onde continua
+        disponível para auditoria.
+      </Aviso>
+
+      {!t.nf && (
+        <Aviso tom="info">
+          {nomeObra(t.obraDestinoId)} ainda não confirmou a nota fiscal. Encerrar agora fecha o caso
+          assim mesmo — a transferência fica registrada sem NF.
+        </Aviso>
+      )}
+
+      <div className="bloco mt-20">
+        <div className="bloco__titulo">O que faltou</div>
+        <div className="tabela-wrap">
+          <table className="comparacao">
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th style={{ textAlign: 'right' }}>Enviado</th>
+                <th style={{ textAlign: 'right' }}>Recebido</th>
+                <th style={{ textAlign: 'right' }}>Falta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {faltas.map((i) => (
+                <tr key={i.insumoId}>
+                  <td>
+                    <div className="td-forte">{i.nome}</div>
+                    {i.motivoDivergencia && (
+                      <div className="txt-11 txt-muted" style={{ marginTop: 3 }}>{i.motivoDivergencia}</div>
+                    )}
+                  </td>
+                  <td className="td-num comparacao__enviado">{i.qtdEnviada.toLocaleString('pt-BR')} {i.unidade}</td>
+                  <td className="td-num">{(i.qtdRecebida ?? 0).toLocaleString('pt-BR')} {i.unidade}</td>
+                  <td className="td-num">
+                    <span className="delta delta--neg">
+                      -{i.falta.toLocaleString('pt-BR')} {i.unidade}
+                    </span>
+                    <div className="txt-11 txt-muted" style={{ marginTop: 3 }}>
+                      {(i.falta * i.custoUnitario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="campo">
+        <Rotulo ajuda="Fica no histórico da transferência e é o que a auditoria lê depois.">
+          Por que está encerrando sem reenviar?
+        </Rotulo>
+        <textarea
+          className="textarea"
+          placeholder="Ex.: perda no trajeto já apurada com a transportadora; a obra de destino não precisa mais do saldo."
+          value={observacao} onChange={(e) => setObservacao(e.target.value)}
+        />
+      </div>
+      <div style={{ height: 4 }} />
+    </Modal>
+  );
+}

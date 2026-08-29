@@ -230,6 +230,21 @@ do fluxo em vez de expor um estado por card. Quem é Aprovador ganha mais um, **
 pendentes**, ao lado de Reservados: é a fila de trabalho dele. Para os outros papéis esse card não
 existe — a pendência aparece só como tag na linha da transferência.
 
+**A divergência não morre num registro: ela vira pendência de quem mandou.**
+Antes, a conferência com falta gerava um estado e parava ali. Agora abre duas
+pendências em paralelo. O destino confirma a nota fiscal — e anexá-la **não** finaliza
+nada. A origem recebe o único aviso crítico do fluxo (vermelho, marcado como "exige
+decisão") e a transferência volta para os **Reservados** dela com tag vermelha de
+divergência pendente. Só a decisão da origem fecha o caso: **enviar o que faltou**,
+que reserva de novo apenas o saldo e passa pela aprovação outra vez, ou **encerrar
+assumindo a falta**, que leva a transferência para **Finalizadas c/ divergência** com
+a perda registrada e o motivo no histórico.
+
+**A sidebar ficou com os dois ícones que existem.** O rail do produto tem mais de uma
+dezena de módulos; o protótipo tem duas telas. Ícone que não leva a lugar nenhum só
+convida ao clique morto. O acesso à versão mobile passou para o botão do header, que
+até então era decorativo.
+
 **A cor da tag vem do estado, nunca do card.** Dois estados que dizem a mesma coisa na lista —
 "Reservado · envio pendente" e "Aprovado · envio pendente" — compartilham a mesma família visual e
 saem sempre na mesma cor, em qualquer tela. O card reusa a cor da família que agrupa; nunca o

@@ -1,8 +1,11 @@
 import type { Role, Transferencia } from './types';
 import {
   STATUS_APROVACAO, STATUS_ATIVOS, STATUS_CANCELADOS, STATUS_EM_ROTA,
-  STATUS_FVM, STATUS_RESERVA,
+  STATUS_FVM, STATUS_RESERVA, divergenciaPendente,
 } from './status';
+
+/** De que lado da transferência a obra atual está. */
+export type Direcao = 'enviar' | 'receber';
 
 /* ============================================================
    Grupos das transferências — os cards da web e os chips do
@@ -27,16 +30,21 @@ export function atrasada(t: Transferencia): boolean {
     && new Date(t.previsaoChegada!) < HOJE;
 }
 
-export function noGrupo(t: Transferencia, g: Grupo): boolean {
+export function noGrupo(t: Transferencia, g: Grupo, direcao: Direcao): boolean {
   switch (g) {
     case 'total': return STATUS_ATIVOS.includes(t.status);
-    case 'reservados': return STATUS_RESERVA.includes(t.status);
+    case 'reservados':
+      // A divergência sem decisão é pendência de quem mandou, e o que ela
+      // pede é justamente uma reserva nova: por isso volta para cá, em vez
+      // de ficar num canto de "problemas" que ninguém abre.
+      return STATUS_RESERVA.includes(t.status)
+        || (direcao === 'enviar' && divergenciaPendente(t));
     case 'aprovacoes': return STATUS_APROVACAO.includes(t.status);
     case 'transito': return STATUS_EM_ROTA.includes(t.status);
     case 'atrasados': return atrasada(t);
     case 'fvm': return STATUS_FVM.includes(t.status);
     case 'nf': return t.status === 'aguardando_nf';
-    case 'divergencia': return t.status === 'recebido_divergencia';
+    case 'divergencia': return t.status === 'encerrado_divergencia';
     case 'completos': return t.status === 'recebido_ok';
     case 'cancelados': return STATUS_CANCELADOS.includes(t.status);
   }
@@ -65,7 +73,7 @@ export const GRUPOS: DefGrupo[] = [
   { grupo: 'atrasados', rotulo: 'Atrasados', familia: '' },
   { grupo: 'fvm', rotulo: 'FVM pendente', familia: 'fvm' },
   { grupo: 'nf', rotulo: 'Aguardando NF', familia: 'nf' },
-  { grupo: 'divergencia', rotulo: 'Com divergência', familia: 'diverg' },
+  { grupo: 'divergencia', rotulo: 'Finalizadas c/ divergência', familia: 'diverg' },
   { grupo: 'completos', rotulo: 'Completos', familia: 'ok' },
   { grupo: 'cancelados', rotulo: 'Cancelados', familia: 'cancelado' },
 ];

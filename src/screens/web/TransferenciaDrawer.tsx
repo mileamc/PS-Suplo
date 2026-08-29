@@ -2,20 +2,23 @@ import { useEffect, useState } from 'react';
 import {
   X, Check, ArrowRight, Truck, Package, ClipboardCheck, RotateCcw,
   User, Calendar, CalendarCheck, CalendarClock, Building2, Coins, PenLine, ClipboardList,
-  FileText, Star, Paperclip, Wallet,
+  FileText, Star, Paperclip, Wallet, AlertTriangle,
 } from 'lucide-react';
-import { BadgeStatus, Aviso } from '../../components/ui';
-import { STATUS_META } from '../../domain/status';
+import { BadgeStatus, BadgeDivergencia, Aviso } from '../../components/ui';
+import { STATUS_META, divergenciaPendente } from '../../domain/status';
 import { acoesDoPapel, trilha, indiceNaTrilha } from '../../domain/machine';
 import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
 import { nomeObra } from '../../data/obras';
 import { useStore } from '../../state/store';
 import type { Transferencia, TransferEvento } from '../../domain/types';
-import { ReprovarModal, DespachoModal, CancelarModal, FvmModal, ChegadaModal, NfModal } from './TransferenciaModais';
+import {
+  ReprovarModal, DespachoModal, CancelarModal, FvmModal, ChegadaModal, NfModal,
+  EncerrarDivergenciaModal,
+} from './TransferenciaModais';
 import { FICHAS, nomeCriterio } from '../../data/avaliacao';
 import { linhaPorId } from '../../data/orcamento';
 
-type ModalAberto = null | 'reprovar' | 'despacho' | 'cancelar' | 'fvm' | 'chegada' | 'nf';
+type ModalAberto = null | 'reprovar' | 'despacho' | 'cancelar' | 'fvm' | 'chegada' | 'nf' | 'encerrar';
 
 export function TransferenciaDrawer({
   t, onFechar, somenteLeitura = false,
@@ -32,7 +35,7 @@ export function TransferenciaDrawer({
   const meta = STATUS_META[t.status];
 
   const custoTotal = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
-  const temDivergencia = t.status === 'recebido_divergencia';
+  const divergenciaAberta = divergenciaPendente(t);
 
   return (
     <>
@@ -44,6 +47,7 @@ export function TransferenciaDrawer({
               <div className="linha" style={{ gap: 10 }}>
                 <h2 className="modal__titulo">{t.codigo}</h2>
                 <BadgeStatus status={t.status} />
+                <BadgeDivergencia t={t} />
                 {t.ciclo > 0 && <span className="badge badge--roxo">{t.ciclo}º reenvio</span>}
               </div>
               <div className="rota mt-8">
@@ -60,8 +64,13 @@ export function TransferenciaDrawer({
         <div className="drawer__corpo">
           <Stepper t={t} />
 
-          {temDivergencia && (
-            <Aviso tom="perigo" titulo="Recebido com divergência">
+          {(divergenciaAberta || t.status === 'encerrado_divergencia') && (
+            <Aviso
+              tom={divergenciaAberta ? 'perigo' : 'atencao'}
+              titulo={divergenciaAberta
+                ? 'Divergência aberta — decisão da obra de origem'
+                : 'Finalizada com divergência'}
+            >
               {t.itens.filter((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada).map((i) => (
                 <div key={i.insumoId} style={{ marginTop: 4 }}>
                   <strong>{i.nome}</strong>: saíram {i.qtdEnviada.toLocaleString('pt-BR')} {i.unidade},
@@ -69,6 +78,14 @@ export function TransferenciaDrawer({
                   {i.motivoDivergencia && <> — <em>{i.motivoDivergencia}</em></>}
                 </div>
               ))}
+              <div style={{ marginTop: 8 }}>
+                {divergenciaAberta
+                  ? <>Enquanto {nomeObra(t.obraOrigemId)} não decidir entre <strong>enviar o que faltou</strong> e{' '}
+                      <strong>encerrar assumindo a falta</strong>, a transferência continua aberta —
+                      mesmo que a nota fiscal já tenha sido confirmada.</>
+                  : <>{t.encerramento?.por} encerrou o caso em {fmtDataHora(t.encerramento!.em)}.
+                      {t.encerramento?.observacao && <> <em>{t.encerramento.observacao}</em></>}</>}
+              </div>
             </Aviso>
           )}
 
@@ -236,7 +253,9 @@ export function TransferenciaDrawer({
                 ? 'Visão geral, só leitura. As ações ficam nos filtros por estado.'
                 : STATUS_META[t.status].terminal
                   ? 'Transferência encerrada.'
-                  : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado. Troque de papel na barra do topo.`}
+                  : divergenciaAberta
+                    ? `A divergência está com a obra de origem: só ela encerra o caso ou envia o saldo faltante. Nenhuma ação para ${ROLE_LABEL[state.papel]} aqui.`
+                    : `Nenhuma ação para ${ROLE_LABEL[state.papel]} neste estado. Troque de papel na barra do topo.`}
             </div>
           ) : acoes.map((a) => {
             const classe = a.tom === 'primario' ? 'btn btn--primario' : a.tom === 'perigo' ? 'btn btn--perigo' : 'btn';
@@ -261,7 +280,7 @@ export function TransferenciaDrawer({
                     case 'avaliar_entrega': setModal('fvm'); break;
                     case 'confirmar_nf': setModal('nf'); break;
                     case 'reenviar': dispatch({ type: 'reenviar', id: t.id }); break;
-                    case 'encerrar_divergencia': dispatch({ type: 'encerrar_divergencia', id: t.id }); onFechar(); break;
+                    case 'encerrar_divergencia': setModal('encerrar'); break;
                   }
                 }}
               >
@@ -277,6 +296,7 @@ export function TransferenciaDrawer({
       {modal === 'cancelar' && <CancelarModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'fvm' && <FvmModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'nf' && <NfModal t={t} onFechar={() => setModal(null)} />}
+      {modal === 'encerrar' && <EncerrarDivergenciaModal t={t} onFechar={() => setModal(null)} />}
       {modal === 'chegada' && (
         <ChegadaModal
           t={t} onFechar={() => setModal(null)}
@@ -306,7 +326,7 @@ function Stepper({ t }: { t: Transferencia }) {
   const passos = trilha(state.aprovacaoAtiva);
   const atual = indiceNaTrilha(t.status, state.aprovacaoAtiva);
   const encerradoMal = t.status === 'reprovado' || t.status === 'cancelado';
-  const divergente = t.status === 'recebido_divergencia';
+  const divergente = t.status === 'recebido_divergencia' || t.status === 'encerrado_divergencia';
 
   if (encerradoMal) {
     return (
@@ -348,6 +368,7 @@ const ICONE_EVENTO: Record<string, React.ReactNode> = {
   chegada_registrada: <Package size={11} color="var(--cyan-fg)" />,
   recebida_ok: <Check size={11} color="var(--green-fg)" />,
   recebida_divergencia: <X size={11} color="var(--red-fg)" />,
+  divergencia_encerrada: <AlertTriangle size={11} color="var(--red-fg)" />,
   cancelada: <X size={11} />,
   reenviada: <RotateCcw size={11} color="var(--purple-fg)" />,
 };
@@ -361,6 +382,7 @@ const TITULO_EVENTO: Record<string, string> = {
   chegada_registrada: 'Chegada registrada',
   recebida_ok: 'Recebida sem divergência',
   recebida_divergencia: 'Recebida com divergência',
+  divergencia_encerrada: 'Divergência encerrada pela origem',
   cancelada: 'Cancelada',
   reenviada: 'Reenviada — voltou para Reservado',
 };

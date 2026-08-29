@@ -1,5 +1,5 @@
 import type { Role, TransferStatus, Transferencia } from './types';
-import { STATUS_META } from './status';
+import { STATUS_META, divergenciaPendente } from './status';
 
 /* ============================================================
    Máquina de estados — seções 2 e 3 da especificação.
@@ -65,12 +65,14 @@ const A = {
     papel: 'destino', destino: null, tom: 'primario',
   },
   reenviar: {
-    id: 'reenviar', label: 'Reenviar corrigido',
+    id: 'reenviar', label: 'Enviar o que faltou',
     papel: 'origem', destino: 'reservado', tom: 'primario', v1: true,
   },
   encerrar_divergencia: {
-    id: 'encerrar_divergencia', label: 'Manter registro e encerrar',
-    papel: 'origem', destino: null, tom: 'neutro',
+    // O encerramento é da origem, não do destino: é ela que sabe se ainda
+    // vem material. Só ele leva a transferência para "finalizada".
+    id: 'encerrar_divergencia', label: 'Encerrar assumindo a falta',
+    papel: 'origem', destino: 'encerrado_divergencia', tom: 'neutro',
   },
 } satisfies Record<AcaoId, Acao>;
 
@@ -81,8 +83,12 @@ const A = {
  * NASCE (Aguardando aprovação ou Reservado pronto para despacho), e não
  * duplica a árvore de decisão daqui para a frente.
  */
-export function acoesDisponiveis(status: TransferStatus): Acao[] {
-  switch (status) {
+export function acoesDisponiveis(t: Transferencia): Acao[] {
+  // A divergência abre uma pendência paralela: enquanto o destino ainda
+  // anexa a nota, a origem já pode decidir o que fazer com a falta.
+  const decisaoDaOrigem = divergenciaPendente(t) ? [A.reenviar, A.encerrar_divergencia] : [];
+
+  switch (t.status) {
     case 'reservado':
       // Só existe quando a aprovação está desligada: já nasce pronta para despacho.
       return [A.despachar, A.cancelar];
@@ -95,9 +101,9 @@ export function acoesDisponiveis(status: TransferStatus): Acao[] {
     case 'avaliacao_entrega':
       return [A.avaliar_entrega];
     case 'aguardando_nf':
-      return [A.confirmar_nf];
+      return [A.confirmar_nf, ...decisaoDaOrigem];
     case 'recebido_divergencia':
-      return [A.reenviar, A.encerrar_divergencia];
+      return decisaoDaOrigem;
     default:
       return [];
   }
@@ -117,7 +123,7 @@ export function podeCancelar(status: TransferStatus): boolean {
 
 /** Ações que o papel selecionado pode executar agora. */
 export function acoesDoPapel(t: Transferencia, papel: Role): Acao[] {
-  return acoesDisponiveis(t.status).filter((a) => a.papel === papel);
+  return acoesDisponiveis(t).filter((a) => a.papel === papel);
 }
 
 /** Passos exibidos no stepper do detalhe da transferência. */
@@ -131,7 +137,7 @@ export function trilha(aprovacaoAtiva: boolean): TransferStatus[] {
 
 export function indiceNaTrilha(status: TransferStatus, aprovacaoAtiva: boolean): number {
   const t = trilha(aprovacaoAtiva);
-  if (status === 'recebido_divergencia') return t.length - 1;
+  if (status === 'recebido_divergencia' || status === 'encerrado_divergencia') return t.length - 1;
   const i = t.indexOf(status);
   return i;
 }

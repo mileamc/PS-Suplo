@@ -15,7 +15,9 @@ import { RegistrarSaidaModal } from './RegistrarSaidaModal';
 
 type Aba = 'estoque' | 'movimentacoes';
 
-export function EstoqueScreen({ onAbrirTransferencia }: { onAbrirTransferencia: (id: string) => void }) {
+export function EstoqueScreen({
+  onAbrirTransferencia, onVerMobile,
+}: { onAbrirTransferencia: (id: string) => void; onVerMobile?: () => void }) {
   const [aba, setAba] = useState<Aba>('estoque');
   const [modalSaida, setModalSaida] = useState(false);
 
@@ -25,6 +27,7 @@ export function EstoqueScreen({ onAbrirTransferencia }: { onAbrirTransferencia: 
         titulo="Estoque de Materiais"
         sub="Controle o inventário, movimentações, reservas e kits da obra"
         ajuda="Como trabalhar com a tela de Estoque de Materiais?"
+        onVerMobile={onVerMobile}
       />
 
       <CardsResumo />
@@ -308,7 +311,8 @@ const FILTROS_STATUS: { valor: 'todos' | TransferStatus; rotulo: string }[] = [
   { valor: 'em_transito', rotulo: 'Em trânsito' },
   { valor: 'avaliacao_entrega', rotulo: 'Avaliação de entrega' },
   { valor: 'recebido_ok', rotulo: 'Recebido ok' },
-  { valor: 'recebido_divergencia', rotulo: 'Com divergência' },
+  { valor: 'recebido_divergencia', rotulo: 'Divergência pendente' },
+  { valor: 'encerrado_divergencia', rotulo: 'Finalizada c/ divergência' },
   { valor: 'cancelado', rotulo: 'Cancelado' },
   { valor: 'reprovado', rotulo: 'Reprovado' },
 ];

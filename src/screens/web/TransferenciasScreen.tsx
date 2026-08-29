@@ -6,18 +6,19 @@ import {
   Stamp, ClipboardCheck,
 } from 'lucide-react';
 import { TelaHeader } from '../../components/Shell';
-import { BadgeStatus, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus } from '../../components/ui';
+import {
+  BadgeStatus, BadgeDivergencia, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus,
+} from '../../components/ui';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
 import { STATUS_META, STATUS_EM_ROTA } from '../../domain/status';
 import {
-  HOJE, atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Grupo,
+  HOJE, atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Direcao, type Grupo,
 } from '../../domain/grupos';
 import { fmtData } from '../../domain/notificacoes';
 import type { Transferencia } from '../../domain/types';
 import { RegistrarSaidaModal } from './RegistrarSaidaModal';
 
-type Direcao = 'enviar' | 'receber';
 type Visao = 'lista' | 'calendario';
 
 /* ------------------------------------------------------------
@@ -48,8 +49,8 @@ const COR_SEM_FAMILIA: Partial<Record<Grupo, string>> = {
 };
 
 export function TransferenciasScreen({
-  onAbrir,
-}: { onAbrir: (id: string) => void }) {
+  onAbrir, onVerMobile,
+}: { onAbrir: (id: string) => void; onVerMobile?: () => void }) {
   const { state, aEnviar, aReceber } = useStore();
   const [direcao, setDirecao] = useState<Direcao>('enviar');
   const [visao, setVisao] = useState<Visao>('lista');
@@ -61,13 +62,13 @@ export function TransferenciasScreen({
   const somenteLeitura = grupo === 'total';
 
   const lista = useMemo(() => base
-    .filter((t) => noGrupo(t, grupo))
+    .filter((t) => noGrupo(t, grupo, direcao))
     .filter((t) => `${t.codigo} ${nomeObra(t.obraDestinoId)} ${nomeObra(t.obraOrigemId)} ${t.itens.map((i) => i.nome).join(' ')}`
       .toLowerCase().includes(busca.toLowerCase()))
     .sort((a, b) => b.criadaEm.localeCompare(a.criadaEm)),
-  [base, grupo, busca]);
+  [base, grupo, busca, direcao]);
 
-  const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g)).length;
+  const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g, direcao)).length;
 
   // "Aprovações pendentes" é card só para quem aprova. Se o papel muda com
   // o filtro aberto, o card some — a lista volta para a visão geral em vez
@@ -91,6 +92,7 @@ export function TransferenciasScreen({
         titulo="Transferências entre Obras"
         sub="Acompanhe o que esta obra tem para enviar e para receber"
         ajuda="Como funciona a transferência entre obras?"
+        onVerMobile={onVerMobile}
       />
 
       <div className="cards-status">
@@ -205,6 +207,7 @@ function ItemLista({
         <div className="item-transf__topo">
           <span className="item-transf__codigo">{t.codigo}</span>
           <BadgeStatus status={t.status} compacto />
+          <BadgeDivergencia t={t} />
           {atrasada(t) && <span className="badge badge--vermelho"><AlertCircle size={11} /> atrasada</span>}
           {t.ciclo > 0 && <span className="badge badge--roxo">{t.ciclo}º reenvio</span>}
         </div>

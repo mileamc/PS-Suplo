@@ -1,9 +1,12 @@
+import { ArrowLeft } from 'lucide-react';
 import { MobileApp } from './MobileApp';
 import { MobToasts } from './comuns';
 
 /* Rota /stocks/transfers/receiving — o app mobile dentro de um
    aparelho, com as notas de decisão ao lado. */
-export function MobileScreen({ semMoldura = false }: { semMoldura?: boolean } = {}) {
+export function MobileScreen({
+  semMoldura = false, onVoltar,
+}: { semMoldura?: boolean; onVoltar?: () => void } = {}) {
   if (semMoldura) {
     return (
       <>
@@ -15,6 +18,13 @@ export function MobileScreen({ semMoldura = false }: { semMoldura?: boolean } = 
 
   return (
     <div className="mob-palco">
+      {onVoltar && (
+        <div className="mob-palco__voltar">
+          <button className="btn" onClick={onVoltar}>
+            <ArrowLeft size={15} /> Voltar para a versão web
+          </button>
+        </div>
+      )}
       <div className="mob-frame">
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
           <MobileApp />

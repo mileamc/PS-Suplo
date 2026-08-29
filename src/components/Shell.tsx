@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import {
-  Globe, LayoutGrid, Gauge, Boxes, Truck, ClipboardList, ShoppingCart,
-  QrCode, ScanLine, HardHat, Lock, HelpCircle, Settings, PanelLeft,
-  ArrowLeftRight, Bell, Smartphone, Building2, BookOpen, Check, X,
+  Boxes, ArrowLeftRight, Bell, Smartphone, Building2, BookOpen, Check, X, AlertTriangle,
 } from 'lucide-react';
 import { useStore, USUARIO_POR_PAPEL } from '../state/store';
 import type { Role } from '../domain/types';
@@ -14,17 +12,9 @@ import type { Rota } from '../state/rotas';
    Sidebar — espelha o rail escuro do produto atual
    ============================================================ */
 export function Sidebar({ rota, onNavegar }: { rota: Rota; onNavegar: (r: Rota) => void }) {
-  const itens = [
-    { icone: Globe, rotulo: 'Portal' },
-    { icone: LayoutGrid, rotulo: 'Módulos' },
-    { icone: Gauge, rotulo: 'Indicadores' },
-  ];
-  const rodape = [
-    { icone: HardHat, rotulo: 'Obras' },
-    { icone: Lock, rotulo: 'Acessos' },
-    { icone: HelpCircle, rotulo: 'Ajuda' },
-    { icone: Settings, rotulo: 'Configurações' },
-  ];
+  // O rail do produto tem mais de uma dezena de módulos, mas este é um
+  // protótipo de duas telas: ícone que não leva a lugar nenhum só convida
+  // ao clique morto. Ficam os dois que existem de verdade.
   return (
     <nav className="sidebar" aria-label="Navegação principal">
       <div className="sidebar__logo" title="Suplos">
@@ -32,9 +22,6 @@ export function Sidebar({ rota, onNavegar }: { rota: Rota; onNavegar: (r: Rota) 
           <path d="M12 3v18M5.5 6.5l13 11M18.5 6.5l-13 11" />
         </svg>
       </div>
-      {itens.map((i) => (
-        <button key={i.rotulo} className="sidebar__item" title={i.rotulo}><i.icone size={17} /></button>
-      ))}
       <button
         className={`sidebar__item ${rota === 'estoque' ? 'sidebar__item--ativo' : ''}`}
         title="Estoque de Materiais" onClick={() => onNavegar('estoque')}
@@ -47,23 +34,8 @@ export function Sidebar({ rota, onNavegar }: { rota: Rota; onNavegar: (r: Rota) 
       >
         <ArrowLeftRight size={17} />
       </button>
-      <button className="sidebar__item" title="Entregas"><Truck size={17} /></button>
-      <button className="sidebar__item" title="Requisições"><ClipboardList size={17} /></button>
-      <button className="sidebar__item" title="Compras"><ShoppingCart size={17} /></button>
-      <button className="sidebar__item" title="Etiquetas"><QrCode size={17} /></button>
-      <button
-        className={`sidebar__item ${rota === 'mobile' ? 'sidebar__item--ativo' : ''}`}
-        title="App do canteiro" onClick={() => onNavegar('mobile')}
-      >
-        <Smartphone size={17} />
-      </button>
-      <button className="sidebar__item" title="Conferência"><ScanLine size={17} /></button>
       <div className="sidebar__spacer" />
-      {rodape.map((i) => (
-        <button key={i.rotulo} className="sidebar__item" title={i.rotulo}><i.icone size={17} /></button>
-      ))}
       <div className="sidebar__avatar" />
-      <button className="sidebar__item" title="Recolher menu"><PanelLeft size={17} /></button>
     </nav>
   );
 }
@@ -72,8 +44,11 @@ export function Sidebar({ rota, onNavegar }: { rota: Rota; onNavegar: (r: Rota) 
    Header escuro da tela
    ============================================================ */
 export function TelaHeader({
-  titulo, sub, ajuda, acoes,
-}: { titulo: string; sub: string; ajuda: string; acoes?: React.ReactNode }) {
+  titulo, sub, ajuda, acoes, onVerMobile,
+}: {
+  titulo: string; sub: string; ajuda: string;
+  acoes?: React.ReactNode; onVerMobile?: () => void;
+}) {
   return (
     <header className="tela-header">
       <div>
@@ -83,7 +58,11 @@ export function TelaHeader({
       <div className="tela-header__acoes">
         <button className="tela-header__ajuda"><BookOpen size={14} /> {ajuda}</button>
         {acoes}
-        <button className="icon-btn-dark" title="Versão mobile"><Smartphone size={15} /></button>
+        {onVerMobile && (
+          <button className="icon-btn-dark" title="Versão mobile" onClick={onVerMobile}>
+            <Smartphone size={15} />
+          </button>
+        )}
         <SinoNotificacoes />
         <button className="icon-btn-dark" title="Obra atual: Suplos Tower II"><Building2 size={15} /></button>
         <div className="sidebar__avatar" style={{ margin: 0 }} />
@@ -130,9 +109,11 @@ function SinoNotificacoes() {
                   Execute uma ação no fluxo para ver quem é avisado.
                 </div>
               ) : notificacoesDoPapel.map((n) => (
-                <div key={n.id} className={`notif ${n.tripla ? 'notif--tripla' : ''}`}>
+                <div key={n.id} className={`notif ${n.critica ? 'notif--critica' : n.tripla ? 'notif--tripla' : ''}`}>
                   <div className="notif__icone">
-                    {n.tripla ? <Check size={15} color="var(--amber-fg)" /> : <Bell size={14} color="var(--text-faint)" />}
+                    {n.critica ? <AlertTriangle size={15} color="var(--red-fg)" />
+                      : n.tripla ? <Check size={15} color="var(--amber-fg)" />
+                      : <Bell size={14} color="var(--text-faint)" />}
                   </div>
                   <div style={{ minWidth: 0 }}>
                     <div className="notif__titulo">{n.titulo}</div>
@@ -144,6 +125,7 @@ function SinoNotificacoes() {
                         </span>
                       ))}
                       {n.tripla && <span className="notif__papel notif__papel--on">notificação tripla</span>}
+                      {n.critica && <span className="notif__papel notif__papel--critica">exige decisão</span>}
                     </div>
                     <div className="txt-11 txt-muted" style={{ marginTop: 6 }}>{fmtDataHora(n.em)}</div>
                   </div>

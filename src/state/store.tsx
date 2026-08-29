@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useReducer, useCallback } fr
 import type {
   AvaliacaoEntrega, Notificacao, Role, TransferItem, Transferencia, TransferStatus, EventoTipo,
 } from '../domain/types';
-import { STATUS_RESERVA, STATUS_TRANSITO } from '../domain/status';
+import { STATUS_RESERVA, STATUS_TRANSITO, temDivergencia } from '../domain/status';
 import { REGRAS } from '../domain/notificacoes';
 import { TRANSFERENCIAS_SEED } from '../data/transferencias';
 import { INSUMOS } from '../data/insumos';
@@ -65,7 +65,7 @@ export type Action =
   | { type: 'confirmar_nf'; id: string; numero: string; anexo: string }
   | { type: 'cancelar'; id: string; motivo: string }
   | { type: 'reenviar'; id: string }
-  | { type: 'encerrar_divergencia'; id: string }
+  | { type: 'encerrar_divergencia'; id: string; observacao: string }
   | { type: 'set_aprovacao'; valor: boolean }
   | { type: 'set_papel'; valor: Role }
   | { type: 'set_estado_tela'; valor: EstadoTela }
@@ -100,6 +100,7 @@ function notificar(
     em: agora(),
     destinatarios: regra.destinatarios,
     tripla: Boolean(regra.tripla),
+    critica: Boolean(regra.critica),
     lida: false,
   };
   return [n, ...state.notificacoes];
@@ -248,12 +249,12 @@ function reducer(state: AppState, action: Action): AppState {
         qtdRecebida: action.recebidos[it.insumoId] ?? it.qtdEnviada,
         motivoDivergencia: action.motivos[it.insumoId] || undefined,
       }));
-      const temDivergencia = itens.some((it) => it.qtdRecebida !== it.qtdEnviada);
+      const temDiferenca = itens.some((it) => it.qtdRecebida !== it.qtdEnviada);
       // A conferência não encerra: o material entra no estoque e a
       // transferência fica Aguardando NF até a nota ser confirmada.
       const status: TransferStatus = 'aguardando_nf';
-      const tipo: EventoTipo = temDivergencia ? 'recebida_divergencia' : 'recebida_ok';
-      const resumo = temDivergencia
+      const tipo: EventoTipo = temDiferenca ? 'recebida_divergencia' : 'recebida_ok';
+      const resumo = temDiferenca
         ? itens.filter((i) => i.qtdRecebida !== i.qtdEnviada)
           .map((i) => `${i.nome}: enviado ${i.qtdEnviada}${i.unidade}, recebido ${i.qtdRecebida}${i.unidade}`)
           .join(' · ')
@@ -276,9 +277,11 @@ function reducer(state: AppState, action: Action): AppState {
         notificacoes: notificar(state, t1, tipo, autor, resumo),
         toasts: [...state.toasts, {
           id: nid('tst'),
-          tom: temDivergencia ? 'erro' : 'sucesso',
-          titulo: temDivergencia ? `${t0.codigo} recebida com divergência` : `${t0.codigo} recebida sem divergência`,
-          descricao: 'Origem, Aprovador e destino foram notificados — é o único evento com notificação tripla. Falta confirmar a NF.',
+          tom: temDiferenca ? 'erro' : 'sucesso',
+          titulo: temDiferenca ? `${t0.codigo} chegou COM divergência` : `${t0.codigo} recebida sem divergência`,
+          descricao: temDiferenca
+            ? `Origem, Aprovador e destino foram notificados. A transferência voltou para os Reservados de ${nomeObra(t0.obraOrigemId)}: só ela pode encerrar o caso. Anexar a NF aqui não finaliza.`
+            : 'Origem, Aprovador e destino foram notificados — é o único evento com notificação tripla. Falta confirmar a NF.',
         }],
       };
     }
@@ -286,9 +289,9 @@ function reducer(state: AppState, action: Action): AppState {
     case 'confirmar_nf': {
       const autor = USUARIO_POR_PAPEL.destino;
       const t0 = achar(state, action.id);
-      const teveDivergencia = t0.itens.some(
-        (i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada,
-      );
+      const teveDivergencia = temDivergencia(t0);
+      // Sem divergência, a NF fecha a transferência. Com divergência, não:
+      // o destino cumpriu a parte dele, mas quem encerra é a origem.
       const status: TransferStatus = teveDivergencia ? 'recebido_divergencia' : 'recebido_ok';
       const t1 = comEvento(
         {
@@ -305,10 +308,10 @@ function reducer(state: AppState, action: Action): AppState {
         notificacoes: notificar(state, t1, 'nf_confirmada', autor, `NF ${action.numero}`),
         toasts: [...state.toasts, {
           id: nid('tst'),
-          tom: teveDivergencia ? 'erro' : 'sucesso',
-          titulo: `${t0.codigo} encerrada`,
+          tom: teveDivergencia ? 'info' : 'sucesso',
+          titulo: teveDivergencia ? `${t0.codigo} — NF confirmada` : `${t0.codigo} encerrada`,
           descricao: teveDivergencia
-            ? 'NF confirmada. A divergência segue registrada para auditoria.'
+            ? `NF anexada, mas a transferência ainda não fecha: a divergência segue aberta até ${nomeObra(t0.obraOrigemId)} decidir se envia o saldo faltante ou encerra assumindo a falta.`
             : 'NF confirmada. A transferência está completa.',
         }],
       };
@@ -341,11 +344,17 @@ function reducer(state: AppState, action: Action): AppState {
       })).filter((it) => it.qtdEnviada > 0);
       const t1 = comEvento(
         {
-          ...t0, status: 'reservado', itens, ciclo: t0.ciclo + 1,
+          ...t0,
+          // O toast sempre prometeu que "o reenvio passa pela aprovação de
+          // novo": com o parâmetro ligado, ele precisa mesmo voltar para a
+          // fila do Aprovador, e não para Reservado pronto para despacho.
+          status: state.aprovacaoAtiva ? 'aguardando_aprovacao' : 'reservado',
+          itens, ciclo: t0.ciclo + 1,
           aprovadaPor: undefined, aprovadaEm: undefined,
           despachadaEm: undefined, previsaoChegada: undefined,
           chegadaEm: undefined, recebidaPor: undefined, recebidaEm: undefined,
           dataSaida: undefined, avaliacao: undefined, nf: undefined,
+          encerramento: undefined,
         },
         'reenviada', 'origem', autor, nomeObra(t0.obraOrigemId),
         `Reenvio do saldo faltante (${t0.ciclo + 1}º ciclo)`,
@@ -356,18 +365,38 @@ function reducer(state: AppState, action: Action): AppState {
         notificacoes: notificar(state, t1, 'reenviada', autor),
         toasts: [...state.toasts, {
           id: nid('tst'), tom: 'info', titulo: `${t0.codigo} voltou para Reservado`,
-          descricao: 'O reenvio passa pela aprovação de novo, sem exceção.',
+          descricao: state.aprovacaoAtiva
+            ? 'Só o saldo que faltou foi reservado de novo, e o reenvio passa pela aprovação outra vez — sem exceção.'
+            : 'Só o saldo que faltou foi reservado de novo. Registre o despacho para seguir.',
         }],
       };
     }
 
     case 'encerrar_divergencia': {
+      // A decisão que fecha o caso. Sem ela a transferência fica aberta,
+      // mesmo com a nota fiscal já anexada pelo destino.
+      const autor = USUARIO_POR_PAPEL.origem;
       const t0 = achar(state, action.id);
+      const faltante = t0.itens
+        .filter((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada)
+        .map((i) => `${i.nome}: faltaram ${(i.qtdEnviada - (i.qtdRecebida ?? 0)).toLocaleString('pt-BR')} ${i.unidade}`)
+        .join(' · ');
+      const t1 = comEvento(
+        {
+          ...t0,
+          status: 'encerrado_divergencia',
+          encerramento: { por: autor, em: agora(), observacao: action.observacao },
+        },
+        'divergencia_encerrada', 'origem', autor, nomeObra(t0.obraOrigemId),
+        [faltante, action.observacao].filter(Boolean).join(' — '),
+      );
       return {
         ...state,
+        transferencias: mapear(state, action.id, () => t1),
+        notificacoes: notificar(state, t1, 'divergencia_encerrada', autor, action.observacao),
         toasts: [...state.toasts, {
-          id: nid('tst'), tom: 'info', titulo: `${t0.codigo} encerrada com divergência`,
-          descricao: 'O registro fica disponível para auditoria.',
+          id: nid('tst'), tom: 'info', titulo: `${t0.codigo} finalizada com divergência`,
+          descricao: 'A origem assumiu a falta. O registro fica disponível para auditoria em "Finalizadas c/ divergência".',
         }],
       };
     }

@@ -8,6 +8,9 @@
   display: flex; gap: 40px; align-items: flex-start; justify-content: center;
   padding: 26px 20px 60px; flex-wrap: wrap;
 }
+/* O acesso à tela mobile saiu do rail lateral, então a volta precisa
+   morar aqui. Ocupa a linha inteira acima do aparelho. */
+.mob-palco__voltar { flex-basis: 100%; }
 .mob-frame {
   /* iPhone 17 — 402 x 874 pt de área útil. */
   width: 426px; height: 898px; border-radius: 56px; background: #0b1420;
@@ -110,6 +113,8 @@
 .mob-tcard:active { background: var(--surface-2); }
 .mob-tcard__topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .mob-tcard__cod { font-size: 15.5px; font-weight: 700; letter-spacing: -.01em; }
+/* Só ocupa espaço quando existe alguma tag extra (hoje, a divergência). */
+.mob-tcard__tags:not(:empty) { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .mob-tcard__rota {
   display: flex; align-items: center; gap: 6px; margin-top: 9px;
   font-size: 13.5px; color: var(--text-2); font-weight: 550;
@@ -283,8 +288,10 @@
   padding: 9px 0; font-size: 14px;
 }
 .mob-linha + .mob-linha { border-top: 1px solid var(--border); }
-.mob-linha__r { color: var(--text-muted); flex-shrink: 0; font-size: 13px; }
-.mob-linha__v { font-weight: 600; text-align: right; }
+/* Quem não encolhe é o valor: rótulo longo (nome de insumo) quebra em
+   vez de empurrar o número para fora do cartão. */
+.mob-linha__r { color: var(--text-muted); min-width: 0; font-size: 13px; }
+.mob-linha__v { font-weight: 600; text-align: right; flex-shrink: 0; }
 
 /* --- Item enviado x recebido ------------------------------- */
 .mob-item {
@@ -374,6 +381,8 @@
   padding: 13px 14px; margin-bottom: 10px; display: flex; gap: 11px;
 }
 .mob-notif--tripla { border-color: #f6e0ab; background: #fffdf7; }
+.mob-notif--critica { border-color: #f3bdbd; background: #fff7f6; border-left: 3px solid var(--red); }
+.mob-notif--critica .mob-notif__t { color: var(--red-fg); }
 .mob-notif__ic { flex-shrink: 0; margin-top: 2px; }
 .mob-notif__t { font-size: 14px; font-weight: 650; line-height: 1.35; }
 .mob-notif__d { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
@@ -383,6 +392,7 @@
   border-radius: 6px; padding: 3px 7px; background: var(--surface-3); color: var(--text-faint);
 }
 .mob-notif__papel--on { background: var(--brand-50); color: var(--brand-700); }
+.mob-notif__papel--critica { background: var(--red-bg); color: var(--red-fg); font-weight: 700; }
 
 /* --- Avisos ------------------------------------------------ */
 .mob-aviso {

@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowRight, Check, X, Truck, PackageCheck, ClipboardCheck, RotateCcw, Ban,
-  FileText, Star, Paperclip, Wallet,
+  FileText, Star, Paperclip, Wallet, AlertTriangle,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { nomeObra } from '../../data/obras';
-import { STATUS_META } from '../../domain/status';
+import { STATUS_META, divergenciaPendente } from '../../domain/status';
 import { acoesDoPapel, trilha, indiceNaTrilha } from '../../domain/machine';
 import { fmtData, fmtDataHora, ROLE_LABEL } from '../../domain/notificacoes';
 import { FICHAS, nomeCriterio } from '../../data/avaliacao';
 import { linhaPorId } from '../../data/orcamento';
-import { BadgeStatus } from '../../components/ui';
+import { BadgeStatus, BadgeDivergencia } from '../../components/ui';
 import type { Transferencia, TransferEvento } from '../../domain/types';
 import { MobTop, MobAviso, Sheet, brl, num } from './comuns';
 
-type SheetAberto = null | 'despacho' | 'reprovar' | 'cancelar' | 'chegada' | 'nf';
+type SheetAberto = null | 'despacho' | 'reprovar' | 'cancelar' | 'chegada' | 'nf' | 'encerrar';
 
 export function TelaDetalhe({
   t, onVoltar, onFvm, somenteLeitura = false,
@@ -26,7 +26,7 @@ export function TelaDetalhe({
   const [sheet, setSheet] = useState<SheetAberto>(null);
   const acoes = somenteLeitura ? [] : acoesDoPapel(t, state.papel);
   const custo = t.itens.reduce((s, i) => s + i.qtdEnviada * i.custoUnitario, 0);
-  const divergente = t.status === 'recebido_divergencia';
+  const divergente = divergenciaPendente(t) || t.status === 'encerrado_divergencia';
 
   return (
     <>
@@ -40,18 +40,31 @@ export function TelaDetalhe({
               <ArrowRight size={14} />
               <strong>{nomeObra(t.obraDestinoId)}</strong>
             </div>
-            <div style={{ marginTop: 10 }}><BadgeStatus status={t.status} /></div>
+            <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+              <BadgeStatus status={t.status} />
+              <BadgeDivergencia t={t} />
+            </div>
             <p className="mob-dica" style={{ marginTop: 10 }}>{STATUS_META[t.status].descricao}</p>
           </div>
 
           {divergente && (
-            <MobAviso tom="perigo" titulo="Recebido com divergência">
+            <MobAviso
+              tom={divergenciaPendente(t) ? 'perigo' : 'atencao'}
+              titulo={divergenciaPendente(t)
+                ? 'Divergência aberta — decisão da origem'
+                : 'Finalizada com divergência'}
+            >
               {t.itens.filter((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada).map((i) => (
                 <div key={i.insumoId} style={{ marginTop: 4 }}>
                   <strong>{i.nome}</strong>: saíram {num(i.qtdEnviada)}, chegaram {num(i.qtdRecebida ?? 0)} {i.unidade}
                   {i.motivoDivergencia && <> — {i.motivoDivergencia}</>}
                 </div>
               ))}
+              <div style={{ marginTop: 8 }}>
+                {divergenciaPendente(t)
+                  ? `A transferência só fecha quando ${nomeObra(t.obraOrigemId)} enviar o saldo faltante ou encerrar assumindo a falta. Anexar a NF aqui não finaliza.`
+                  : `${t.encerramento?.por} encerrou o caso em ${t.encerramento ? fmtDataHora(t.encerramento.em) : '—'}.${t.encerramento?.observacao ? ` ${t.encerramento.observacao}` : ''}`}
+              </div>
             </MobAviso>
           )}
 
@@ -210,8 +223,7 @@ export function TelaDetalhe({
                       case 'avaliar_entrega': onFvm(t.id); break;
                       case 'confirmar_nf': setSheet('nf'); break;
                       case 'reenviar': dispatch({ type: 'reenviar', id: t.id }); break;
-                      case 'encerrar_divergencia':
-                        dispatch({ type: 'encerrar_divergencia', id: t.id }); onVoltar(); break;
+                      case 'encerrar_divergencia': setSheet('encerrar'); break;
                     }
                   }}
                 >
@@ -233,6 +245,9 @@ export function TelaDetalhe({
         />
       )}
       {sheet === 'nf' && <SheetNf t={t} onFechar={() => setSheet(null)} />}
+      {sheet === 'encerrar' && (
+        <SheetEncerrarDivergencia t={t} onFechar={() => setSheet(null)} onPronto={onVoltar} />
+      )}
     </>
   );
 }
@@ -251,7 +266,7 @@ function Trilha({ t }: { t: Transferencia }) {
   const { state } = useStore();
   const passos = trilha(state.aprovacaoAtiva);
   const atual = indiceNaTrilha(t.status, state.aprovacaoAtiva);
-  const divergente = t.status === 'recebido_divergencia';
+  const divergente = divergenciaPendente(t) || t.status === 'encerrado_divergencia';
 
   if (t.status === 'reprovado' || t.status === 'cancelado') {
     return (
@@ -287,7 +302,7 @@ function Trilha({ t }: { t: Transferencia }) {
             </span>
             <div>
               <div className={`mob-trilha__rot ${eAtual || erro ? 'atual' : ''}`}>
-                {erro ? 'Recebido com divergência' : STATUS_META[p].passo ?? STATUS_META[p].curto}
+                {erro ? 'Com divergência' : STATUS_META[p].passo ?? STATUS_META[p].curto}
               </div>
               {q && (feita || eAtual || erro) && (
                 <div className="mob-trilha__quando">{fmtDataHora(q)}</div>
@@ -308,6 +323,7 @@ const IC_EV: Record<string, React.ReactNode> = {
   chegada_registrada: <PackageCheck size={11} color="var(--cyan-fg)" />,
   recebida_ok: <Check size={11} color="var(--green-fg)" />,
   recebida_divergencia: <X size={11} color="var(--red-fg)" />,
+  divergencia_encerrada: <AlertTriangle size={11} color="var(--red-fg)" />,
   cancelada: <Ban size={11} />,
   reenviada: <RotateCcw size={11} color="var(--purple-fg)" />,
   nf_confirmada: <FileText size={11} color="var(--green-fg)" />,
@@ -320,6 +336,7 @@ const T_EV: Record<string, string> = {
   chegada_registrada: 'Chegada registrada',
   recebida_ok: 'Recebida sem divergência',
   recebida_divergencia: 'Recebida com divergência',
+  divergencia_encerrada: 'Divergência encerrada pela origem',
   cancelada: 'Cancelada',
   reenviada: 'Reenviada — voltou para Reservado',
   nf_confirmada: 'NF confirmada — transferência encerrada',
@@ -550,7 +567,7 @@ function SheetNf({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
     >
       <MobAviso tom={divergente ? 'atencao' : 'info'}>
         {divergente
-          ? 'A conferência registrou divergência. A NF encerra a transferência e a diferença fica registrada para auditoria.'
+          ? `A conferência registrou divergência, então a NF não encerra a transferência: ela fica aberta até ${nomeObra(t.obraOrigemId)} enviar o que faltou ou encerrar assumindo a falta.`
           : 'A conferência fechou sem divergência. Confirmar a NF encerra a transferência.'}
       </MobAviso>
 
@@ -586,6 +603,78 @@ function SheetNf({ t, onFechar }: { t: Transferencia; onFechar: () => void }) {
         )}
         <p className="mob-dica">PDF ou XML da nota. Máximo 10MB.</p>
         {erro && <div className="mob-erro">Informe o número da NF e anexe o arquivo.</div>}
+      </div>
+    </Sheet>
+  );
+}
+
+/* ---------------- Encerrar a divergência ----------------------
+   A decisão é da obra de ORIGEM. É ela, e não a nota fiscal do
+   destino, que leva a transferência para "finalizada".
+   -------------------------------------------------------------- */
+function SheetEncerrarDivergencia({
+  t, onFechar, onPronto,
+}: { t: Transferencia; onFechar: () => void; onPronto: () => void }) {
+  const { dispatch } = useStore();
+  const [observacao, setObservacao] = useState('');
+
+  const faltas = t.itens
+    .filter((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada)
+    .map((i) => ({ ...i, falta: i.qtdEnviada - (i.qtdRecebida ?? 0) }));
+  const perda = faltas.reduce((s, i) => s + i.falta * i.custoUnitario, 0);
+
+  return (
+    <Sheet
+      titulo="Encerrar com divergência" sub={t.codigo} onFechar={onFechar}
+      rodape={
+        <>
+          <button
+            className="mob-btn mob-btn--perigo"
+            onClick={() => {
+              dispatch({ type: 'encerrar_divergencia', id: t.id, observacao });
+              onFechar(); onPronto();
+            }}
+          >
+            <Check size={19} /> Encerrar assumindo a falta
+          </button>
+          <button className="mob-btn mob-btn--sm" onClick={onFechar}>Voltar</button>
+        </>
+      }
+    >
+      <MobAviso tom="atencao" titulo="Esta é a decisão que fecha a transferência">
+        Encerrar significa que não vem mais material: a diferença vira perda assumida por{' '}
+        {nomeObra(t.obraOrigemId)}. Se ainda for enviar o saldo, volte e escolha "Enviar o que faltou".
+      </MobAviso>
+
+      {!t.nf && (
+        <MobAviso tom="info">
+          {nomeObra(t.obraDestinoId)} ainda não confirmou a nota fiscal. Encerrar agora fecha o caso
+          assim mesmo.
+        </MobAviso>
+      )}
+
+      <div className="mob-cartao" style={{ marginBottom: 16 }}>
+        {faltas.map((i) => (
+          <div className="mob-linha" key={i.insumoId}>
+            <span className="mob-linha__r">{i.nome}</span>
+            <span className="mob-linha__v" style={{ color: 'var(--red-fg)' }}>
+              -{num(i.falta)} {i.unidade}
+            </span>
+          </div>
+        ))}
+        <div className="mob-linha">
+          <span className="mob-linha__r">Perda assumida</span>
+          <span className="mob-linha__v" style={{ color: 'var(--red-fg)' }}>{brl(perda)}</span>
+        </div>
+      </div>
+
+      <div className="mob-campo">
+        <label className="mob-rot">Por que está encerrando sem reenviar?</label>
+        <textarea
+          className="mob-textarea"
+          placeholder="Ex.: perda no trajeto já apurada com a transportadora."
+          value={observacao} onChange={(e) => setObservacao(e.target.value)}
+        />
       </div>
     </Sheet>
   );

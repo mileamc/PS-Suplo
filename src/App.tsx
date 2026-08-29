@@ -54,12 +54,18 @@ function Prototipo({
         <DemoBar />
         <div className="conteudo">
           {rota === 'estoque' && (
-            <EstoqueScreen onAbrirTransferencia={(tid) => navegar(caminhoDaTransferencia(tid))} />
+            <EstoqueScreen
+              onAbrirTransferencia={(tid) => navegar(caminhoDaTransferencia(tid))}
+              onVerMobile={() => navegar(ROTAS.mobile)}
+            />
           )}
           {rota === 'transferencias' && (
-            <TransferenciasScreen onAbrir={(tid) => navegar(caminhoDaTransferencia(tid))} />
+            <TransferenciasScreen
+              onAbrir={(tid) => navegar(caminhoDaTransferencia(tid))}
+              onVerMobile={() => navegar(ROTAS.mobile)}
+            />
           )}
-          {rota === 'mobile' && <MobileScreen />}
+          {rota === 'mobile' && <MobileScreen onVoltar={() => navegar(ROTAS.transferencias)} />}
         </div>
       </div>
 

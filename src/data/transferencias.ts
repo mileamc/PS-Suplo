@@ -47,7 +47,11 @@ const ASSINATURA_MOCK =
    (A Enviar a partir de Suplos Tower II e A Receber nela).
    ============================================================ */
 export const TRANSFERENCIAS_SEED: Transferencia[] = [
-  /* ---------- ⭐ O caso central do problema: divergência --------- */
+  /* ---------- ⭐ O caso central do problema: divergência ---------
+     O destino já conferiu e já anexou a nota fiscal — e mesmo assim a
+     transferência não fechou: falta a obra de origem decidir se manda as
+     28 peças que faltaram ou se encerra assumindo a perda. É esse gancho
+     que mantém o caso vivo em vez de virar um registro morto. ---------- */
   {
     id: 'tr-136', codigo: 'TR-000136', status: 'recebido_divergencia',
     obraOrigemId: 'ob-002', obraDestinoId: 'ob-004',
@@ -244,6 +248,40 @@ export const TRANSFERENCIAS_SEED: Transferencia[] = [
       ev('criada', '2026-08-28T09:30:00', 'Bruno Sales', 'origem', 'Suplos Tower VI'),
     ],
   },
+  /* ---------- Divergência já encerrada pela origem ---------------
+     O outro desfecho possível do mesmo caso: a origem olhou a falta,
+     decidiu que não valia um novo frete e encerrou assumindo a perda. --- */
+  {
+    id: 'tr-131', codigo: 'TR-000131', status: 'encerrado_divergencia',
+    obraOrigemId: 'ob-002', obraDestinoId: 'ob-005',
+    criadaPor: 'Rafael Menezes', criadaEm: '2026-07-28T10:05:00',
+    entrada: 'requisicao', requisicaoCodigo: 'RQ-004411',
+    observacao: 'Saldo de abraçadeiras da fachada.',
+    assinatura: ASSINATURA_MOCK, ciclo: 0,
+    itens: [item('in-11654-p', 400, 355, 'Duas caixas chegaram rasgadas; 45 peças perdidas no trajeto.')],
+    aprovadaPor: 'Kaio Ambrosio', aprovadaEm: '2026-07-28T14:20:00',
+    dataSaida: '2026-07-29', despachadaEm: '2026-07-29T07:10:00', previsaoChegada: '2026-08-01T00:00:00',
+    chegadaEm: '2026-08-01T09:30:00',
+    recebidaPor: 'Josué Barbosa', recebidaEm: '2026-08-01T10:02:00',
+    nf: {
+      numero: '000.391.204', anexo: 'nf-tr-000131.pdf',
+      confirmadaPor: 'Josué Barbosa', confirmadaEm: '2026-08-02T11:40:00',
+    },
+    encerramento: {
+      por: 'Rafael Menezes', em: '2026-08-04T08:15:00',
+      observacao: 'Perda apurada com a transportadora. Não compensa um frete novo por 45 peças.',
+    },
+    eventos: [
+      ev('criada', '2026-07-28T10:05:00', 'Rafael Menezes', 'origem', 'Suplos Tower II'),
+      ev('aprovada', '2026-07-28T14:20:00', 'Kaio Ambrosio', 'aprovador', 'Suplos Tower V'),
+      ev('despachada', '2026-07-29T07:10:00', 'Rafael Menezes', 'origem', 'Suplos Tower II', 'Previsão de chegada: 01/08/2026'),
+      ev('chegada_registrada', '2026-08-01T09:30:00', 'Josué Barbosa', 'destino', 'Suplos Tower V'),
+      ev('recebida_divergencia', '2026-08-01T10:02:00', 'Josué Barbosa', 'destino', 'Suplos Tower V', 'Faltaram 45 un de Abraçadeira de nylon'),
+      ev('nf_confirmada', '2026-08-02T11:40:00', 'Josué Barbosa', 'destino', 'Suplos Tower V', 'NF 000.391.204'),
+      ev('divergencia_encerrada', '2026-08-04T08:15:00', 'Rafael Menezes', 'origem', 'Suplos Tower II', 'Perda de 45 un assumida pela origem'),
+    ],
+  },
+
   {
     id: 'tr-144', codigo: 'TR-000144', status: 'em_transito',
     obraOrigemId: 'ob-001', obraDestinoId: 'ob-002',

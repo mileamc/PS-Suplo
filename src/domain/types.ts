@@ -13,6 +13,7 @@ export type TransferStatus =
   | 'aguardando_nf'
   | 'recebido_ok'
   | 'recebido_divergencia'
+  | 'encerrado_divergencia'
   | 'reprovado'
   | 'cancelado';
 
@@ -71,6 +72,7 @@ export type EventoTipo =
   | 'recebida_ok'
   | 'recebida_divergencia'
   | 'nf_confirmada'
+  | 'divergencia_encerrada'
   | 'cancelada'
   | 'reenviada';
 
@@ -115,6 +117,12 @@ export interface Transferencia {
   avaliacao?: AvaliacaoEntrega;
   /** Nota fiscal da transferência, confirmada pela obra de destino. */
   nf?: NotaFiscal;
+  /**
+   * Encerramento da divergência pela obra de origem. É ele, e não a NF,
+   * que fecha uma transferência que chegou com falta: o destino pode
+   * anexar a nota, mas quem decide se ainda vem material é quem mandou.
+   */
+  encerramento?: EncerramentoDivergencia;
   /** Ciclo de reenvio (V1) — nº de vezes que voltou para Reservado. */
   ciclo: number;
   eventos: TransferEvento[];
@@ -131,6 +139,11 @@ export interface Notificacao {
   destinatarios: Role[];
   /** A confirmação de recebimento é o único evento com notificação tripla. */
   tripla: boolean;
+  /**
+   * Aviso que não pode passar batido — hoje, só a divergência na
+   * conferência. A obra de origem precisa ver e decidir o que fazer.
+   */
+  critica?: boolean;
   lida: boolean;
 }
 
@@ -155,4 +168,10 @@ export interface NotaFiscal {
   anexo: string;
   confirmadaPor: string;
   confirmadaEm: string;
+}
+
+export interface EncerramentoDivergencia {
+  por: string;
+  em: string;
+  observacao: string;
 }

@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Search, Bell, Check, ArrowRight, Archive, TrendingDown, Layers } from 'lucide-react';
+import {
+  Search, Bell, Check, ArrowRight, Archive, TrendingDown, Layers, AlertTriangle,
+} from 'lucide-react';
 import { useStore } from '../../state/store';
 import { INSUMOS } from '../../data/insumos';
 import { OBRA_ATUAL, nomeObra } from '../../data/obras';
@@ -114,7 +116,8 @@ const FILTROS_MOV: { valor: TransferStatus | 'todos'; rotulo: string }[] = [
   { valor: 'em_transito', rotulo: 'Em trânsito' },
   { valor: 'avaliacao_entrega', rotulo: 'Avaliação de entrega' },
   { valor: 'recebido_ok', rotulo: 'Recebido ok' },
-  { valor: 'recebido_divergencia', rotulo: 'Com divergência' },
+  { valor: 'recebido_divergencia', rotulo: 'Divergência pendente' },
+  { valor: 'encerrado_divergencia', rotulo: 'Finalizada c/ divergência' },
 ];
 
 export function TelaMovimentacoes({ onAbrir }: { onAbrir: (id: string) => void }) {
@@ -201,13 +204,13 @@ export function TelaNotificacoes({ onAbrir }: { onAbrir: (id: string) => void })
           ) : notificacoesDoPapel.map((n) => (
             <button
               key={n.id}
-              className={`mob-notif ${n.tripla ? 'mob-notif--tripla' : ''}`}
+              className={`mob-notif ${n.critica ? 'mob-notif--critica' : n.tripla ? 'mob-notif--tripla' : ''}`}
               onClick={() => onAbrir(n.transferenciaId)}
               style={{ width: '100%', textAlign: 'left' }}
             >
               <span className="mob-notif__ic">
-                {n.tripla
-                  ? <Check size={16} color="var(--amber-fg)" />
+                {n.critica ? <AlertTriangle size={16} color="var(--red-fg)" />
+                  : n.tripla ? <Check size={16} color="var(--amber-fg)" />
                   : <Bell size={15} color="var(--text-faint)" />}
               </span>
               <span style={{ flex: 1, minWidth: 0 }}>
@@ -220,6 +223,7 @@ export function TelaNotificacoes({ onAbrir }: { onAbrir: (id: string) => void })
                     </span>
                   ))}
                   {n.tripla && <span className="mob-notif__papel mob-notif__papel--on">tripla</span>}
+                  {n.critica && <span className="mob-notif__papel mob-notif__papel--critica">exige decisão</span>}
                 </span>
                 <span className="mob-notif__d" style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
                   {fmtDataHora(n.em)} <ArrowRight size={12} /> {n.transferenciaCodigo}
@@ -229,8 +233,9 @@ export function TelaNotificacoes({ onAbrir }: { onAbrir: (id: string) => void })
           ))}
           {notificacoesDoPapel.length > 0 && (
             <p className="mob-dica" style={{ marginTop: 4 }}>
-              A confirmação de recebimento é o único evento com notificação tripla em todo o fluxo —
-              por isso ela aparece destacada.
+              A confirmação de recebimento é o único evento com notificação tripla em todo o fluxo.
+              A divergência vai além: é o único aviso que exige uma decisão de quem mandou o
+              material, e por isso vem marcado em vermelho.
             </p>
           )}
         </div>

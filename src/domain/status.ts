@@ -1,4 +1,4 @@
-import type { TransferStatus } from './types';
+import type { Transferencia, TransferStatus } from './types';
 
 /**
  * Família visual do estado — é ela, e só ela, que decide a cor da tag.
@@ -81,11 +81,19 @@ export const STATUS_META: Record<TransferStatus, StatusMeta> = {
     terminal: true,
   },
   recebido_divergencia: {
-    label: 'Recebido com divergência',
-    curto: 'Com divergência',
-    descricao: 'A quantidade recebida não bate com a enviada. Registrado para auditoria.',
+    label: 'Divergência — aguardando a origem',
+    curto: 'Divergência pendente',
+    descricao: 'A conferência achou falta e a nota fiscal já foi confirmada. A transferência não fecha aqui: falta a obra de origem decidir se manda o saldo que faltou ou se encerra assumindo a diferença.',
     token: 'diverg',
+    passo: 'Com divergência',
     terminal: false,
+  },
+  encerrado_divergencia: {
+    label: 'Finalizada com divergência',
+    curto: 'Com divergência',
+    descricao: 'A obra de origem encerrou o caso assumindo a diferença entre o que saiu e o que chegou. A divergência segue registrada para auditoria.',
+    token: 'diverg',
+    terminal: true,
   },
   reprovado: {
     label: 'Reprovado',
@@ -129,14 +137,38 @@ export const STATUS_FVM: TransferStatus[] = ['avaliacao_entrega'];
 /** Encerrados sem entrega. */
 export const STATUS_CANCELADOS: TransferStatus[] = ['cancelado', 'reprovado'];
 
-/** Estados em que a movimentação já foi concluída (entrou no destino). */
-export const STATUS_CONCLUIDO: TransferStatus[] = ['recebido_ok', 'recebido_divergencia'];
+/** Estados finais em que a movimentação já foi concluída. */
+export const STATUS_CONCLUIDO: TransferStatus[] = ['recebido_ok', 'encerrado_divergencia'];
 
+/**
+ * Tudo que ainda pede acompanhamento. `recebido_divergencia` está aqui de
+ * propósito: a nota fiscal pode já ter sido confirmada, mas enquanto a
+ * origem não encerrar o caso a transferência continua aberta.
+ */
 export const STATUS_ABERTOS: TransferStatus[] = [
-  ...STATUS_RESERVA, ...STATUS_TRANSITO, 'aguardando_nf',
+  ...STATUS_RESERVA, ...STATUS_TRANSITO, 'aguardando_nf', 'recebido_divergencia',
 ];
 
-/** Transferências ativas — tudo que ainda pede acompanhamento. */
-export const STATUS_ATIVOS: TransferStatus[] = [
-  ...STATUS_ABERTOS, 'recebido_divergencia',
-];
+/** Transferências ativas — hoje, o mesmo recorte dos abertos. */
+export const STATUS_ATIVOS: TransferStatus[] = [...STATUS_ABERTOS];
+
+/* ============================================================
+   Divergência — a falta entre o que saiu e o que chegou
+   ============================================================ */
+
+/** A conferência registrou falta em pelo menos um item. */
+export function temDivergencia(t: Transferencia): boolean {
+  return t.itens.some((i) => i.qtdRecebida !== null && i.qtdRecebida !== i.qtdEnviada);
+}
+
+/**
+ * Divergência registrada e ainda sem decisão da obra de origem.
+ *
+ * Vale desde a conferência (`aguardando_nf`, quando o destino ainda tem a
+ * nota para anexar) até a origem encerrar ou reenviar o saldo faltante.
+ * Anexar a NF não fecha o caso — só a decisão de quem mandou fecha.
+ */
+export function divergenciaPendente(t: Transferencia): boolean {
+  return (t.status === 'aguardando_nf' || t.status === 'recebido_divergencia')
+    && temDivergencia(t);
+}

@@ -8,10 +8,12 @@ import { nomeObra } from '../../data/obras';
 import { STATUS_META } from '../../domain/status';
 // Os grupos são os mesmos da versão web — a definição vive em domain/grupos.ts
 // para as duas telas não saírem do lugar uma da outra.
-import { atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Grupo } from '../../domain/grupos';
+import {
+  atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Direcao, type Grupo,
+} from '../../domain/grupos';
 import { acoesDoPapel } from '../../domain/machine';
 import { fmtData } from '../../domain/notificacoes';
-import { BadgeStatus, corDoStatus } from '../../components/ui';
+import { BadgeStatus, BadgeDivergencia, corDoStatus } from '../../components/ui';
 import type { Transferencia } from '../../domain/types';
 import { MobTop, MobVazio, MobCarregando, brl } from './comuns';
 
@@ -19,17 +21,17 @@ export function TelaTransferencias({
   onAbrir, onNova, onConfig,
 }: { onAbrir: (id: string, leitura?: boolean) => void; onNova: () => void; onConfig: () => void }) {
   const { state, aEnviar, aReceber } = useStore();
-  const [direcao, setDirecao] = useState<'enviar' | 'receber'>('enviar');
+  const [direcao, setDirecao] = useState<Direcao>('enviar');
   const [filtro, setFiltro] = useState<Grupo>('total');
 
   const base = direcao === 'enviar' ? aEnviar : aReceber;
   const somenteLeitura = filtro === 'total';
   const lista = useMemo(
-    () => base.filter((t) => noGrupo(t, filtro)).sort((a, b) => b.criadaEm.localeCompare(a.criadaEm)),
-    [base, filtro],
+    () => base.filter((t) => noGrupo(t, filtro, direcao)).sort((a, b) => b.criadaEm.localeCompare(a.criadaEm)),
+    [base, filtro, direcao],
   );
   const abertas = (l: Transferencia[]) => l.filter((t) => !STATUS_META[t.status].terminal).length;
-  const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g)).length;
+  const conta = (g: Grupo) => base.filter((t) => noGrupo(t, g, direcao)).length;
 
   // "Aprovações pendentes" é chip só de quem aprova; para os outros papéis
   // a pendência aparece apenas como tag no card da transferência.
@@ -129,7 +131,7 @@ export function TelaTransferencias({
 function CardTransferencia({
   t, direcao, onAbrir, somenteLeitura,
 }: {
-  t: Transferencia; direcao: 'enviar' | 'receber';
+  t: Transferencia; direcao: Direcao;
   onAbrir: (id: string, leitura?: boolean) => void; somenteLeitura?: boolean;
 }) {
   const { state } = useStore();
@@ -155,6 +157,7 @@ function CardTransferencia({
         <span className="mob-tcard__cod">{t.codigo}</span>
         <BadgeStatus status={t.status} compacto />
       </div>
+      <div className="mob-tcard__tags"><BadgeDivergencia t={t} /></div>
 
       <div className="mob-tcard__rota">
         <span>{direcao === 'enviar' ? 'para' : 'de'}</span>

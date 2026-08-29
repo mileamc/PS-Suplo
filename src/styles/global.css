@@ -241,6 +241,21 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 .badge-status--reprovado { background: var(--st-reprovado-bg); color: var(--st-reprovado-fg); }
 .badge-status--cancelado { background: var(--st-cancelado-bg); color: var(--st-cancelado-fg); }
 
+/* A divergência sem decisão é a única pendência que respira: ela custa
+   dinheiro por dia parado, e não pode se perder no meio das outras tags. */
+.badge-status--pulsa {
+  box-shadow: 0 0 0 0 rgba(229, 72, 77, .45);
+  animation: pulsa-diverg 2.2s ease-out infinite;
+}
+@keyframes pulsa-diverg {
+  0%   { box-shadow: 0 0 0 0 rgba(229, 72, 77, .40); }
+  70%  { box-shadow: 0 0 0 6px rgba(229, 72, 77, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-status--pulsa { animation: none; box-shadow: 0 0 0 2px rgba(229, 72, 77, .30); }
+}
+
 /* ============================================================
    Cards de status (padrão "Entregas")
    ============================================================ */
@@ -615,12 +630,16 @@ table.tabela { width: 100%; border-collapse: collapse; min-width: 900px; }
 .notif { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
 .notif:last-child { border-bottom: 0; }
 .notif--tripla { background: linear-gradient(90deg, #fff9ec, transparent 70%); border-left: 3px solid var(--amber); }
+/* Aviso que exige decisão de quem recebe — não pode passar batido. */
+.notif--critica { background: linear-gradient(90deg, #fdeceb, transparent 78%); border-left: 3px solid var(--red); }
+.notif--critica .notif__titulo { color: var(--red-fg); }
 .notif__icone { flex-shrink: 0; margin-top: 2px; }
 .notif__titulo { font-size: var(--fs-13); font-weight: 600; line-height: 1.35; }
 .notif__desc { font-size: var(--fs-12); color: var(--text-muted); margin-top: 3px; line-height: 1.45; }
 .notif__papeis { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
 .notif__papel { font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; border-radius: var(--r-sm); padding: 2px 6px; background: var(--surface-3); color: var(--text-muted); }
 .notif__papel--on { background: var(--brand-50); color: var(--brand-700); }
+.notif__papel--critica { background: var(--red-bg); color: var(--red-fg); font-weight: 700; }
 
 /* ============================================================
    Utilitários

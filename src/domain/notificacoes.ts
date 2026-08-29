@@ -9,6 +9,8 @@ import type { EventoTipo, Role, Transferencia } from './types';
 interface RegraNotificacao {
   destinatarios: Role[];
   tripla?: boolean;
+  /** Aviso que não pode passar batido — a interface o destaca em vermelho. */
+  critica?: boolean;
   titulo: (t: Transferencia) => string;
   descricao: (t: Transferencia, ctx: Ctx) => string;
 }
@@ -55,15 +57,29 @@ export const REGRAS: Partial<Record<EventoTipo, RegraNotificacao>> = {
   recebida_divergencia: {
     destinatarios: ['origem', 'aprovador', 'destino'],
     tripla: true,
-    titulo: (t) => `${t.codigo} recebida COM divergência`,
+    // O único aviso crítico do fluxo: a obra de origem precisa parar e
+    // decidir se manda o que faltou ou se encerra assumindo a falta.
+    critica: true,
+    titulo: (t) => `${t.codigo} chegou COM divergência`,
     descricao: (_t, c) =>
-      `${c.autor} registrou divergência na conferência em ${c.obraDestino}.${c.detalhe ? ` ${c.detalhe}` : ''}`,
+      `${c.autor} conferiu a entrega em ${c.obraDestino} e o que chegou não bate com o que saiu de ${c.obraOrigem}.${c.detalhe ? ` ${c.detalhe}.` : ''} A transferência voltou para os Reservados de ${c.obraOrigem}: é ela que decide se envia o saldo faltante ou encerra assumindo a falta.`,
   },
   nf_confirmada: {
     destinatarios: ['origem', 'destino'],
-    titulo: (t) => `${t.codigo} encerrada`,
+    titulo: (t) => `${t.codigo} teve a NF confirmada`,
+    descricao: (t, c) =>
+      `${c.autor} confirmou a nota fiscal da transferência em ${c.obraDestino}.${c.detalhe ? ` ${c.detalhe}.` : ''} ${
+        t.status === 'recebido_divergencia'
+          ? `A transferência ainda não fecha: a divergência segue aberta até ${c.obraOrigem} encerrar.`
+          : 'A transferência está completa.'
+      }`,
+  },
+  divergencia_encerrada: {
+    destinatarios: ['origem', 'aprovador', 'destino'],
+    tripla: true,
+    titulo: (t) => `${t.codigo} finalizada com divergência`,
     descricao: (_t, c) =>
-      `${c.autor} confirmou a nota fiscal da transferência em ${c.obraDestino}.${c.detalhe ? ` ${c.detalhe}` : ''}`,
+      `${c.autor} encerrou o caso em ${c.obraOrigem} assumindo a diferença entre o que saiu e o que chegou.${c.detalhe ? ` ${c.detalhe}` : ''} A divergência fica registrada para auditoria.`,
   },
   cancelada: {
     destinatarios: ['origem'],
@@ -72,7 +88,7 @@ export const REGRAS: Partial<Record<EventoTipo, RegraNotificacao>> = {
       `Cancelada antes do despacho. A quantidade voltou ao disponível de ${c.obraOrigem}.`,
   },
   reenviada: {
-    destinatarios: ['origem'],
+    destinatarios: ['origem', 'destino'],
     titulo: (t) => `${t.codigo} voltou para Reservado`,
     descricao: (t, c) =>
       `Reenvio ${t.ciclo}º ciclo. O material precisa ser re-separado em ${c.obraOrigem} e passa pela aprovação de novo.`,

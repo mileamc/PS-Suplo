@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
 import { X, HelpCircle, Check, AlertTriangle, Info, AlertOctagon, Inbox } from 'lucide-react';
-import type { TransferStatus } from '../domain/types';
-import { STATUS_META } from '../domain/status';
+import type { Transferencia, TransferStatus } from '../domain/types';
+import { STATUS_META, divergenciaPendente } from '../domain/status';
 
 /* ---------------- Badge de status da transferência ---------- */
 export function BadgeStatus({ status, compacto }: { status: TransferStatus; compacto?: boolean }) {
   const m = STATUS_META[status];
+  // A divergência esperando decisão da origem é a única pendência que
+  // custa dinheiro por dia parado, então a tag respira em vez de sumir
+  // no meio das outras.
+  const pulsa = status === 'recebido_divergencia' ? ' badge-status--pulsa' : '';
   return (
-    <span className={`badge-status badge-status--${m.token}`} title={m.descricao}>
+    <span className={`badge-status badge-status--${m.token}${pulsa}`} title={m.descricao}>
       <span className="badge-status__ponto" />
       {compacto ? m.curto : m.label}
     </span>
@@ -16,6 +20,31 @@ export function BadgeStatus({ status, compacto }: { status: TransferStatus; comp
 
 export function corDoStatus(status: TransferStatus): string {
   return `var(--st-${STATUS_META[status].token})`;
+}
+
+/**
+ * Marca a divergência que ainda espera decisão da obra de origem.
+ *
+ * Só aparece em "Aguardando NF", onde as duas pendências correm em
+ * paralelo — o destino anexa a nota, a origem decide o que fazer com a
+ * falta — e a tag de status conta só metade da história. Em
+ * "Divergência pendente" a própria tag de status já diz tudo, e repetir
+ * seria ruído.
+ */
+export function BadgeDivergencia({ t }: { t: Transferencia }) {
+  if (t.status !== 'aguardando_nf' || !divergenciaPendente(t)) return null;
+  const faltando = t.itens.reduce(
+    (s, i) => s + Math.max(0, i.qtdEnviada - (i.qtdRecebida ?? i.qtdEnviada)), 0,
+  );
+  return (
+    <span
+      className="badge-status badge-status--diverg badge-status--pulsa"
+      title={`Faltaram ${faltando.toLocaleString('pt-BR')} un. no total. A obra de origem precisa decidir se envia o saldo faltante ou encerra assumindo a falta.`}
+    >
+      <AlertTriangle size={11} />
+      Divergência pendente
+    </span>
+  );
 }
 
 /* ---------------- Badge genérico ---------------------------- */
