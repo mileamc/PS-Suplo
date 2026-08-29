@@ -1,0 +1,39 @@
+<svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="560" fill="#ffffff"/>
+<text x="40" y="30" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e">Print 4 — Entregas: Calendário (hoje só de pedidos de compra)</text>
+
+<rect x="40" y="50" width="1120" height="330" rx="10" fill="#f2f5f7" stroke="#d1d4d7"/>
+<rect x="40" y="50" width="1120" height="44" rx="10" fill="#282b2e"/>
+<text x="60" y="78" font-family="sans-serif" font-size="14" font-weight="700" fill="#ffffff">Entregas</text>
+
+<rect x="60" y="110" width="140" height="60" rx="6" fill="#ffffff" stroke="#aaaeb3"/><text x="130" y="145" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e" text-anchor="middle">120</text><text x="130" y="160" font-family="sans-serif" font-size="10" fill="#7d848b" text-anchor="middle">Total</text>
+<rect x="210" y="110" width="140" height="60" rx="6" fill="#ffffff" stroke="#aaaeb3"/><text x="280" y="145" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e" text-anchor="middle">32</text><text x="280" y="160" font-family="sans-serif" font-size="10" fill="#7d848b" text-anchor="middle">Atrasados</text>
+<rect x="360" y="110" width="140" height="60" rx="6" fill="#ffffff" stroke="#aaaeb3"/><text x="430" y="145" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e" text-anchor="middle">12</text><text x="430" y="160" font-family="sans-serif" font-size="10" fill="#7d848b" text-anchor="middle">Parciais</text>
+<rect x="510" y="110" width="140" height="60" rx="6" fill="#ffffff" stroke="#aaaeb3"/><text x="580" y="145" font-family="sans-serif" font-size="16" font-weight="700" fill="#282b2e" text-anchor="middle">52</text><text x="580" y="160" font-family="sans-serif" font-size="10" fill="#7d848b" text-anchor="middle">Completos</text>
+
+<circle cx="150" cy="105" r="14" fill="#307bb0"/><text x="150" y="110" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+
+<rect x="60" y="195" width="700" height="165" rx="6" fill="#ffffff" stroke="#aaaeb3"/>
+<text x="80" y="220" font-family="sans-serif" font-size="13" font-weight="600" fill="#282b2e">Agosto de 2026</text>
+<line x1="80" y1="235" x2="740" y2="235" stroke="#d1d4d7"/>
+<g font-family="sans-serif" font-size="10" fill="#7d848b">
+<text x="105" y="250" text-anchor="middle">Dom</text><text x="195" y="250" text-anchor="middle">Seg</text><text x="285" y="250" text-anchor="middle">Ter</text><text x="375" y="250" text-anchor="middle">Qua</text><text x="465" y="250" text-anchor="middle">Qui</text><text x="555" y="250" text-anchor="middle">Sex</text><text x="645" y="250" text-anchor="middle">Sáb</text>
+</g>
+<rect x="80" y="260" width="70" height="45" fill="#f2f5f7" stroke="#d1d4d7"/>
+<rect x="620" y="260" width="70" height="45" fill="#ffffff" stroke="#d1d4d7"/><rect x="622" y="264" width="60" height="16" rx="4" fill="#eef6fd"/><text x="652" y="276" font-family="sans-serif" font-size="9" fill="#213e5c" text-anchor="middle">800108</text>
+
+<rect x="780" y="195" width="360" height="165" rx="6" fill="#ffffff" stroke="#aaaeb3"/>
+<text x="800" y="218" font-family="sans-serif" font-size="12" font-weight="600" fill="#071e3b">Entregas Atrasadas (4)</text>
+<rect x="795" y="228" width="330" height="30" rx="4" fill="#ecf0f5"/>
+<text x="805" y="247" font-family="sans-serif" font-size="11" fill="#071e3b">800083 — Hidráulica Tropeiro Eireli</text>
+
+<circle cx="900" cy="220" r="14" fill="#307bb0"/><text x="900" y="225" font-family="sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+
+<rect x="40" y="420" width="1120" height="130" rx="8" fill="#f0f6f9" stroke="#74a7cb"/>
+<text x="60" y="448" font-family="sans-serif" font-size="13" font-weight="700" fill="#1d435d">1 — Cards de status (total, atrasados, parciais, completos) já são um bom padrão</text>
+<text x="70" y="466" font-family="sans-serif" font-size="12" fill="#2d668e">Resolvem exatamente o pedido de "visibilidade por obra" do CS (slide 5) — só que hoje aplicado a pedidos de compra, não a transferências.</text>
+<text x="70" y="483" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ reaproveitar esse padrão para "A Enviar" / "A Receber" por obra</text>
+
+<text x="60" y="511" font-family="sans-serif" font-size="13" font-weight="700" fill="#1d435d">2 — Painel "Entregas Atrasadas" também é referência direta</text>
+<text x="70" y="529" font-family="sans-serif" font-size="12" fill="#213e5c" font-weight="600">→ mesma lógica se aplica a transferências paradas em "Em trânsito" além do previsto</text>
+</svg>

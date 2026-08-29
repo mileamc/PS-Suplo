@@ -1,0 +1,103 @@
+<svg viewBox="0 0 2460 1120" xmlns="http://www.w3.org/2000/svg" role="img">
+<defs><marker id="pta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#9a9793"/></marker></defs>
+<title>Fluxo 2: Aprovação — original da Suplos digitalizado</title>
+<desc>As ramificações de parâmetro ligado e desligado são reproduzidas com a mesma árvore de aprovar e reprovar.</desc>
+<rect width="2460" height="1120" fill="#ffffff"/>
+<text x="40" y="48" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#111111" text-anchor="start">Fluxo 2: Aprovação — original da Suplos</text>
+<text x="40" y="76" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="400" fill="#615d59" text-anchor="start">Digitalização fiel do material fornecido · perguntas em azul não alteram o fluxo original.</text>
+<rect x="40" y="475" width="230" height="74" fill="#f1f2f2" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="155.0" y="507.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">FLUXO DE TRANSFERÊNCIA</text>
+<text x="155.0" y="524.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">(APROVADOR)</text>
+<rect x="315" y="135" width="265" height="66" fill="#f1f2f2" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="447.5" y="163.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">PUXAR QUAIS USERS PODEM SER</text>
+<text x="447.5" y="180.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">APROVADORES</text>
+<rect x="650" y="275" width="245" height="64" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="772.5" y="311.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">PARAMETRO DE APROVADOR = ON</text>
+<polygon points="1040,258.0 1096.0,307 1040,356.0 984.0,307" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1040" y="311.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="600" fill="#111111" text-anchor="middle">AÇÃO</text>
+<rect x="1165" y="205" width="230" height="64" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1280.0" y="241.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">REPROVAR TRANSFERENCIA</text>
+<rect x="1165" y="345" width="230" height="64" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1280.0" y="381.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">APROVAR TRANSFERENCIA</text>
+<rect x="1450" y="173" width="260" height="128" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1580.0" y="207.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">CAMPOS DOS MODAIS</text>
+<text x="1580.0" y="224.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">1. MOTIVO DA REPROVAÇÃO =</text>
+<text x="1580.0" y="241.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">CAMPO DE TEXTO</text>
+<text x="1580.0" y="258.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">2. ASSINATURA</text>
+<text x="1580.0" y="275.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">3. CAPTURAR EMAIL/nome DO USER</text>
+<rect x="1765" y="173" width="260" height="128" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1895.0" y="215.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">RECUSA, APRESENTAR DADOS</text>
+<text x="1895.0" y="232.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">STATUS DE REPROVADO +</text>
+<text x="1895.0" y="249.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">OBSERVAÇÃO (CAMPO PARA</text>
+<text x="1895.0" y="266.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">PREENCHER)</text>
+<rect x="1665" y="345" width="260" height="64" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1795.0" y="372.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">APRESENTAR CARD NA OBRA</text>
+<text x="1795.0" y="389.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">DESTINO</text>
+<polygon points="2097,239 2205,239 2183,301 2075,301" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="2140.0" y="274.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#111111" text-anchor="middle">FIM</text>
+<rect x="2250" y="239" width="170" height="70" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="2335.0" y="269.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">Listar card e atualizar em</text>
+<text x="2335.0" y="286.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">stocks/transfers</text>
+<path d="M 895 307 L 982 307" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1096 289 L 1130 237 L 1163 237" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1096 325 L 1130 377 L 1163 377" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1395 237 L 1448 237" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1710 237 L 1763 237" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 2025 237 L 2073 270" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1395 377 L 1663 377" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1925 377 L 2028 377 L 2073 285" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 2205 270 L 2248 273" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<rect x="650" y="690" width="245" height="64" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="772.5" y="726.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">PARAMETRO DE APROVADOR = OFF</text>
+<polygon points="1040,673.0 1096.0,722 1040,771.0 984.0,722" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1040" y="726.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="600" fill="#111111" text-anchor="middle">AÇÃO</text>
+<rect x="1165" y="620" width="230" height="64" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1280.0" y="656.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">REPROVAR TRANSFERENCIA</text>
+<rect x="1165" y="760" width="230" height="64" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1280.0" y="796.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">APROVAR TRANSFERENCIA</text>
+<rect x="1450" y="588" width="260" height="128" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1580.0" y="622.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">CAMPOS DOS MODAIS</text>
+<text x="1580.0" y="639.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">1. MOTIVO DA REPROVAÇÃO =</text>
+<text x="1580.0" y="656.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">CAMPO DE TEXTO</text>
+<text x="1580.0" y="673.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">2. ASSINATURA</text>
+<text x="1580.0" y="690.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">3. CAPTURAR EMAIL/nome DO USER</text>
+<rect x="1765" y="588" width="260" height="128" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1895.0" y="630.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">RECUSA, APRESENTAR DADOS</text>
+<text x="1895.0" y="647.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">STATUS DE REPROVADO +</text>
+<text x="1895.0" y="664.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">OBSERVAÇÃO (CAMPO PARA</text>
+<text x="1895.0" y="681.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">PREENCHER)</text>
+<rect x="1665" y="760" width="260" height="64" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="1795.0" y="787.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">APRESENTAR CARD NA OBRA</text>
+<text x="1795.0" y="804.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="600" fill="#111111" text-anchor="middle">DESTINO</text>
+<polygon points="2097,654 2205,654 2183,716 2075,716" fill="#ff6468" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="2140.0" y="689.0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#111111" text-anchor="middle">FIM</text>
+<rect x="2250" y="654" width="170" height="70" fill="#a9ebc5" stroke="#9ba1a6" stroke-width="1.5"/>
+<text x="2335.0" y="684.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">Listar card e atualizar em</text>
+<text x="2335.0" y="701.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#111111" text-anchor="middle">stocks/transfers</text>
+<path d="M 895 722 L 982 722" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1096 704 L 1130 652 L 1163 652" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1096 740 L 1130 792 L 1163 792" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1395 652 L 1448 652" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1710 652 L 1763 652" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 2025 652 L 2073 685" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1395 792 L 1663 792" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1925 792 L 2028 792 L 2073 700" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 2205 685 L 2248 688" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 270 494 L 610 307 L 648 307" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 270 530 L 610 722 L 648 722" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 270 490 L 290 168 L 313 168" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 580 168 L 620 168 L 620 275 L 648 275" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<circle cx="1010" cy="635" r="16" fill="#0f3c78"/>
+<text x="1010" y="640" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<circle cx="1010" cy="520" r="16" fill="#0f3c78"/>
+<text x="1010" y="525" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="40" y="920" width="2380" height="154" rx="12" fill="#e6f3fe" stroke="#b8d8f4"/>
+<circle cx="66" cy="945" r="16" fill="#0f3c78"/>
+<text x="66" y="950" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="94" y="950" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0f3c78" text-anchor="start">Pergunta que expôs a inconsistência</text>
+<text x="94" y="972" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">Se o parâmetro está OFF, por que o fluxo original ainda oferece Aprovar e Reprovar? No protótipo atual, a aprovação é obrigatória e explícita.</text>
+<circle cx="66" cy="997" r="16" fill="#0f3c78"/>
+<text x="66" y="1002" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="94" y="1002" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0f3c78" text-anchor="start">Mudança aplicada ao meu fluxo</text>
+<text x="94" y="1024" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">As duas árvores idênticas não foram copiadas. O meu fluxo mostra uma única fila de aprovação, uma decisão e os caminhos de aprovado/reprovado.</text>
+</svg>

@@ -1,0 +1,159 @@
+<svg viewBox="0 0 2720 1480" xmlns="http://www.w3.org/2000/svg" role="img">
+<defs><marker id="pta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#9a9793"/></marker></defs>
+<title>Fluxo de telas do protótipo web e mobile</title>
+<desc>Mapa das rotas, telas, drawers, modais, sheets e navegação que compartilham a mesma máquina de estados.</desc>
+<rect width="2720" height="1480" fill="#ffffff"/>
+<text x="40" y="52" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#111111" text-anchor="start">Fluxo de telas do protótipo</text>
+<text x="40" y="80" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="400" fill="#615d59" text-anchor="start">Web e mobile usam a mesma transferência e a mesma máquina de estados; a navegação muda conforme o contexto.</text>
+<rect x="24" y="112" width="2672" height="590" rx="18" fill="#fbfbfa" stroke="#e4e2df"/>
+<text x="50" y="150" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#111111" text-anchor="start">WEB · escritório</text>
+<rect x="70" y="190" width="300" height="130" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="218" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">/stocks · Estoque</text>
+<text x="86" y="241" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Aba Estoque · Entrada / Saída</text>
+<text x="86" y="259" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Aba Movimentações · linhas clicáveis</text>
+<rect x="70" y="430" width="300" height="150" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="458" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">/stocks/transfers · Painel</text>
+<text x="86" y="481" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Saindo / Chegando · cards de status</text>
+<text x="86" y="499" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Lista / calendário · atrasos / próximas</text>
+<text x="86" y="517" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Modo aprovador da outra empresa</text>
+<rect x="460" y="190" width="290" height="130" rx="12" fill="#ffffff" stroke="#7aaed9" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="476" y="218" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Registrar Saída de Estoque</text>
+<text x="476" y="241" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Saída direta ou requisição</text>
+<text x="476" y="259" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Destino · itens · assinatura</text>
+<rect x="460" y="430" width="290" height="150" rx="12" fill="#ffffff" stroke="#7aaed9" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="476" y="458" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">/stocks/transfers/:id · Detalhe</text>
+<text x="476" y="481" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Drawer · status · saldos · histórico</text>
+<text x="476" y="499" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Ações variam por estado e obra</text>
+<rect x="850" y="150" width="300" height="116" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="866" y="178" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Aprovação</text>
+<text x="866" y="201" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Aprovar direto no painel</text>
+<text x="866" y="219" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Reprovar abre motivo</text>
+<rect x="850" y="290" width="300" height="116" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="866" y="318" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Pré-despacho</text>
+<text x="866" y="341" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Registrar despacho</text>
+<text x="866" y="359" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Cancelar transferência</text>
+<rect x="850" y="430" width="300" height="116" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="866" y="458" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Chegada</text>
+<text x="866" y="481" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Alegar recebimento</text>
+<text x="866" y="499" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Seguir agora ou deixar FVM pendente</text>
+<rect x="850" y="570" width="300" height="100" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="866" y="598" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">FVM</text>
+<text x="866" y="621" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Quantidade obrigatória</text>
+<text x="866" y="639" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Critérios configuráveis</text>
+<rect x="1250" y="150" width="300" height="116" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="1266" y="178" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Confirmar NF</text>
+<text x="1266" y="201" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Número + anexo</text>
+<text x="1266" y="219" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Sem divergência → completa</text>
+<rect x="1250" y="300" width="300" height="136" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="1266" y="328" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Divergência</text>
+<text x="1266" y="351" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Aviso crítico para a origem</text>
+<text x="1266" y="369" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">NF não encerra a pendência</text>
+<rect x="1250" y="490" width="300" height="150" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="1266" y="518" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Decisão da origem</text>
+<text x="1266" y="541" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Enviar somente o saldo faltante</text>
+<text x="1266" y="559" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">ou encerrar assumindo a falta</text>
+<rect x="1700" y="185" width="330" height="130" rx="12" fill="#f0eefb" stroke="#7d68bb" stroke-width="1.5" />
+<text x="1716" y="213" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Notificações + toasts</text>
+<text x="1716" y="236" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Ações atualizam sino, timeline e saldos</text>
+<text x="1716" y="254" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Recebimento notifica as três partes</text>
+<rect x="1700" y="430" width="330" height="130" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="1716" y="458" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Entradas do app mobile</text>
+<text x="1716" y="481" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">/stocks/transfers/receiving · moldura</text>
+<text x="1716" y="499" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">/embed/mobile · app sem moldura</text>
+<rect x="2160" y="300" width="380" height="150" rx="12" fill="#f0eefb" stroke="#7d68bb" stroke-width="1.5" />
+<text x="2176" y="328" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Store + máquina de estados</text>
+<text x="2176" y="351" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Uma entidade de transferência</text>
+<text x="2176" y="369" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Mesmos estados, papéis, saldos e histórico</text>
+<text x="2176" y="387" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">para as duas experiências</text>
+<path d="M 370 230 L 458 230" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 370 500 L 458 500" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 605 320 L 605 430" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 750 505 L 812 505 L 812 208 L 848 208" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 750 505 L 812 505 L 812 348 L 848 348" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 750 505 L 848 488" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1000 546 L 1000 568" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1150 620 L 1200 620 L 1200 208 L 1248 208" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1150 620 L 1200 620 L 1200 368 L 1248 368" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1400 436 L 1400 488" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1550 240 L 1698 240" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<path d="M 1550 560 L 1650 560 L 1650 250 L 1698 250" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<path d="M 2030 250 L 2140 250 L 2140 360 L 2158 360" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<path d="M 370 550 L 400 550 L 400 680 L 1600 680 L 1600 495 L 1698 495" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="1040" y="672" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">header: abrir mobile</text>
+<rect x="24" y="730" width="2672" height="690" rx="18" fill="#fbfbfa" stroke="#e4e2df"/>
+<text x="50" y="770" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#111111" text-anchor="start">MOBILE · canteiro</text>
+<rect x="70" y="820" width="260" height="118" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="848" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Transferências</text>
+<text x="86" y="871" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Direção · cards · lista</text>
+<text x="86" y="889" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">FAB: Nova transferência</text>
+<rect x="70" y="975" width="260" height="118" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="1003" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Estoque</text>
+<text x="86" y="1026" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Entrada / Saída</text>
+<text x="86" y="1044" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Saldos e reservas</text>
+<rect x="70" y="1130" width="260" height="118" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="1158" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Movimentações</text>
+<text x="86" y="1181" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Filtros · histórico</text>
+<text x="86" y="1199" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Linha abre detalhe</text>
+<rect x="70" y="1285" width="260" height="100" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="86" y="1313" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Alertas</text>
+<text x="86" y="1336" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Notificação abre detalhe</text>
+<rect x="430" y="820" width="300" height="138" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="446" y="848" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Nova transferência</text>
+<text x="446" y="871" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Passo 1 · origem e destino</text>
+<text x="446" y="889" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Passo 2 · insumos</text>
+<text x="446" y="907" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Passo 3 · observação e assinatura</text>
+<rect x="430" y="1045" width="300" height="138" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="446" y="1073" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Detalhe</text>
+<text x="446" y="1096" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Dados · itens · timeline</text>
+<text x="446" y="1114" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Botões conforme estado e papel</text>
+<rect x="850" y="790" width="300" height="164" rx="12" fill="#ffffff" stroke="#7aaed9" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="866" y="818" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Bottom sheets</text>
+<text x="866" y="841" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Despacho · Reprovação · Cancelamento</text>
+<text x="866" y="859" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Chegada · NF · Encerrar divergência</text>
+<text x="866" y="877" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Adicionar insumo · Controles da demo</text>
+<rect x="850" y="1045" width="300" height="138" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="866" y="1073" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">FVM · tela inteira</text>
+<text x="866" y="1096" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Conferência de quantidade</text>
+<text x="866" y="1114" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Avaliação por critérios</text>
+<rect x="1260" y="1045" width="300" height="118" rx="12" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5" />
+<text x="1276" y="1073" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Resultado da FVM</text>
+<text x="1276" y="1096" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Voltar para a lista</text>
+<text x="1276" y="1114" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">ou ver a transferência</text>
+<rect x="1260" y="810" width="300" height="118" rx="12" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5" />
+<text x="1276" y="838" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Modo aprovador</text>
+<text x="1276" y="861" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Fila adicional no topo</text>
+<text x="1276" y="879" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Aprovar / reprovar sem trocar de app</text>
+<rect x="1700" y="900" width="350" height="150" rx="12" fill="#f0eefb" stroke="#7d68bb" stroke-width="1.5" />
+<text x="1716" y="928" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Navegação compartilhada</text>
+<text x="1716" y="951" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Abas mantêm as quatro áreas</text>
+<text x="1716" y="969" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Fluxos longos viram pilha</text>
+<text x="1716" y="987" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Sheets resolvem decisões curtas</text>
+<rect x="2160" y="900" width="380" height="150" rx="12" fill="#f0eefb" stroke="#7d68bb" stroke-width="1.5" />
+<text x="2176" y="928" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#111111" text-anchor="start">Mesma máquina do web</text>
+<text x="2176" y="951" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">Qualquer ação mobile atualiza</text>
+<text x="2176" y="969" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">a lista, o drawer, os saldos</text>
+<text x="2176" y="987" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#615d59" text-anchor="start">e o histórico na versão web</text>
+<path d="M 330 865 L 428 865" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 330 1034 L 380 1034 L 380 895 L 428 895" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="382" y="1018" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">Saída</text>
+<path d="M 330 1189 L 380 1189 L 380 1114 L 428 1114" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 330 1335 L 380 1335 L 380 1145 L 428 1145" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 730 1114 L 848 1114" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 730 1114 L 790 1114 L 790 872 L 848 872" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1150 1114 L 1258 1104" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<path d="M 1410 1045 L 1410 965 L 1152 965 L 1152 1114" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="1300" y="952" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">ver transferência</text>
+<path d="M 200 820 L 200 790 L 1410 790 L 1410 808" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)"/>
+<text x="790" y="782" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="400" fill="#8b8783" text-anchor="middle">simular outra empresa</text>
+<path d="M 1560 870 L 1698 948" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<path d="M 2050 975 L 2158 975" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<path d="M 2540 975 L 2620 975 L 2620 420 L 2542 420" fill="none" stroke="#9a9793" stroke-width="1.6" marker-end="url(#pta)" stroke-dasharray="6 5"/>
+<rect x="50" y="1439" width="16" height="16" rx="4" fill="#e6f3fe" stroke="#0075de" stroke-width="1.5"/>
+<text x="74" y="1452" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">tela / rota</text>
+<rect x="168.1" y="1439" width="16" height="16" rx="4" fill="#ffffff" stroke="#7aaed9" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="192.1" y="1452" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">modal / drawer / sheet</text>
+<rect x="364.29999999999995" y="1439" width="16" height="16" rx="4" fill="#fff5e0" stroke="#ffb110" stroke-width="1.5"/>
+<text x="388.29999999999995" y="1452" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">ação do fluxo</text>
+<rect x="496.59999999999997" y="1439" width="16" height="16" rx="4" fill="#f0eefb" stroke="#7d68bb" stroke-width="1.5"/>
+<text x="520.5999999999999" y="1452" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="400" fill="#615d59" text-anchor="start">estado compartilhado</text>
+</svg>
