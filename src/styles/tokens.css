@@ -1,0 +1,69 @@
+/* ============================================================
+   Suplos — Design Tokens
+   Extraídos dos prints do produto atual (Estoque de Materiais,
+   Registrar Saída de Estoque, Movimentações, Entregas).
+   ============================================================ */
+
+:root {
+  /* --- Marca ------------------------------------------------ */
+  --brand-500: #00e28a;   /* verde do logo / nav ativo         */
+  --brand-600: #0fa45f;   /* botão primário (Entrada/Confirmar)*/
+  --brand-700: #0b7f4a;
+  --brand-50:  #e6f7ef;
+  --brand-100: #c7efdd;
+
+  /* --- Superfícies escuras (sidebar + header da tela) ------- */
+  --dark-900: #0b1420;
+  --dark-800: #0e1b28;
+  --dark-700: #16242f;
+  --dark-header: linear-gradient(104deg, #0e1a26 0%, #102130 52%, #12483c 100%);
+  --dark-text: #eef4f2;
+  --dark-text-muted: #9fb3ad;
+
+  /* --- Neutros --------------------------------------------- */
+  --bg:        #f4f6f8;
+  --surface:   #ffffff;
+  --surface-2: #fafbfc;
+  --surface-3: #f2f4f7;
+  --border:    #e6e9ee;
+  --border-strong: #d3d9e0;
+  --text:      #111827;
+  --text-2:    #374151;
+  --text-muted:#6b7280;
+  --text-faint:#9aa3ae;
+
+  /* --- Semânticas (herdadas dos badges dos prints) ---------- */
+  --green:  #12a05f;  --green-bg:  #e6f7ef;  --green-fg:  #0e7a4e;
+  --amber:  #f5a524;  --amber-bg:  #fef3d7;  --amber-fg:  #8a5a00;
+  --red:    #e5484d;  --red-bg:    #fde8e8;  --red-fg:    #c0392b;
+  --red-deep: #a32323; /* botão "Salvar Saída"                 */
+  --purple: #7c6bf0;  --purple-bg: #eeecfe;  --purple-fg:  #5647c4;
+  --blue:   #2d7ff9;  --blue-bg:   #e6f0ff;  --blue-fg:    #1b5fc4;
+  --cyan:   #0e9aa7;  --cyan-bg:   #e0f5f7;  --cyan-fg:    #0a6f79;
+  --gray-bg: #eef0f3; --gray-fg:   #5b6572;
+
+  /* --- Tipografia ------------------------------------------ */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --fs-11: 11px; --fs-12: 12px; --fs-13: 13px; --fs-14: 14px;
+  --fs-16: 16px; --fs-18: 18px; --fs-20: 20px; --fs-24: 24px; --fs-30: 30px;
+
+  /* --- Forma ----------------------------------------------- */
+  --r-sm: 6px; --r-md: 8px; --r-lg: 10px; --r-xl: 14px; --r-full: 999px;
+  --sh-1: 0 1px 2px rgba(16, 24, 40, .05);
+  --sh-2: 0 2px 8px rgba(16, 24, 40, .07);
+  --sh-3: 0 12px 32px rgba(16, 24, 40, .16);
+  --sh-modal: 0 24px 64px rgba(8, 15, 26, .28);
+
+  /* --- Estados da transferência entre obras ----------------- */
+  --st-reservado-fg: var(--purple-fg);  --st-reservado-bg: var(--purple-bg);  --st-reservado: var(--purple);
+  --st-aprovacao-fg: var(--amber-fg);   --st-aprovacao-bg: var(--amber-bg);   --st-aprovacao: var(--amber);
+  --st-aprovado-fg:  var(--blue-fg);    --st-aprovado-bg:  var(--blue-bg);    --st-aprovado: var(--blue);
+  --st-transito-fg:  var(--cyan-fg);    --st-transito-bg:  var(--cyan-bg);    --st-transito: var(--cyan);
+  --st-fvm-fg:       #7a4a00;           --st-fvm-bg:       #fff1dd;           --st-fvm: #e08a15;
+  --st-ok-fg:        var(--green-fg);   --st-ok-bg:        var(--green-bg);   --st-ok: var(--green);
+  --st-diverg-fg:    var(--red-fg);     --st-diverg-bg:    var(--red-bg);     --st-diverg: var(--red);
+  --st-reprovado-fg: #8f1d1d;           --st-reprovado-bg: #fbe3e3;           --st-reprovado: var(--red-deep);
+  --st-cancelado-fg: var(--gray-fg);    --st-cancelado-bg: var(--gray-bg);    --st-cancelado: #8b94a0;
+
+  --sidebar-w: 56px;
+}

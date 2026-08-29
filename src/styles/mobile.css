@@ -1,0 +1,132 @@
+/* ============================================================
+   Tela mobile do almoxarife — contexto de canteiro:
+   sol, luva, conexão ruim. Alvos grandes, poucos toques.
+   ============================================================ */
+.mob-palco {
+  display: flex; gap: 34px; align-items: flex-start; justify-content: center;
+  padding: 26px 20px 60px; flex-wrap: wrap;
+}
+.mob-frame {
+  width: 390px; height: 800px; border-radius: 38px; background: #0b1420;
+  padding: 12px; box-shadow: var(--sh-modal); flex-shrink: 0;
+}
+.mob-tela {
+  width: 100%; height: 100%; background: var(--bg); border-radius: 28px;
+  overflow: hidden; display: flex; flex-direction: column; position: relative;
+}
+.mob-notch {
+  height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: var(--dark-900); color: #cfe0d9; font-size: 11px; font-weight: 600;
+}
+.mob-header {
+  background: var(--dark-header); color: var(--dark-text);
+  padding: 14px 16px 16px; flex-shrink: 0;
+}
+.mob-header__obra { font-size: 11px; color: var(--dark-text-muted); letter-spacing: .04em; text-transform: uppercase; }
+.mob-header__titulo { font-size: 19px; font-weight: 700; margin-top: 3px; }
+.mob-header__linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mob-voltar {
+  border: 0; background: rgba(255,255,255,.10); color: var(--dark-text);
+  width: 38px; height: 38px; border-radius: var(--r-md); display: grid; place-items: center;
+}
+.mob-corpo { flex: 1; overflow-y: auto; padding: 14px; }
+.mob-rodape {
+  flex-shrink: 0; padding: 12px 14px 16px; border-top: 1px solid var(--border);
+  background: var(--surface); display: flex; flex-direction: column; gap: 9px;
+}
+
+.mob-card {
+  width: 100%; text-align: left; background: var(--surface);
+  border: 1px solid var(--border); border-left: 4px solid var(--c, var(--cyan));
+  border-radius: var(--r-lg); padding: 14px; margin-bottom: 11px; box-shadow: var(--sh-1);
+}
+.mob-card__topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mob-card__codigo { font-size: 16px; font-weight: 700; }
+.mob-card__rota { font-size: 13px; color: var(--text-2); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+.mob-card__itens { font-size: 12px; color: var(--text-muted); margin-top: 7px; }
+.mob-card__cta { margin-top: 12px; }
+
+.mob-btn {
+  width: 100%; height: 54px; border-radius: var(--r-lg); border: 1px solid var(--border-strong);
+  background: var(--surface); font-size: 16px; font-weight: 700; color: var(--text-2);
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+}
+.mob-btn--primario { background: var(--brand-600); border-color: var(--brand-600); color: #fff; }
+.mob-btn--perigo { background: var(--red); border-color: var(--red); color: #fff; }
+.mob-btn--fantasma { background: transparent; border-color: var(--border-strong); }
+.mob-btn:disabled { opacity: .45; }
+
+.mob-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 14px; margin-bottom: 11px;
+}
+.mob-item__nome { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.mob-item__meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.mob-item__enviado {
+  display: flex; align-items: baseline; gap: 7px; margin-top: 12px;
+  font-size: 13px; color: var(--text-muted);
+}
+.mob-item__enviado strong { font-size: 20px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+.mob-stepper { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.mob-stepper button {
+  width: 54px; height: 54px; border-radius: var(--r-lg); border: 1px solid var(--border-strong);
+  background: var(--surface-3); display: grid; place-items: center; font-size: 22px; color: var(--text-2);
+}
+.mob-stepper button:active { background: var(--surface-2); }
+.mob-stepper input {
+  flex: 1; height: 54px; border-radius: var(--r-lg); border: 1px solid var(--border-strong);
+  text-align: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--surface); outline: none; min-width: 0;
+}
+.mob-stepper input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,107,240,.16); }
+.mob-stepper--dif input { border-color: var(--red); color: var(--red-fg); }
+
+.mob-chip-ok {
+  margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--green-fg);
+}
+.mob-chip-dif {
+  margin-top: 10px; display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--red-fg);
+}
+.mob-motivo {
+  width: 100%; margin-top: 10px; min-height: 56px; border-radius: var(--r-md);
+  border: 1px solid var(--border-strong); padding: 10px 12px; font-size: 14px; outline: none; resize: vertical;
+}
+.mob-motivo:focus { border-color: var(--purple); }
+
+.mob-resumo {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 14px; margin-bottom: 12px;
+}
+.mob-resumo__linha { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; font-size: 14px; }
+.mob-resumo__linha + .mob-resumo__linha { border-top: 1px solid var(--border); }
+
+.mob-vazio { text-align: center; padding: 60px 20px; }
+.mob-vazio__icone {
+  width: 62px; height: 62px; border-radius: 50%; background: var(--surface-3);
+  display: grid; place-items: center; margin: 0 auto 16px; color: var(--text-faint);
+}
+.mob-vazio__titulo { font-size: 17px; font-weight: 700; }
+.mob-vazio__texto { font-size: 14px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+.mob-sucesso { text-align: center; padding: 40px 16px; }
+.mob-sucesso__icone {
+  width: 78px; height: 78px; border-radius: 50%; display: grid; place-items: center;
+  margin: 0 auto 18px; background: var(--green-bg); color: var(--green-fg);
+}
+.mob-sucesso__icone--erro { background: var(--red-bg); color: var(--red-fg); }
+.mob-sucesso__titulo { font-size: 20px; font-weight: 700; }
+.mob-sucesso__texto { font-size: 14px; color: var(--text-muted); margin-top: 10px; line-height: 1.55; }
+
+.mob-notas { max-width: 380px; }
+.mob-notas h3 { font-size: var(--fs-16); font-weight: 700; margin-bottom: 10px; }
+.mob-notas li {
+  font-size: var(--fs-13); color: var(--text-2); line-height: 1.55;
+  padding-left: 18px; position: relative; margin-bottom: 9px;
+}
+.mob-notas li::before {
+  content: ''; position: absolute; left: 0; top: 7px; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--brand-600);
+}
