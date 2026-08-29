@@ -17,16 +17,21 @@ export interface Secao {
   curto: string;
 }
 
+/**
+ * O protótipo vem logo depois do overview, e não no fim: quem abre o case
+ * quer ver a coisa funcionando antes de ler como ela foi decidida. As
+ * seções seguintes explicam o percurso que levou até ele.
+ */
 export const SECOES: Secao[] = [
   { id: 'introducao', numero: '01', titulo: 'Introdução', curto: 'Introdução' },
   { id: 'overview', numero: '02', titulo: 'Overview do projeto', curto: 'Overview' },
-  { id: 'processo', numero: '03', titulo: 'Etapas do processo', curto: 'Processo' },
-  { id: 'fluxogramas', numero: '04', titulo: 'Fluxogramas originais, comentados', curto: 'Fluxogramas' },
-  { id: 'prints', numero: '05', titulo: 'Prints das telas atuais, anotados', curto: 'Prints' },
-  { id: 'fluxo-v1', numero: '06', titulo: 'Fluxo de estados (V1)', curto: 'Fluxo V1' },
-  { id: 'fluxo-enriquecido', numero: '07', titulo: 'Fluxo enriquecido, atores e notificações', curto: 'Atores' },
-  { id: 'priorizacao', numero: '08', titulo: 'MVP, V.1, V.2 e V.3', curto: 'Priorização' },
-  { id: 'prototipo', numero: '09', titulo: 'Protótipo interativo', curto: 'Protótipo' },
+  { id: 'prototipo', numero: '03', titulo: 'Protótipo interativo', curto: 'Protótipo' },
+  { id: 'processo', numero: '04', titulo: 'Etapas do processo', curto: 'Processo' },
+  { id: 'fluxogramas', numero: '05', titulo: 'Fluxogramas originais, comentados', curto: 'Fluxogramas' },
+  { id: 'prints', numero: '06', titulo: 'Prints das telas atuais, anotados', curto: 'Prints' },
+  { id: 'fluxo-v1', numero: '07', titulo: 'Fluxo de estados (V1)', curto: 'Fluxo V1' },
+  { id: 'fluxo-enriquecido', numero: '08', titulo: 'Fluxo enriquecido, atores e notificações', curto: 'Atores' },
+  { id: 'priorizacao', numero: '09', titulo: 'MVP, V.1, V.2 e V.3', curto: 'Priorização' },
   { id: 'encerramento', numero: '10', titulo: 'Encerramento', curto: 'Encerramento' },
 ];
 

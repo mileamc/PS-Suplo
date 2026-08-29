@@ -129,6 +129,54 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 /* ============================================================
+   Seletor de direção — a primeira camada da tela de transferências
+
+   Vem acima dos cards de status e precisa pesar mais do que eles:
+   os cards filtram dentro da direção, a direção é a perspectiva.
+   O contraste faz esse trabalho — a opção ativa é escura, como o
+   header e o rail, contra o branco de tudo que ela contém.
+   ============================================================ */
+.direcao { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.direcao__op {
+  display: flex; align-items: center; gap: 13px; text-align: left;
+  padding: 14px 16px; border-radius: var(--r-lg);
+  border: 1px solid var(--border); background: var(--surface);
+  box-shadow: var(--sh-1); color: var(--text-muted);
+  transition: border-color .15s, box-shadow .15s, background .15s, color .15s;
+}
+.direcao__op:hover { border-color: var(--border-strong); box-shadow: var(--sh-2); }
+.direcao__op--ativa {
+  background: var(--dark-header); border-color: transparent;
+  color: var(--dark-text-muted); box-shadow: var(--sh-2);
+}
+.direcao__icone {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 38px; height: 38px; border-radius: var(--r-md);
+  background: var(--surface-3); color: var(--text-muted);
+}
+.direcao__op--ativa .direcao__icone { background: rgba(255, 255, 255, .12); color: var(--brand-500); }
+.direcao__txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.direcao__titulo { font-size: var(--fs-16); font-weight: 700; color: var(--text-2); letter-spacing: -.01em; }
+.direcao__op--ativa .direcao__titulo { color: var(--dark-text); }
+.direcao__sub {
+  font-size: var(--fs-12); color: var(--text-faint);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.direcao__op--ativa .direcao__sub { color: var(--dark-text-muted); }
+.direcao__cont {
+  flex-shrink: 0; display: grid; place-items: center;
+  min-width: 26px; height: 26px; padding: 0 8px; border-radius: var(--r-full);
+  background: var(--surface-3); color: var(--text-2);
+  font-size: var(--fs-13); font-weight: 700;
+}
+.direcao__op--ativa .direcao__cont { background: var(--brand-500); color: #06231a; }
+
+/* Numa coluna só, as duas opções continuam legíveis empilhadas. */
+@media (max-width: 720px) {
+  .direcao { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    Toolbar / controles
    ============================================================ */
 .toolbar { display: flex; align-items: center; gap: 10px; margin: 14px 0; flex-wrap: wrap; }

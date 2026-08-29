@@ -10,7 +10,7 @@ import {
   BadgeStatus, BadgeDivergencia, EstadoVazio, EstadoErro, ListaCarregando, corDoStatus,
 } from '../../components/ui';
 import { useStore } from '../../state/store';
-import { nomeObra } from '../../data/obras';
+import { OBRA_ATUAL, nomeObra } from '../../data/obras';
 import { STATUS_META, STATUS_EM_ROTA } from '../../domain/status';
 import {
   HOJE, atrasada, noGrupo, gruposDoPapel, rotuloGrupo, type Direcao, type Grupo,
@@ -95,6 +95,29 @@ export function TransferenciasScreen({
         onVerMobile={onVerMobile}
       />
 
+      {/* Primeira camada de navegação: de que lado desta obra a
+          transferência está. Os cards de status abaixo só existem dentro
+          da direção escolhida — por isso ela vem antes, e com mais peso
+          visual do que eles. */}
+      <div className="direcao" role="group" aria-label="Direção da transferência">
+        <OpcaoDirecao
+          ativa={direcao === 'enviar'}
+          icone={<ArrowUpFromLine size={19} />}
+          titulo="Saindo desta obra"
+          sub={`${nomeObra(OBRA_ATUAL)} → outras obras`}
+          contagem={aEnviar.filter((t) => !STATUS_META[t.status].terminal).length}
+          onClick={() => { setDirecao('enviar'); setGrupo('total'); }}
+        />
+        <OpcaoDirecao
+          ativa={direcao === 'receber'}
+          icone={<ArrowDownToLine size={19} />}
+          titulo="Chegando nesta obra"
+          sub={`outras obras → ${nomeObra(OBRA_ATUAL)}`}
+          contagem={aReceber.filter((t) => !STATUS_META[t.status].terminal).length}
+          onClick={() => { setDirecao('receber'); setGrupo('total'); }}
+        />
+      </div>
+
       <div className="cards-status">
         {cards.map((c) => (
           <button
@@ -108,17 +131,6 @@ export function TransferenciasScreen({
             <div className="card-status__rotulo">{c.rotulo}</div>
           </button>
         ))}
-      </div>
-
-      <div className="abas">
-        <button className={`aba ${direcao === 'enviar' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('enviar'); setGrupo('total'); }}>
-          <ArrowUpFromLine size={15} /> A Enviar
-          <span className="aba__badge">{aEnviar.filter((t) => !STATUS_META[t.status].terminal).length}</span>
-        </button>
-        <button className={`aba ${direcao === 'receber' ? 'aba--ativa' : ''}`} onClick={() => { setDirecao('receber'); setGrupo('total'); }}>
-          <ArrowDownToLine size={15} /> A Receber
-          <span className="aba__badge">{aReceber.filter((t) => !STATUS_META[t.status].terminal).length}</span>
-        </button>
       </div>
 
       <div className="toolbar">
@@ -187,6 +199,35 @@ export function TransferenciasScreen({
 
       {modalSaida && <RegistrarSaidaModal onFechar={() => setModalSaida(false)} />}
     </>
+  );
+}
+
+/* ============================================================
+   Seletor de direção — a primeira decisão da tela
+
+   Não é um filtro a mais: é a perspectiva a partir da qual todo
+   o resto é lido. O rótulo carrega o significado sozinho ("Saindo
+   desta obra"), e a seta e o sentido da rota só reforçam — quem
+   não distingue as setas continua entendendo pelo texto.
+   ============================================================ */
+function OpcaoDirecao({
+  ativa, icone, titulo, sub, contagem, onClick,
+}: {
+  ativa: boolean; icone: React.ReactNode; titulo: string; sub: string;
+  contagem: number; onClick: () => void;
+}) {
+  return (
+    <button
+      className={`direcao__op ${ativa ? 'direcao__op--ativa' : ''}`}
+      aria-pressed={ativa} onClick={onClick}
+    >
+      <span className="direcao__icone">{icone}</span>
+      <span className="direcao__txt">
+        <span className="direcao__titulo">{titulo}</span>
+        <span className="direcao__sub">{sub}</span>
+      </span>
+      <span className="direcao__cont">{contagem}</span>
+    </button>
   );
 }
 

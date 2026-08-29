@@ -23,13 +23,13 @@ export function CaseSite() {
       <Hero />
       <Introducao />
       <Overview />
+      <Prototipo />
       <Processo />
       <Fluxogramas />
       <Prints />
       <FluxoV1 />
       <FluxoEnriquecido />
       <Priorizacao />
-      <Prototipo />
       <Encerramento />
       <Rodape />
     </div>
@@ -166,7 +166,7 @@ function Hero() {
           </div>
           <div>
             <span className="hero__meta-rot">Seções</span>
-            <span className="hero__meta-val">10 · em ordem cronológica</span>
+            <span className="hero__meta-val">10 · protótipo logo no começo</span>
           </div>
         </div>
       </div>
@@ -240,7 +240,7 @@ function Overview() {
   );
 }
 
-/* ---------------- 03 · Processo ----------------------------- */
+/* ---------------- 04 · Processo ----------------------------- */
 const CORES_ETAPA = [
   ['var(--sky-tint)', 'var(--notion-blue)'],
   ['#ffeccc', '#8a5a00'],
@@ -279,7 +279,7 @@ function Processo() {
   );
 }
 
-/* ---------------- 04 · Fluxogramas -------------------------- */
+/* ---------------- 05 · Fluxogramas -------------------------- */
 function Fluxogramas() {
   return (
     <section className="secao" id="fluxogramas">
@@ -324,7 +324,7 @@ function Fluxogramas() {
   );
 }
 
-/* ---------------- 05 · Prints ------------------------------- */
+/* ---------------- 06 · Prints ------------------------------- */
 function Prints() {
   return (
     <section className="secao" id="prints">
@@ -385,7 +385,7 @@ function Prints() {
   );
 }
 
-/* ---------------- 06 · Fluxo V1 ----------------------------- */
+/* ---------------- 07 · Fluxo V1 ----------------------------- */
 function FluxoV1() {
   return (
     <section className="secao" id="fluxo-v1">
@@ -430,7 +430,7 @@ function FluxoV1() {
   );
 }
 
-/* ---------------- 07 · Fluxo enriquecido -------------------- */
+/* ---------------- 08 · Fluxo enriquecido -------------------- */
 function FluxoEnriquecido() {
   return (
     <section className="secao" id="fluxo-enriquecido">
@@ -555,7 +555,7 @@ function TabelaNotificacoes() {
   );
 }
 
-/* ---------------- 08 · Priorização -------------------------- */
+/* ---------------- 09 · Priorização -------------------------- */
 const ESTILO_VERSAO: Record<string, React.CSSProperties> = {
   mvp: { ['--bg-v' as string]: 'var(--marigold)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
   v1: { ['--bg-v' as string]: 'var(--sky-wash)', ['--bd-v' as string]: 'transparent', ['--bd-nota' as string]: 'rgba(0,0,0,.16)' },
@@ -618,7 +618,7 @@ function Priorizacao() {
   );
 }
 
-/* ---------------- 09 · Protótipo ---------------------------- */
+/* ---------------- 03 · Protótipo ---------------------------- */
 function Prototipo() {
   const base = window.location.origin.replace(/^https?:\/\//, '');
   return (
@@ -627,16 +627,17 @@ function Prototipo() {
         <div className="proto__interno">
           <Cabecalho id="prototipo">
             <p>
-              Depois de validar o modelo de estados, o próximo passo foi trazer isso para telas de
-              verdade — reaproveitando a identidade visual da Suplos e os padrões que já existem no
-              produto (como a comparação "pedido x recebido"), em vez de propor um visual do zero.
+              Este é o resultado, antes do percurso: um protótipo funcional, navegável tanto na
+              versão web (criação e aprovação, para quem trabalha no escritório) quanto na versão
+              mobile (recebimento, para quem está no canteiro). Ele reaproveita a identidade visual
+              da Suplos e os padrões que já existem no produto — como a comparação "pedido x
+              recebido" — em vez de propor um visual do zero.
             </p>
             <p>
-              Abaixo está o protótipo funcional, navegável tanto na versão web (fluxo de criação e
-              aprovação, pensado para quem trabalha no escritório) quanto na versão mobile (fluxo de
-              recebimento, pensado para quem está no canteiro). Ele cobre o recorte do MVP descrito
-              acima, incluindo o estado de recebimento com divergência — o caminho "não-feliz" que o
-              case pede que apareça no recorte de alta-fidelidade.
+              Ele cobre o recorte do MVP, incluindo o recebimento com divergência: o caminho
+              "não-feliz" que o case pede no recorte de alta-fidelidade. As seções seguintes
+              mostram como se chegou até aqui — as telas atuais, os fluxogramas originais e o que
+              foi questionado neles, o modelo de estados e o corte entre MVP e versões seguintes.
             </p>
           </Cabecalho>
 

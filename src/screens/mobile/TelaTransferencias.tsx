@@ -55,12 +55,14 @@ export function TelaTransferencias({
       <div className="mob-corpo">
         <div className="mob-pad" style={{ paddingBottom: 0 }}>
           <div className="mob-seg">
+            {/* Mesmo vocabulário da web, encurtado para a largura do
+                aparelho: a direção continua sendo a primeira escolha. */}
             <button aria-pressed={direcao === 'enviar'} onClick={() => { setDirecao('enviar'); setFiltro('total'); }}>
-              <ArrowUpFromLine size={16} /> A Enviar
+              <ArrowUpFromLine size={16} /> Saindo daqui
               <span className="mob-seg__cont">{abertas(aEnviar)}</span>
             </button>
             <button aria-pressed={direcao === 'receber'} onClick={() => { setDirecao('receber'); setFiltro('total'); }}>
-              <ArrowDownToLine size={16} /> A Receber
+              <ArrowDownToLine size={16} /> Chegando aqui
               <span className="mob-seg__cont">{abertas(aReceber)}</span>
             </button>
           </div>
